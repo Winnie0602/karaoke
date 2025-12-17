@@ -1,0 +1,83 @@
+{
+  "id": "7zBeQezaz4U",
+  "title": "クリスマスソング",
+  "artist": "Back Number",
+  "lyrics": [
+    {
+      "start": 38,
+      "end": 43,
+      "ja": [
+        { "surface": "どこかで" },
+        { "surface": "鐘", "reading": "かね", "meaning": "鐘聲" },
+        { "surface": "が" },
+        {
+          "surface": "鳴って",
+          "reading": "なって",
+          "meaning": "正在響",
+          "origin": "鳴る"
+        }
+      ],
+      "zh": "不知在何處的鐘聲響起"
+    },
+    {
+      "start": 44,
+      "end": 49,
+      "ja": [
+        { "surface": "らしくない", "meaning": "不像…的樣子" },
+        { "surface": "言葉", "reading": "ことば", "meaning": "話語" },
+        { "surface": "が" },
+        {
+          "surface": "浮かんで",
+          "reading": "うかんで",
+          "meaning": "漂浮著",
+          "origin": "浮かぶ"
+        }
+      ],
+      "zh": "和平常不同的話語浮現在腦中"
+    },
+    {
+      "start": 50,
+      "end": 54,
+      "ja": [
+        { "surface": "寒さ", "reading": "さむさ", "meaning": "寒冷的感覺" },
+        { "surface": "心地", "reading": "ここち", "meaning": "感覺、心情" },
+        { "surface": "よくて" }
+      ],
+      "zh": "冷冷的感覺很舒服"
+    },
+    {
+      "start": 51,
+      "end": 61,
+      "ja": [
+        { "surface": "あれ" },
+        { "surface": "なんで" },
+        { "surface": "恋", "reading": "こい", "meaning": "戀愛" },
+        { "surface": "なんかしてんだろう" }
+      ],
+      "zh": "嗯？ 為什麼會陷入戀愛呢"
+    },
+    {
+      "start": 62,
+      "end": 68,
+      "ja": [
+        { "surface": "聖夜", "reading": "せいや", "meaning": "聖誕夜" },
+        { "surface": "だなんだと" },
+        { "surface": "繰り返す", "reading": "くりかえす", "meaning": "重複" },
+        { "surface": "歌", "reading": "うた", "meaning": "歌曲" },
+        { "surface": "と" }
+      ],
+      "zh": "也許是反覆播放的聖誕夜歌曲"
+    },
+    {
+      "start": 62,
+      "end": 68,
+      "ja": [
+        { "surface": "わざとらしく", "meaning": "故意地" },
+        { "surface": "きらめく", "meaning": "閃爍、閃亮" },
+        { "surface": "街", "reading": "まち", "meaning": "街道" },
+        { "surface": "のせいかな", "meaning": "是不是因為…的原因呢？" }
+      ],
+      "zh": "或者是刻意裝飾得格外閃耀的街道造成的吧"
+    }
+  ]
+}

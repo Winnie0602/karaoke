@@ -1,5 +1,5 @@
 <template>
   <div>
-    index page
+    <YoutubePlayer video-id="7zBeQezaz4U" />
   </div>
 </template>
