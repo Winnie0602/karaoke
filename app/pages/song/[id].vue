@@ -8,6 +8,22 @@ const {
   pending,
   error,
 } = await useFetch<SongData>(`/api/song/${route.params.id}`)
+
+const currentTime = ref(0)
+
+const handleTimeUpdate = (time: number) => {
+  currentTime.value = time
+}
+
+const youtubeRef = ref<{
+  seekTo: (time: number) => void
+} | null>(null)
+
+const goToTime = (time: number) => {
+  console.log(youtubeRef.value)
+  console.log(time)
+  youtubeRef.value?.seekTo(time)
+}
 </script>
 
 <template>
@@ -20,11 +36,20 @@ const {
       <div v-else-if="song" class="space-y-5">
         <!-- 影片 -->
         <ClientOnly>
-          <YoutubePlayer :video-id="song.id" />
+          <YoutubePlayer
+            ref="youtubeRef"
+            :key="song.id"
+            :video-id="song.id"
+            @timeupdate="(time: number) => handleTimeUpdate(time)"
+          />
         </ClientOnly>
 
         <!-- 歌詞 -->
-        <SongLyrics :lyrics="song.lyrics" />
+        <SongLyrics
+          :lyrics="song.lyrics"
+          :current-time="currentTime"
+          @go-to-time="(time: number) => goToTime(time)"
+        />
       </div>
     </div>
     <!-- 右邊區塊 -->

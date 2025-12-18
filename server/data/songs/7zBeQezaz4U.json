@@ -37,7 +37,7 @@
     },
     {
       "start": 50,
-      "end": 54,
+      "end": 55,
       "ja": [
         { "surface": "寒さ", "reading": "さむさ", "meaning": "寒冷的感覺" },
         { "surface": "心地", "reading": "ここち", "meaning": "感覺、心情" },
@@ -46,7 +46,7 @@
       "zh": "冷冷的感覺很舒服"
     },
     {
-      "start": 51,
+      "start": 56,
       "end": 61,
       "ja": [
         { "surface": "あれ" },
@@ -69,8 +69,8 @@
       "zh": "也許是反覆播放的聖誕夜歌曲"
     },
     {
-      "start": 62,
-      "end": 68,
+      "start": 68,
+      "end": 74,
       "ja": [
         { "surface": "わざとらしく", "meaning": "故意地" },
         { "surface": "きらめく", "meaning": "閃爍、閃亮" },
