@@ -53,17 +53,31 @@ watch(currentLineIndex, (newLineIndex) => {
         <span
           v-for="(word, wIndex) in lyric.ja"
           :key="wIndex"
-          class="mr-1 text-lg"
+          class="mr-1 inline-block"
         >
-          <!-- 有假名 -->
-          <ruby v-if="word.reading">
-            {{ word.surface }}
-            <rt class="text-xs text-gray-600">
-              {{ word.reading }}
-            </rt>
-          </ruby>
+          <!-- 有假名 or 有意思的詞 -->
+          <span
+            v-if="word.meaning"
+            class="cursor-pointer rounded border border-transparent px-0.5 hover:border-blue-500"
+          >
+            <ruby v-if="word.reading">
+              {{ word.surface }}
+              <rt class="text-xs text-gray-600">
+                {{ word.reading }}
+              </rt>
+            </ruby>
 
-          <!-- 沒假名 -->
+            <span v-else>
+              {{ word.surface }}
+            </span>
+
+            <!-- tooltip -->
+            <span class="relative -top-1 w-full text-xs">
+              {{ word.meaning }}
+            </span>
+          </span>
+
+          <!-- 沒 meaning 的普通字 -->
           <span v-else>
             {{ word.surface }}
           </span>

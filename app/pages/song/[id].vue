@@ -53,6 +53,13 @@ const goToTime = (time: number) => {
       </div>
     </div>
     <!-- 右邊區塊 -->
-    <div class="w-full border-[1px] border-black md:w-1/3"></div>
+    <div class="w-full md:w-1/3 md:min-w-[402px]">
+      <div class="mb-4 border-b-2 border-gray-800 text-2xl font-medium">
+        あなたにおすすめ
+      </div>
+      <div class="space-y-2">
+        <VideoCard v-for="i in 8" :key="i" />
+      </div>
+    </div>
   </div>
 </template>

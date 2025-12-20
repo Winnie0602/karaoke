@@ -78,6 +78,225 @@
         { "surface": "のせいかな", "meaning": "是不是因為…的原因呢？" }
       ],
       "zh": "或者是刻意裝飾得格外閃耀的街道造成的吧"
+    },
+    {
+      "start": 74,
+      "end": 78,
+      "ja": [
+        { "surface": "会いたい", "meaning": "想要見" },
+        { "surface": "と思う", "meaning": "覺得" },
+        { "surface": "回数", "reading": "かいすう", "meaning": "次數" },
+        { "surface": "が" }
+      ],
+      "zh": "想見你的次數"
+    },
+    {
+      "start": 78,
+      "end": 81,
+      "ja": [
+        { "surface": "会えない", "meaning": "見不到" },
+        { "surface": "と", "meaning": "一...就..." },
+        { "surface": "痛い", "reading": "いたい", "meaning": "痛的" },
+        { "surface": "この" },
+        { "surface": "胸", "reading": "むね" },
+        { "surface": "が" }
+      ],
+      "zh": "見不到你時胸口的疼痛"
+    },
+    {
+      "start": 81,
+      "end": 86,
+      "ja": [
+        { "surface": "君", "reading": "きみ", "meaning": "你" },
+        { "surface": "の" },
+        { "surface": "事", "reading": "こと", "meaning": "事情" },
+        { "surface": "どう" },
+        { "surface": "思う", "reading": "おもう" },
+        { "surface": "か" },
+        {
+          "surface": "教え",
+          "reading": "おしえ",
+          "meaning": "教、告訴",
+          "origin": "教える"
+        },
+        { "surface": "よう", "meaning": "打算" },
+        { "surface": "としてる", "meaning": "正在做～" }
+      ],
+      "zh": "都在試著教會我如何去思念你"
+    },
+    {
+      "start": 87,
+      "end": 93,
+      "ja": [
+        { "surface": "いいよ" },
+        { "surface": "そんな" },
+        { "surface": "事", "reading": "こと", "meaning": "事情" },
+        { "surface": "自分", "reading": "じぶん", "meaning": "自己" },
+        { "surface": "で" },
+        {
+          "surface": "分かってる",
+          "reading": "わかってる",
+          "meaning": "知道",
+          "origin": "分かる"
+        },
+        { "surface": "よ" }
+      ],
+      "zh": "算了，那種事情我自己也會知道"
+    },
+    {
+      "start": 94,
+      "end": 99,
+      "ja": [
+        { "surface": "サンタ", "meaning": "聖誕老人" },
+        { "surface": "とやら", "meaning": "那個叫～的" },
+        { "surface": "に", "meaning": "對" },
+        {
+          "surface": "頼んで",
+          "reading": "たのんで",
+          "meaning": "拜託",
+          "origin": "頼む"
+        },
+        { "surface": "も" },
+        { "surface": "仕方", "reading": "しかた", "meaning": "辦法" },
+        { "surface": "ない" },
+        { "surface": "よなぁ" }
+      ],
+      "zh": "這種事就算拜託聖誕老人也無濟於事"
+    },
+    {
+      "start": 100,
+      "end": 103,
+      "ja": [
+        { "surface": "できれば", "meaning": "如果可以的話" },
+        { "surface": "横", "meaning": "旁邊" },
+        { "surface": "に", "meaning": "在" },
+        {
+          "surface": "いて",
+          "meaning": "存在",
+          "origin": "いる"
+        },
+        { "surface": "欲しくて", "reading": "ほしくて", "meaning": "想要～" }
+      ],
+      "zh": "如果可以的話希望你能在身邊"
+    },
+    {
+      "start": 103,
+      "end": 106,
+      "ja": [
+        { "surface": "どこにも", "meaning": "任何地方" },
+        {
+          "surface": "行って",
+          "reading": "いって",
+          "meaning": "去",
+          "origin": "行く"
+        },
+        {
+          "surface": "欲し",
+          "reading": "ほし",
+          "meaning": "想要",
+          "origin": "欲しい"
+        },
+        {
+          "surface": "くなくて",
+          "meaning": "欲しい的否定て形"
+        }
+      ],
+      "zh": "希望你哪裡都不要去"
+    },
+    {
+      "start": 106,
+      "end": 112,
+      "ja": [
+        { "surface": "僕", "meaning": "我", "reading": "ぼく" },
+        { "surface": "の" },
+        { "surface": "事", "reading": "こと" },
+        {
+          "surface": "だけ",
+          "meaning": "只有～"
+        },
+        {
+          "surface": "を"
+        },
+        {
+          "surface": "ずっと",
+          "meaning": "一直"
+        },
+        {
+          "surface": "考えていて",
+          "meaning": "想著"
+        },
+        {
+          "surface": "欲しい",
+          "reading": "ほしい",
+          "meaning": "希望"
+        }
+      ],
+      "zh": "希望你始終想著我"
+    },
+    {
+      "start": 112,
+      "end": 118,
+      "ja": [
+        { "surface": "でも" },
+        { "surface": "こんな" },
+        { "surface": "事", "reading": "こと" },
+        {
+          "surface": "を"
+        },
+        {
+          "surface": "伝え",
+          "reading": "つたえ",
+          "meaning": "傳達",
+          "origin": "伝える"
+        },
+        {
+          "surface": "たら",
+          "meaning": "如果"
+        },
+        {
+          "surface": "格好悪い",
+          "reading": "かっこうわるい",
+          "meaning": "很遜"
+        },
+        {
+          "surface": "し"
+        }
+      ],
+      "zh": "但這種話跟你說的話就太遜了"
+    },
+    {
+      "start": 119,
+      "end": 123,
+      "ja": [
+        { "surface": "長く", "reading": "ながく" },
+        { "surface": "なる", "meaning": "變得" },
+        { "surface": "だけ" },
+        {
+          "surface": "だから",
+          "meaning": "所以"
+        },
+        {
+          "surface": "まとめる",
+          "meaning": "整理、總結"
+        },
+        {
+          "surface": "よ"
+        }
+      ],
+      "zh": "想說的話太多了，所以簡短來說"
+    },
+    {
+      "start": 123,
+      "end": 126,
+      "ja": [
+        { "surface": "君", "reading": "きみ", "meaning": "你" },
+        { "surface": "が", "meaning": "變得" },
+        { "surface": "好き", "reading": "すき", "meaning": "喜歡" },
+        {
+          "surface": "だ"
+        }
+      ],
+      "zh": "我喜歡你"
     }
   ]
 }
