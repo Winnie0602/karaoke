@@ -79,6 +79,7 @@ function createPlayer() {
 function seekTo(time: number) {
   if (!player.value) return
   player.value.seekTo(time, true)
+  player.value.playVideo()
 }
 
 defineExpose({

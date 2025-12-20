@@ -11,19 +11,31 @@ const emit = defineEmits<{
 <template>
   <!-- 背景遮罩 -->
   <div
-    class="fixed inset-0 bg-black/50 transition-opacity duration-300 z-40"
-    :class="open ? 'opacity-100' : 'opacity-0 pointer-events-none'"
+    class="fixed inset-0 z-40 bg-black/20 transition-opacity duration-300"
+    :class="open ? 'opacity-100' : 'pointer-events-none opacity-0'"
     @click="emit('close')"
   />
 
   <!-- Drawer -->
   <aside
-    class="fixed top-14 left-0 w-64 h-[calc(100vh-3.5rem)] bg-black text-white p-6 z-50 transition-transform duration-300 ease-out"
+    class="fixed left-0 top-14 z-50 h-[calc(100vh-3.5rem)] w-64 rounded-r-xl bg-white p-6 shadow-lg transition-transform duration-300 ease-out"
     :class="open ? 'translate-x-0' : '-translate-x-full'"
   >
     <nav class="space-y-6">
-      <a href="#" class="block" @click="emit('close')">Songs</a>
-      <a href="#" class="block" @click="emit('close')">About</a>
+      <a
+        href="#"
+        class="block rounded px-2 py-1 text-gray-800 transition hover:bg-[#F9595F]/10 hover:text-[#F9595F]"
+        @click="emit('close')"
+      >
+        Songs
+      </a>
+      <a
+        href="#"
+        class="block rounded px-2 py-1 text-gray-800 transition hover:bg-[#F9595F]/10 hover:text-[#F9595F]"
+        @click="emit('close')"
+      >
+        About
+      </a>
     </nav>
   </aside>
 </template>

@@ -7,5 +7,6 @@
       </div>
     </div>
     <!-- <Footer /> -->
+    <SongPlayer />
   </div>
 </template>
