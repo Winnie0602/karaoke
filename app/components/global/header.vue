@@ -9,7 +9,7 @@ const isOpen = ref(false)
     >
       <!-- Logo -->
       <div class="text-lg font-semibold tracking-wide text-gray-900">
-        カラオケ
+        カラオケ 〜 歌を歌お-
         <span class="ml-1 text-[#F9595F]">♪</span>
       </div>
 

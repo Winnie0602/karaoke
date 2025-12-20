@@ -72,9 +72,12 @@ const goToTime = (time: number) => {
     </div>
     <!-- 右邊區塊 -->
     <div class="w-full lg:w-1/3 lg:min-w-[402px]">
-      <div class="mb-4 border-b-2 border-gray-800 text-2xl font-medium">
+      <div
+        class="mb-4 border-b-4 border-[#A66B6B] text-2xl font-medium text-[#A66B6B]"
+      >
         あなたにおすすめ
       </div>
+
       <div class="space-y-2">
         <VideoCard v-for="i in 8" :key="i" />
       </div>
