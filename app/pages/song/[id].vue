@@ -22,16 +22,9 @@ const youtubeRef = ref<{
 } | null>(null)
 
 const goToTime = (time: number) => {
-  console.log(youtubeRef.value)
-  console.log(time)
   youtubeRef.value?.seekTo(time)
 }
 
-// onMounted(() => {
-//   setTimeout(() => {
-//     duration.value = youtubeRef.value?.getDuration() ?? 0
-//   }, 1000)
-// })
 </script>
 
 <template>
@@ -59,15 +52,6 @@ const goToTime = (time: number) => {
           :current-time="currentTime"
           @go-to-time="(time: number) => goToTime(time)"
         />
-        <!-- <SongPlayer
-          :duration="duration"
-          :current-time="currentTime"
-          @play="youtubeRef?.play()"
-          @pause="youtubeRef?.pause()"
-          @seek="(t) => youtubeRef?.seekTo(t)"
-          @volume="(v) => youtubeRef?.setVolume(v)"
-          @rate="(r) => youtubeRef?.setPlaybackRate(r)"
-        /> -->
       </div>
     </div>
     <!-- 右邊區塊 -->

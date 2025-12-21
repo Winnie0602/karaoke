@@ -47,6 +47,7 @@ declare global {
       stopVideo(): void
       getCurrentTime(): number
       seekTo(seconds: number, allowSeekAhead: boolean): void
+      destroy(): void
     }
 
     const PlayerState: {
