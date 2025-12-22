@@ -1,5 +1,3 @@
 <template>
-  <div>
-    <YoutubePlayer video-id="7zBeQezaz4U" />
-  </div>
+  <div>123</div>
 </template>

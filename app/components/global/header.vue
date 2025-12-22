@@ -35,15 +35,15 @@ const isOpen = ref(false)
 
       <!-- 桌機選單 -->
       <div class="ml-auto hidden gap-6 md:flex">
-        <a
-          href="#"
+        <NuxtLink
+          to="/"
           class="relative rounded px-2 py-1 text-gray-700 transition hover:bg-[#F9595F]/10 hover:text-[#F9595F]"
         >
-          Songs
+          Home
           <span
             class="absolute -bottom-1 left-0 h-[2px] w-0 bg-[#F9595F] transition-all group-hover:w-full"
           />
-        </a>
+        </NuxtLink>
         <a
           href="#"
           class="relative rounded px-2 py-1 text-gray-700 transition hover:bg-[#F9595F]/10 hover:text-[#F9595F]"

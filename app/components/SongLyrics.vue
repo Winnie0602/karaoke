@@ -1,24 +1,21 @@
 <script setup lang="ts">
 import type { LyricData } from '~/types/song'
 
-const { lyrics, currentTime } = defineProps<{
+const { lyrics, songData } = defineProps<{
   lyrics: LyricData[]
-  currentTime: number
   songData: { title: string; artist: string }
 }>()
 
-const emit = defineEmits(['goToTime'])
+const store = usePlayerStore()
 
 // 每句歌詞dom陣列
 const lyricsRefs = ref<HTMLElement[]>([])
 
-const goToTime = (time: number) => {
-  emit('goToTime', time)
-}
-
 // 現在在第幾句歌詞
 const currentLineIndex = computed(() => {
-  return lyrics.findIndex((l) => currentTime >= l.start && currentTime < l.end)
+  return lyrics.findIndex(
+    (l) => store.currentTime >= l.start && store.currentTime < l.end,
+  )
 })
 
 let lastLineIndex = -1
@@ -63,7 +60,7 @@ watch(currentLineIndex, (newLineIndex) => {
       :ref="(el) => (lyricsRefs[index] = el as HTMLElement)"
       class="relative flex cursor-pointer flex-col px-3 py-2"
       :class="{ 'current-lyric': index === currentLineIndex }"
-      @click="goToTime(lyric.start)"
+      @click="store.seekTo(lyric.start)"
     >
       <span>
         <span

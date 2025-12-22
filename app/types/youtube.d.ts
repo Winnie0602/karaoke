@@ -48,6 +48,10 @@ declare global {
       getCurrentTime(): number
       seekTo(seconds: number, allowSeekAhead: boolean): void
       destroy(): void
+      setVolume(suggestedRate: number): void
+      setPlaybackRate(suggestedRate: number): void
+      getDuration(): number
+      loadVideoById(videoId: string, startSeconds: number): void
     }
 
     const PlayerState: {

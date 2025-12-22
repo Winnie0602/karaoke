@@ -1,7 +1,7 @@
-export function useYoutubePlayer(videoId: string) {
+export function useYoutubePlayer(videoId: Ref<string | null>) {
+  const store = usePlayerStore()
+
   const player = ref<YT.Player | null>(null)
-  const isPlaying = ref(false)
-  const currentTime = ref(0)
 
   let rafId: number | null = null
 
@@ -28,9 +28,9 @@ export function useYoutubePlayer(videoId: string) {
     if (rafId !== null) return
 
     const tick = () => {
-      if (!isPlaying.value) return
+      if (!store.isPlaying) return
 
-      currentTime.value = player.value?.getCurrentTime() ?? 0
+      store.setTime(player.value?.getCurrentTime() ?? 0)
       rafId = requestAnimationFrame(tick)
     }
 
@@ -46,24 +46,37 @@ export function useYoutubePlayer(videoId: string) {
 
   // 建立播放器
   async function createPlayer(elementId: string) {
+    if (!videoId.value) return
+
     await loadYoutubeAPI()
 
+    // 已存在 player → 直接換歌
+    if (player.value) {
+      player.value.loadVideoById(videoId.value, store.currentTime)
+      return
+    }
+
     player.value = new YT.Player(elementId, {
-      videoId,
+      videoId: videoId.value,
       playerVars: {
         playsinline: 1,
         enablejsapi: 1,
       },
       events: {
         onReady: () => {
-          // 播放狀態由 onStateChange 控制
+          store.setPlayer(player.value!)
+          store.setDuration(player.value?.getDuration() ?? 0)
+
+          if (store.currentTime > 0) {
+            player.value?.seekTo(store.currentTime, true)
+          }
         },
         onStateChange: (event) => {
           if (event.data === YT.PlayerState.PLAYING) {
-            isPlaying.value = true
+            store.play()
             startTick()
           } else {
-            isPlaying.value = false
+            store.pause()
             stopTick()
           }
         },
@@ -81,6 +94,7 @@ export function useYoutubePlayer(videoId: string) {
   }
 
   function seekTo(time: number) {
+    console.log(player.value)
     if (!player.value) return
     player.value.seekTo(time, true)
     player.value.playVideo()
@@ -94,8 +108,6 @@ export function useYoutubePlayer(videoId: string) {
   return {
     // state
     player,
-    isPlaying,
-    currentTime,
 
     // methods
     createPlayer,

@@ -3,28 +3,27 @@ import type { SongData } from '~/types/song'
 
 const route = useRoute()
 
+const store = usePlayerStore()
+
 const {
   data: song,
   pending,
   error,
 } = await useFetch<SongData>(`/api/song/${route.params.id}`)
 
-const currentTime = ref(0)
+watch(
+  () => route.params.id,
+  (id) => {
+    if (typeof id !== 'string') return
 
-// const duration = ref(0)
+    store.loadVideo(id, store.currentTime)
 
-const handleTimeUpdate = (time: number) => {
-  currentTime.value = time
-}
-
-const youtubeRef = ref<{
-  seekTo: (time: number) => void
-} | null>(null)
-
-const goToTime = (time: number) => {
-  youtubeRef.value?.seekTo(time)
-}
-
+    if (song.value?.title) {
+      store.setSongInfo(song.value.title, song.value.artist)
+    }
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
@@ -35,22 +34,10 @@ const goToTime = (time: number) => {
       <div v-else-if="error">Error</div>
 
       <div v-else-if="song" class="space-y-5">
-        <!-- 影片 -->
-        <ClientOnly>
-          <YoutubePlayer
-            ref="youtubeRef"
-            :key="song.id"
-            :video-id="song.id"
-            @timeupdate="(time: number) => handleTimeUpdate(time)"
-          />
-        </ClientOnly>
-
         <!-- 歌詞 -->
         <SongLyrics
           :lyrics="song.lyrics"
           :song-data="{ title: song.title, artist: song.artist }"
-          :current-time="currentTime"
-          @go-to-time="(time: number) => goToTime(time)"
         />
       </div>
     </div>
