@@ -1,6 +1,5 @@
 export function useYoutubePlayer(videoId: Ref<string | null>) {
   const store = usePlayerStore()
-
   const player = ref<YT.Player | null>(null)
 
   let rafId: number | null = null
@@ -8,6 +7,8 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
   // YouTube API 載入
   function loadYoutubeAPI(): Promise<void> {
     return new Promise((resolve) => {
+      if (!import.meta.client) return resolve()
+
       if (window.YT && window.YT.Player) {
         resolve()
         return
@@ -44,31 +45,35 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
     }
   }
 
+  //  換歌（不重建 player）
+  watch(videoId, (id) => {
+    if (!player.value || !id) return
+    player.value.loadVideoById(id, store.currentTime)
+  })
+
   // 建立播放器
   async function createPlayer(elementId: string) {
+    if (!import.meta.client) return
+    if (player.value) return
     if (!videoId.value) return
 
     await loadYoutubeAPI()
-
-    // 已存在 player → 直接換歌
-    if (player.value) {
-      player.value.loadVideoById(videoId.value, store.currentTime)
-      return
-    }
 
     player.value = new YT.Player(elementId, {
       videoId: videoId.value,
       playerVars: {
         playsinline: 1,
-        enablejsapi: 1,
       },
       events: {
         onReady: () => {
-          store.setPlayer(player.value!)
-          store.setDuration(player.value?.getDuration() ?? 0)
+          store.setDuration(player.value!.getDuration())
 
           if (store.currentTime > 0) {
-            player.value?.seekTo(store.currentTime, true)
+            player.value!.seekTo(store.currentTime, true)
+          }
+
+          if (store.isPlaying) {
+            player.value!.playVideo()
           }
         },
         onStateChange: (event) => {
@@ -94,16 +99,10 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
   }
 
   function seekTo(time: number) {
-    console.log(player.value)
     if (!player.value) return
     player.value.seekTo(time, true)
     player.value.playVideo()
   }
-
-  onUnmounted(() => {
-    stopTick()
-    player.value?.destroy()
-  })
 
   return {
     // state

@@ -35,10 +35,12 @@ watch(
 
       <div v-else-if="song" class="space-y-5">
         <!-- 歌詞 -->
-        <SongLyrics
-          :lyrics="song.lyrics"
-          :song-data="{ title: song.title, artist: song.artist }"
-        />
+        <ClientOnly>
+          <SongLyrics
+            :lyrics="song.lyrics"
+            :song-data="{ title: song.title, artist: song.artist }"
+          />
+        </ClientOnly>
       </div>
     </div>
     <!-- 右邊區塊 -->

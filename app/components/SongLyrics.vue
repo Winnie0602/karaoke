@@ -60,7 +60,7 @@ watch(currentLineIndex, (newLineIndex) => {
       :ref="(el) => (lyricsRefs[index] = el as HTMLElement)"
       class="relative flex cursor-pointer flex-col px-3 py-2"
       :class="{ 'current-lyric': index === currentLineIndex }"
-      @click="store.seekTo(lyric.start)"
+      @click="store.seekToRequest(lyric.start)"
     >
       <span>
         <span

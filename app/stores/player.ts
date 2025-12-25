@@ -7,7 +7,8 @@ export const usePlayerStore = defineStore(
     const isPlaying = ref(false)
     const playbackRate = ref(1)
     const volume = ref(100)
-    const player = ref<YT.Player | null>(null)
+    const seekToTime = ref<number | null>(null)
+
     const songTitle = ref('')
     const songArtist = ref('')
 
@@ -17,15 +18,15 @@ export const usePlayerStore = defineStore(
       // isPlaying.value = true
     }
 
-    function setPlayer(p: YT.Player) {
-      player.value = p
-    }
+    // function setPlayer(p: YT.Player) {
+    //   player.value = p
+    // }
 
-    function seekTo(time: number) {
-      if (!player.value) return
-      player.value.seekTo(time, true)
-      player.value.playVideo()
-    }
+    // function seekTo(time: number) {
+    //   if (!player.value) return
+    //   player.value.seekTo(time, true)
+    //   player.value.playVideo()
+    // }
 
     function play() {
       isPlaying.value = true
@@ -48,6 +49,10 @@ export const usePlayerStore = defineStore(
       songArtist.value = artist
     }
 
+    function seekToRequest(time: number) {
+      seekToTime.value = time
+    }
+
     return {
       // state
       videoId,
@@ -56,9 +61,9 @@ export const usePlayerStore = defineStore(
       isPlaying,
       playbackRate,
       volume,
-      player,
       songTitle,
       songArtist,
+      seekToTime,
 
       // actions
       loadVideo,
@@ -66,9 +71,10 @@ export const usePlayerStore = defineStore(
       pause,
       setTime,
       setDuration,
-      setPlayer,
-      seekTo,
+      // setPlayer,
+      // seekTo,
       setSongInfo,
+      seekToRequest,
     }
   },
   {

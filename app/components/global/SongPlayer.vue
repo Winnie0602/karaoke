@@ -7,28 +7,41 @@ const store = usePlayerStore()
 // 只有 song/[id] 頁顯示影片
 const showVideo = computed(() => route.name === 'song-id')
 
-const { createPlayer, play, pause } = useYoutubePlayer(toRef(store, 'videoId'))
+const { createPlayer, play, pause, seekTo } = useYoutubePlayer(
+  toRef(store, 'videoId'),
+)
 
 watch(
   () => store.videoId,
-  async (id) => {
+  (id) => {
     if (!id) return
-    await nextTick()
     createPlayer('player')
-    console.log(store.videoId)
   },
   { immediate: true },
 )
+
+watch(
+  () => store.seekToTime,
+  (time) => {
+    if (time == null) return
+    seekTo(time)
+    store.seekToTime = null // consume
+  },
+)
+
+onMounted(() => {
+  createPlayer('player')
+})
 </script>
 
 <template>
   <div class="flex min-h-screen flex-col">
     <!--  影片（只有需要時才顯示） -->
     <ClientOnly>
-      <div v-if="showVideo" id="player" class="aspect-video w-full bg-black" />
+      <div id="player" class="aspect-video w-full bg-black" />
     </ClientOnly>
 
-    <!-- 📄 中間頁面內容 -->
+    <!-- 中間頁面內容 -->
     <div class="flex-1">
       <slot />
     </div>
