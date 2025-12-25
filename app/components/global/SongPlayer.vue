@@ -5,7 +5,7 @@ const route = useRoute()
 const store = usePlayerStore()
 
 // 只有 song/[id] 頁顯示影片
-const showVideo = computed(() => route.name === 'song-id')
+const showVideo = computed(() => route.path.startsWith('/song/'))
 
 const { createPlayer, play, pause, seekTo } = useYoutubePlayer(
   toRef(store, 'videoId'),
@@ -38,7 +38,9 @@ onMounted(() => {
   <div class="flex min-h-screen flex-col">
     <!--  影片（只有需要時才顯示） -->
     <ClientOnly>
-      <div id="player" class="aspect-video w-full bg-black" />
+      <div :class="{ hidden: !showVideo }">
+        <div id="player" class="aspect-video w-full bg-black" />
+      </div>
     </ClientOnly>
 
     <!-- 中間頁面內容 -->
@@ -72,16 +74,18 @@ onMounted(() => {
               {{ `${store.songArtist} - ${store.songTitle}` }}
             </span>
             <!-- 進度條 -->
-            <input
-              type="range"
-              min="0"
-              :max="store.duration"
-              :value="store.currentTime"
-              class="time-bar w-full cursor-pointer appearance-none rounded-full"
-              :style="{
-                '--progress': `${calcProgress(store.currentTime, store.duration)}%`,
-              }"
-            />
+            <ClientOnly>
+              <input
+                type="range"
+                min="0"
+                :max="store.duration"
+                :value="store.currentTime"
+                class="time-bar w-full cursor-pointer appearance-none rounded-full"
+                :style="{
+                  '--progress': `${calcProgress(store.currentTime, store.duration)}%`,
+                }"
+              />
+            </ClientOnly>
           </div>
 
           <span class="mr-2 text-xs">{{ formatTime(store.duration) }}</span>
