@@ -18,3 +18,10 @@ export interface WordData {
   meaning?: string
   origin?: string
 }
+
+export interface SongsList {
+  id: number
+  language: string
+  title: string
+  artist: string
+}

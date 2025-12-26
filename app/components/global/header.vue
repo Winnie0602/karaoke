@@ -8,10 +8,13 @@ const isOpen = ref(false)
       class="relative z-50 flex h-14 items-center border-b border-gray-200 bg-white px-4"
     >
       <!-- Logo -->
-      <div class="text-lg font-semibold tracking-wide text-gray-900">
+      <NuxtLink
+        class="text-lg font-semibold tracking-wide text-gray-900"
+        to="/"
+      >
         カラオケ 〜 歌を歌お-
         <span class="ml-1 text-[#F9595F]">♪</span>
-      </div>
+      </NuxtLink>
 
       <!-- 漢堡 / X -->
       <button

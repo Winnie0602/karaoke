@@ -27,7 +27,9 @@ watch(
 </script>
 
 <template>
-  <div class="flex flex-col space-y-8 lg:flex-row lg:space-x-10 lg:space-y-0">
+  <div
+    class="my-8 flex w-full flex-col space-y-8 px-8 md:max-w-[1280px] lg:flex-row lg:space-x-10 lg:space-y-0 lg:px-0"
+  >
     <!-- 左邊區塊 -->
     <div class="w-full lg:w-2/3">
       <div v-if="pending">Loading…</div>

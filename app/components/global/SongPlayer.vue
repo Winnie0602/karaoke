@@ -91,13 +91,66 @@ onMounted(() => {
           <span class="mr-2 text-xs">{{ formatTime(store.duration) }}</span>
 
           <!-- 右側 icon -->
-          <div class="flex items-center space-x-3">
-            <i
-              class="fa-solid fa-volume-low text-xl text-[#F9595F] transition-transform duration-150 hover:rotate-[10deg] hover:scale-125"
-            ></i>
-            <i
-              class="fa-solid fa-gauge text-xl text-[#F9595F] transition-transform duration-150 hover:rotate-[-10deg] hover:scale-125"
-            ></i>
+          <div class="flex items-center space-x-4">
+            <!-- 🔊 音量 -->
+            <div class="group relative">
+              <i
+                class="fa-solid fa-volume-low cursor-pointer text-xl text-[#F9595F] transition-transform duration-150 hover:rotate-[10deg] hover:scale-125"
+              ></i>
+
+              <!-- 音量調整 UI -->
+              <div
+                class="pointer-events-none absolute bottom-9 left-1/2 -translate-x-1/2 opacity-0 transition-all duration-150 group-hover:pointer-events-auto group-hover:opacity-100"
+              >
+                <div
+                  class="flex h-[120px] w-[40px] items-center justify-center rounded-xl bg-white shadow-lg"
+                >
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value="60"
+                    class="volume-bar"
+                    style="
+                      --volume: 60%;
+                      --active: #f9595f;
+                      --inactive: #ffe5e5;
+                    "
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- ⚡ 播放速度 -->
+            <div class="group relative">
+              <i
+                class="fa-solid fa-gauge cursor-pointer text-xl text-[#F9595F] transition-transform duration-150 hover:rotate-[-10deg] hover:scale-125"
+              ></i>
+
+              <!-- 速度選單（置中） -->
+              <div
+                class="pointer-events-none absolute bottom-9 left-1/2 -translate-x-1/2 opacity-0 transition-all duration-150 group-hover:pointer-events-auto group-hover:opacity-100"
+              >
+                <div
+                  class="w-[88px] overflow-hidden rounded-xl bg-white text-sm shadow-lg"
+                >
+                  <div
+                    v-for="speed in [
+                      '0.5x',
+                      '0.75x',
+                      '1x',
+                      '1.25x',
+                      '1.5x',
+                      '2x',
+                    ]"
+                    :key="speed"
+                    class="cursor-pointer px-3 py-2 text-center text-[#A66B6B] transition hover:bg-[#FFE5E5] hover:text-[#F9595F]"
+                  >
+                    {{ speed }}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -142,5 +195,42 @@ onMounted(() => {
 
 .time-bar:hover {
   height: 8px;
+}
+
+.volume-bar {
+  appearance: none;
+  writing-mode: vertical-rl;
+  direction: rtl;
+
+  width: 6px;
+  height: 90px;
+  border-radius: 9999px;
+  cursor: pointer;
+
+  background: linear-gradient(
+    to top,
+    var(--active) 0%,
+    var(--active) var(--volume),
+    var(--inactive) var(--volume),
+    var(--inactive) 100%
+  );
+}
+
+/* 軌道 */
+.volume-bar::-webkit-slider-runnable-track {
+  width: 6px;
+  background: transparent;
+}
+
+/* 圓形拖曳點 */
+.volume-bar::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  border: 3px solid var(--active);
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(249, 89, 95, 0.4);
+  margin-right: -4px;
 }
 </style>
