@@ -56,8 +56,46 @@ const tabSongs = computed(() => {
       </div>
     </div>
 
+    <div class="mt-2 flex w-full justify-end px-3">
+      <div class="grid grid-cols-2 rounded-xl border-[4px] border-[#FFE5E5]">
+        <div class="bg-[#FFE5E5] px-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6 text-[#F9595F]"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        </div>
+
+        <div class="px-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6 text-[#F9595F]"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M4 4h6v6H4V4zm0 10h6v6H4v-6zm10-10h6v6h-6V4zm0 10h6v6h-6v-6z"
+            />
+          </svg>
+        </div>
+      </div>
+    </div>
+
     <!-- Song List -->
-    <div class="mt-6 space-y-3">
+    <div class="mt-3 space-y-3">
       <div
         v-for="song in tabSongs"
         :key="song.id"
