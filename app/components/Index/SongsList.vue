@@ -1,12 +1,23 @@
 <script setup lang="ts">
 import type { SongsList } from '~/types/song'
+import type { Tab, LangCode } from '~/types/lang'
 
-type Tab = '中文' | '한국어' | '日本語' | '臺語' | 'English' | '廣東話'
-
+const languageMap: Record<Tab, LangCode> = {
+  日本語: 'ja',
+  臺語: 'tw',
+  English: 'en',
+  한국어: 'kr',
+  廣東話: 'hk',
+}
 const { songs } = defineProps<{ songs: SongsList[] }>()
 
-const tabs: Tab[] = ['中文', '한국어', '日本語', '臺語', 'English', '廣東話']
-const nowTab = ref<Tab>('中文')
+const tabs = Object.keys(languageMap) as Tab[]
+const nowTab = ref<Tab>('日本語')
+
+const tabSongs = computed(() => {
+  const lang = languageMap[nowTab.value]
+  return songs.filter((song) => song.language === lang)
+})
 </script>
 
 <template>
@@ -48,19 +59,22 @@ const nowTab = ref<Tab>('中文')
     <!-- Song List -->
     <div class="mt-6 space-y-3">
       <div
-        v-for="song in songs"
+        v-for="song in tabSongs"
         :key="song.id"
         class="group flex items-center justify-between rounded-xl border border-[#F9595F]/20 bg-white px-4 py-3 shadow-sm transition hover:bg-[#FFF3F3]"
       >
         <!-- Left -->
         <div class="flex items-center space-x-4">
           <!-- Thumbnail -->
-          <div class="relative h-[56px] w-[56px] overflow-hidden rounded-lg">
-            <!-- <img
-              :src="song.thumbnail"
+          <NuxtLink
+            :to="`/song/${song.id}`"
+            class="relative h-[56px] w-[56px] overflow-hidden rounded-lg"
+          >
+            <img
+              :src="`https://img.youtube.com/vi/${song.id}/mqdefault.jpg`"
               alt="thumbnail"
               class="h-full w-full object-cover"
-            /> -->
+            />
 
             <!-- Play Icon -->
             <div
@@ -72,23 +86,29 @@ const nowTab = ref<Tab>('中文')
                 ▶
               </div>
             </div>
-          </div>
+          </NuxtLink>
 
           <!-- Song Info -->
-          <div class="flex flex-col">
+          <NuxtLink
+            :to="`/song/${song.id}`"
+            class="flex cursor-pointer flex-col"
+          >
             <span class="text-lg font-medium text-[#5A3E3E]">
               {{ song.title }}
             </span>
             <span class="mt-1 text-sm text-[#A66B6B]">{{ song.artist }}</span>
-          </div>
+          </NuxtLink>
         </div>
 
         <!-- Right -->
-        <div class="flex items-center space-x-4 text-sm text-[#A66B6B]">
-          <span>3333</span>
-          <span>4444</span>
-          <span class="rounded-full bg-[#FFE5E5] px-3 py-1 text-xs">1111</span>
-        </div>
+        <a
+          :href="`https://www.youtube.com/watch?v=${song.id}`"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center rounded-full bg-[#FFE5E5] px-3 py-1 text-xs"
+        >
+          <i class="fa-brands fa-youtube text-lg text-[#F9595F]"></i>
+        </a>
       </div>
     </div>
   </div>

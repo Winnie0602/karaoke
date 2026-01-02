@@ -29,7 +29,10 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
     if (rafId !== null) return
 
     const tick = () => {
-      if (!store.isPlaying) return
+      if (!store.isPlaying || store.isSeeking) {
+        rafId = requestAnimationFrame(tick)
+        return
+      }
 
       store.setTime(player.value?.getCurrentTime() ?? 0)
       rafId = requestAnimationFrame(tick)
@@ -48,8 +51,34 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
   //  換歌（不重建 player）
   watch(videoId, (id) => {
     if (!player.value || !id) return
-    player.value.loadVideoById(id, store.currentTime)
+    player.value.loadVideoById(id, 0)
   })
+
+  // state的速度變數改變時，call youtube API改變速度
+  watch(
+    () => store.playbackRate,
+    (rate) => {
+      if (!player.value) return
+
+      const current = player.value.getPlaybackRate()
+      if (current !== rate) {
+        player.value.setPlaybackRate(rate)
+      }
+    },
+  )
+
+  // state的音量變數改變時，call youtube API改變音量
+  watch(
+    () => store.volume,
+    (vol) => {
+      if (!player.value) return
+
+      const current = player.value.getVolume()
+      if (current !== vol) {
+        player.value.setVolume(vol)
+      }
+    },
+  )
 
   // 建立播放器
   async function createPlayer(elementId: string) {
@@ -72,6 +101,20 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
             player.value!.seekTo(store.currentTime, true)
           }
 
+          // 取得目前影片速度
+          const rate = player.value!.getPlaybackRate()
+
+          store.setPlaybackRate(rate)
+
+          // 將目前音量設至store
+          const vol = player.value!.getVolume()
+
+          store.setVolume(vol)
+
+          // 取得可用影片速度
+          const rates = player.value!.getAvailablePlaybackRates()
+          store.setAvailableRates(rates)
+
           if (store.isPlaying) {
             player.value!.playVideo()
           }
@@ -79,6 +122,13 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
         onStateChange: (event) => {
           if (event.data === YT.PlayerState.PLAYING) {
             store.play()
+
+            const duration = player.value?.getDuration() ?? 0
+            if (duration > 0) {
+              store.setDuration(duration)
+            }
+
+            store.isSeeking = false
             startTick()
           } else {
             store.pause()

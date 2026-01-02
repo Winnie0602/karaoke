@@ -4,12 +4,29 @@ import { formatTime, calcProgress } from '~/utils/time'
 const route = useRoute()
 const store = usePlayerStore()
 
+const seekingTime = ref(0)
+
 // 只有 song/[id] 頁顯示影片
 const showVideo = computed(() => route.path.startsWith('/song/'))
 
 const { createPlayer, play, pause, seekTo } = useYoutubePlayer(
   toRef(store, 'videoId'),
 )
+
+const onSeekInput = (e: Event) => {
+  const value = Number((e.target as HTMLInputElement).value)
+  seekingTime.value = value
+  store.isSeeking = true
+}
+
+const onSeekCommit = async (e: Event) => {
+  const value = Number((e.target as HTMLInputElement).value)
+  seekTo(value)
+}
+
+const setRate = (speed: number) => {
+  store.setPlaybackRate(speed)
+}
 
 watch(
   () => store.videoId,
@@ -20,6 +37,7 @@ watch(
   { immediate: true },
 )
 
+// 歌詞被點 -> 影片跳到該行
 watch(
   () => store.seekToTime,
   (time) => {
@@ -48,7 +66,7 @@ onMounted(() => {
       <slot />
     </div>
 
-    <!-- 🎵 底部播放器（永遠存在） -->
+    <!-- 底部播放器 -->
     <div class="fixed bottom-0 h-[75px] w-full bg-[#ffe5e5]">
       <div class="flex h-full w-full items-center justify-center py-2">
         <div
@@ -79,11 +97,16 @@ onMounted(() => {
                 type="range"
                 min="0"
                 :max="store.duration"
-                :value="store.currentTime"
+                :value="store.isSeeking ? seekingTime : store.currentTime"
                 class="time-bar w-full cursor-pointer appearance-none rounded-full"
                 :style="{
-                  '--progress': `${calcProgress(store.currentTime, store.duration)}%`,
+                  '--progress': `${calcProgress(
+                    store.isSeeking ? seekingTime : store.currentTime,
+                    store.duration,
+                  )}%`,
                 }"
+                @input="onSeekInput"
+                @change="onSeekCommit"
               />
             </ClientOnly>
           </div>
@@ -92,42 +115,61 @@ onMounted(() => {
 
           <!-- 右側 icon -->
           <div class="flex items-center space-x-4">
-            <!-- 🔊 音量 -->
-            <div class="group relative">
-              <i
-                class="fa-solid fa-volume-low cursor-pointer text-xl text-[#F9595F] transition-transform duration-150 hover:rotate-[10deg] hover:scale-125"
-              ></i>
+            <!-- 音量 -->
+            <div class="group relative flex items-center">
+              <!-- 固定寬度 icon 區（避免擠版） -->
+              <div
+                class="flex h-6 w-6 items-center justify-center"
+                @click="store.toggleMute"
+              >
+                <i
+                  :class="[
+                    'fa-solid cursor-pointer text-xl text-[#F9595F] transition-transform duration-150',
+                    store.isMuted ? 'fa-volume-xmark' : 'fa-volume-low',
+                  ]"
+                />
+              </div>
+
+              <!-- 透明區塊 -->
+              <div
+                class="absolute bottom-6 left-1/2 h-6 w-10 -translate-x-1/2"
+              ></div>
 
               <!-- 音量調整 UI -->
               <div
-                class="pointer-events-none absolute bottom-9 left-1/2 -translate-x-1/2 opacity-0 transition-all duration-150 group-hover:pointer-events-auto group-hover:opacity-100"
+                class="pointer-events-none absolute bottom-8 left-1/2 -translate-x-1/2 opacity-0 transition-all duration-150 group-hover:pointer-events-auto group-hover:opacity-100"
               >
                 <div
-                  class="flex h-[120px] w-[40px] items-center justify-center rounded-xl bg-white shadow-lg"
+                  class="flex h-[120px] w-[40px] items-center justify-center rounded-xl bg-[#f9595f] bg-white shadow-lg"
                 >
                   <input
                     type="range"
                     min="0"
                     max="100"
-                    value="60"
+                    :value="store.volume"
                     class="volume-bar"
-                    style="
-                      --volume: 60%;
-                      --active: #f9595f;
-                      --inactive: #ffe5e5;
+                    :style="{
+                      '--volume': `${store.volume}%`,
+                      '--active': '#f9595f',
+                      '--inactive': '#ffe5e5',
+                    }"
+                    @input="
+                      store.setVolume(
+                        Number(($event.target as HTMLInputElement).value),
+                      )
                     "
                   />
                 </div>
               </div>
             </div>
 
-            <!-- ⚡ 播放速度 -->
+            <!-- 播放速度 -->
             <div class="group relative">
               <i
                 class="fa-solid fa-gauge cursor-pointer text-xl text-[#F9595F] transition-transform duration-150 hover:rotate-[-10deg] hover:scale-125"
               ></i>
 
-              <!-- 速度選單（置中） -->
+              <!-- 速度選單 -->
               <div
                 class="pointer-events-none absolute bottom-9 left-1/2 -translate-x-1/2 opacity-0 transition-all duration-150 group-hover:pointer-events-auto group-hover:opacity-100"
               >
@@ -135,16 +177,14 @@ onMounted(() => {
                   class="w-[88px] overflow-hidden rounded-xl bg-white text-sm shadow-lg"
                 >
                   <div
-                    v-for="speed in [
-                      '0.5x',
-                      '0.75x',
-                      '1x',
-                      '1.25x',
-                      '1.5x',
-                      '2x',
-                    ]"
+                    v-for="speed in store.availableRates"
                     :key="speed"
                     class="cursor-pointer px-3 py-2 text-center text-[#A66B6B] transition hover:bg-[#FFE5E5] hover:text-[#F9595F]"
+                    :class="{
+                      'bg-[#FFE5E5] text-[#F9595F]':
+                        speed === store.playbackRate,
+                    }"
+                    @click="setRate(speed)"
                   >
                     {{ speed }}
                   </div>

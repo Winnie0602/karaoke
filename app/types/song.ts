@@ -8,7 +8,11 @@ export interface SongData {
 export interface LyricData {
   start: number
   end: number
-  ja: WordData[]
+  ja?: WordData[]
+  kr?: WordData[]
+  en?: WordData[]
+  tw?: WordData[]
+  hk?: WordData[]
   zh: string
 }
 

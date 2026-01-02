@@ -8,6 +8,8 @@ const [emblaRef] = emblaCarouselVue({ loop: true, duration: 10 }, [
 ])
 
 const { songs } = defineProps<{ songs: SongsList[] }>()
+
+// :src="`https://img.youtube.com/vi/${song.id}/mqdefault.jpg`"
 </script>
 
 <template>
@@ -17,10 +19,10 @@ const { songs } = defineProps<{ songs: SongsList[] }>()
         v-for="song in songs"
         :key="song.id"
         class="embla__slide relative w-[600px]"
-        :to="`song/${song.id}`"
+        :to="`/song/${song.id}`"
       >
         <img
-          :src="`https://img.youtube.com/vi/${song.id}/maxresdefault.jpg`"
+          :src="`https://img.youtube.com/vi/${song.id}/mqdefault.jpg`"
           alt="影片封面"
           class="aspect-video w-full object-cover"
         />
@@ -42,7 +44,7 @@ const { songs } = defineProps<{ songs: SongsList[] }>()
   display: flex;
 }
 .embla__slide {
-  @apply min-w-0 flex-[0_0_100%] md:flex-[0_0_600px];
+  @apply min-w-0 flex-[0_0_100%] md:flex-[0_0_360px] xl:flex-[0_0_520px];
   margin-left: 4px;
 }
 </style>

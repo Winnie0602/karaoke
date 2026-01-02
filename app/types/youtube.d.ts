@@ -48,8 +48,11 @@ declare global {
       getCurrentTime(): number
       seekTo(seconds: number, allowSeekAhead: boolean): void
       destroy(): void
+      getVolume(): number
       setVolume(suggestedRate: number): void
       setPlaybackRate(suggestedRate: number): void
+      getPlaybackRate(): number
+      getAvailablePlaybackRates(): array
       getDuration(): number
       loadVideoById(videoId: string, startSeconds: number): void
     }

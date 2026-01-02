@@ -5,9 +5,15 @@ export const usePlayerStore = defineStore(
     const currentTime = ref(0)
     const duration = ref(0)
     const isPlaying = ref(false)
-    const playbackRate = ref(1)
+    const playbackRate = ref(1) // 影片播放速度
+    const availableRates = ref<number[]>([]) //可用的播放速度
+
     const volume = ref(100)
-    const seekToTime = ref<number | null>(null)
+    const lastVolume = ref(100) // 靜音前的音量
+    const isMuted = computed(() => volume.value === 0)
+
+    const seekToTime = ref<number | null>(null) // 由影片組件監聽，有變動的話影片跳到該段落
+    const isSeeking = ref(false) //拖拉bar是否在把拖拉
 
     const songTitle = ref('')
     const songArtist = ref('')
@@ -17,16 +23,6 @@ export const usePlayerStore = defineStore(
       currentTime.value = time
       // isPlaying.value = true
     }
-
-    // function setPlayer(p: YT.Player) {
-    //   player.value = p
-    // }
-
-    // function seekTo(time: number) {
-    //   if (!player.value) return
-    //   player.value.seekTo(time, true)
-    //   player.value.playVideo()
-    // }
 
     function play() {
       isPlaying.value = true
@@ -49,6 +45,28 @@ export const usePlayerStore = defineStore(
       songArtist.value = artist
     }
 
+    function setPlaybackRate(rate: number) {
+      playbackRate.value = rate
+    }
+
+    function setAvailableRates(rates: []) {
+      availableRates.value = rates
+    }
+
+    function setVolume(vol: number) {
+      volume.value = vol
+    }
+
+      function toggleMute() {
+      if (volume.value === 0) {
+        volume.value = lastVolume.value || 60
+      } else {
+        lastVolume.value = volume.value
+        volume.value = 0
+      }
+    }
+
+    // 由歌詞組件呼叫，使影片跳到該段
     function seekToRequest(time: number) {
       seekToTime.value = time
     }
@@ -60,10 +78,14 @@ export const usePlayerStore = defineStore(
       duration,
       isPlaying,
       playbackRate,
+      availableRates,
       volume,
+      lastVolume,
+      isMuted,
       songTitle,
       songArtist,
       seekToTime,
+      isSeeking,
 
       // actions
       loadVideo,
@@ -71,10 +93,12 @@ export const usePlayerStore = defineStore(
       pause,
       setTime,
       setDuration,
-      // setPlayer,
-      // seekTo,
       setSongInfo,
       seekToRequest,
+      setPlaybackRate,
+      setAvailableRates,
+      setVolume,
+      toggleMute
     }
   },
   {

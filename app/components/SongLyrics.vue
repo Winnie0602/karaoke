@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { LyricData } from '~/types/song'
+import type { LangCode } from '~/types/lang'
 
 const { lyrics, songData } = defineProps<{
   lyrics: LyricData[]
@@ -8,8 +9,29 @@ const { lyrics, songData } = defineProps<{
 
 const store = usePlayerStore()
 
+//這首歌的語言
+const songLang = computed<LangCode | null>(() => {
+  const first = lyrics[0]
+  if (!first) return null
+
+  if (first.ja) return 'ja'
+  if (first.kr) return 'kr'
+  if (first.en) return 'en'
+  if (first.hk) return 'hk'
+  if (first.tw) return 'tw'
+
+  return null
+})
+
 // 每句歌詞dom陣列
 const lyricsRefs = ref<HTMLElement[]>([])
+
+const containerRef = ref<HTMLElement | null>(null)
+
+const getWords = (lyric: LyricData) => {
+  if(!songLang.value) return []
+return lyric[songLang.value] ?? []
+}
 
 // 現在在第幾句歌詞
 const currentLineIndex = computed(() => {
@@ -20,7 +42,6 @@ const currentLineIndex = computed(() => {
 
 let lastLineIndex = -1
 
-// 換到新的一列歌詞時，捲動歌詞到畫面中間
 watch(currentLineIndex, (newLineIndex) => {
   if (newLineIndex === -1) return
   if (newLineIndex === lastLineIndex) return
@@ -28,18 +49,28 @@ watch(currentLineIndex, (newLineIndex) => {
   lastLineIndex = newLineIndex
 
   const el = lyricsRefs.value[newLineIndex]
-  if (!el) return
+  const container = containerRef.value
+  if (!el || !container) return
 
-  el.scrollIntoView({
+  const containerRect = container.getBoundingClientRect()
+  const elRect = el.getBoundingClientRect()
+
+  const elCenterInContainer =
+    elRect.top - containerRect.top + container.scrollTop + elRect.height / 2
+
+  const targetScrollTop = elCenterInContainer - container.clientHeight / 2
+
+  container.scrollTo({
+    top: targetScrollTop,
     behavior: 'smooth',
-    block: 'center',
   })
 })
 </script>
 
 <template>
   <div
-    class="hide-scroll h-[420px] space-y-3 overflow-y-scroll rounded-md border-[1px] border-gray-300"
+    ref="containerRef"
+    class="hide-scroll relative h-[420px] space-y-3 overflow-y-scroll rounded-md border-[1px] border-gray-300"
   >
     <div
       class="sticky top-0 z-10 flex h-[30px] w-full items-center bg-[#e6ebf1] pl-3"
@@ -64,7 +95,7 @@ watch(currentLineIndex, (newLineIndex) => {
     >
       <span>
         <span
-          v-for="(word, wIndex) in lyric.ja"
+          v-for="(word, wIndex) in getWords(lyric)"
           :key="wIndex"
           class="mr-1 inline-block"
         >
