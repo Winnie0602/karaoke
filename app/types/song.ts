@@ -24,7 +24,7 @@ export interface WordData {
 }
 
 export interface SongsList {
-  id: number
+  id: string
   language: string
   title: string
   artist: string

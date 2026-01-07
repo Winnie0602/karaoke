@@ -46,6 +46,7 @@ declare global {
       pauseVideo(): void
       stopVideo(): void
       getCurrentTime(): number
+      getPlayerState(): -1 | 0 | 1 | 2 | 3 | 5
       seekTo(seconds: number, allowSeekAhead: boolean): void
       destroy(): void
       getVolume(): number

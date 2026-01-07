@@ -67,6 +67,24 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
     },
   )
 
+  // state isPlayinge改變時，call youtube API暫停/播放
+  watch(
+    () => store.isPlaying,
+    (isPlaying) => {
+      if (!player.value) return
+
+      const state = player.value.getPlayerState()
+
+      if (isPlaying && state !== YT.PlayerState.PLAYING) {
+        player.value.playVideo()
+      }
+
+      if (!isPlaying && state === YT.PlayerState.PLAYING) {
+        player.value.pauseVideo()
+      }
+    },
+  )
+
   // state的音量變數改變時，call youtube API改變音量
   watch(
     () => store.volume,

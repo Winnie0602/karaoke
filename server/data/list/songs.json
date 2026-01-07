@@ -3,114 +3,133 @@
     "id": "7zBeQezaz4U",
     "language": "ja",
     "title": "クリスマスソング",
-    "artist": "Back Number"
+    "artist": "Back Number",
+    "hasLyrics": true
   },
   {
     "id": "VPZK72W4Xxw",
     "language": "ja",
     "title": "ヒロイン",
-    "artist": "Back Number"
+    "artist": "Back Number",
+    "hasLyrics": false
   },
   {
     "id": "V-gxqhWEbxI",
     "language": "ja",
     "title": "そんなbitterな話",
-    "artist": "Vaundy"
+    "artist": "Vaundy",
+    "hasLyrics": true
   },
   {
     "id": "mnO0uTHjQCQ",
     "language": "ja",
     "title": "ひとりごつ",
-    "artist": "ちいかわ"
+    "artist": "ちいかわ",
+    "hasLyrics": true
   },
   {
     "id": "T8y_RsF4TSw",
     "language": "ja",
     "title": "ハッピーエンド",
-    "artist": "Back Number"
+    "artist": "Back Number",
+    "hasLyrics": false
   },
   {
     "id": "ewhRE-BvJCg",
     "language": "ja",
     "title": "タイムパラドックス",
-    "artist": "Vaundy"
+    "artist": "Vaundy",
+    "hasLyrics": false
   },
   {
     "id": "SII-S-zCg-c",
     "language": "ja",
     "title": "高嶺の花子さん",
-    "artist": "Back Number"
+    "artist": "Back Number",
+    "hasLyrics": false
   },
   {
     "id": "0JRGKQKUtNo",
     "language": "kr",
     "title": "고백",
-    "artist": "Hot Potato"
+    "artist": "Hot Potato",
+    "hasLyrics": true
   },
   {
     "id": "PJJhHihvDpo",
     "language": "tw",
     "title": "閣愛妳一擺",
-    "artist": "茄子蛋"
+    "artist": "茄子蛋",
+    "hasLyrics": false
   },
   {
     "id": "5VUUGZ1-nlY",
     "language": "tw",
     "title": "志明與春嬌",
-    "artist": "五月天"
+    "artist": "五月天",
+    "hasLyrics": false
   },
   {
     "id": "K5H-GvnNz2Y",
     "language": "kr",
     "title": "Mr. Chu",
-    "artist": "Apink"
+    "artist": "Apink",
+    "hasLyrics": false
   },
   {
     "id": "hspqQuuuGIw",
     "language": "kr",
     "title": "NoNoNo",
-    "artist": "Apink"
+    "artist": "Apink",
+    "hasLyrics": false
   },
   {
     "id": "8dVjSvLzD1I",
     "language": "kr",
     "title": "LUV",
-    "artist": "Apink"
+    "artist": "Apink",
+    "hasLyrics": false
   },
   {
     "id": "wDkjWSt3HOM",
     "language": "kr",
     "title": "그리워하다",
-    "artist": "BTOB"
+    "artist": "BTOB",
+    "hasLyrics": false
   },
   {
     "id": "4bykFvnRzno",
     "language": "kr",
     "title": "Missing You",
-    "artist": "BTOB"
+    "artist": "BTOB",
+    "hasLyrics": false
   },
   {
     "id": "VlMEGBsw6j8",
     "language": "en",
     "title": "Won't Go Home Without You",
-    "artist": "Maroon 5"
+    "artist": "Maroon 5",
+    "hasLyrics": false
   },
   {
     "id": "geN8mEfMR8w",
     "language": "hk",
     "title": "每次你走的時分",
-    "artist": "my little airport"
+    "artist": "my little airport",
+    "hasLyrics": false
   },
   {
     "id": "3Om6Ztel34Y",
     "language": "en",
     "title": "Bluebird",
-    "artist": "落日飛車"
+    "artist": "落日飛車",
+    "hasLyrics": true
   },
   {
     "id": "0xSiBpUdW4E",
     "language": "ja",
     "title": "マリーゴールド",
-    "artist": "あいみょん"
+    "artist": "あいみょん",
+    "hasLyrics": true
   }
 ]

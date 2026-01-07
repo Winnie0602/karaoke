@@ -67,7 +67,7 @@ onMounted(() => {
     </div>
 
     <!-- 底部播放器 -->
-    <div class="fixed bottom-0 h-[75px] w-full bg-[#ffe5e5]">
+    <div class="fixed bottom-0 h-[75px] w-full bg-[#ffe5e5] px-2">
       <div class="flex h-full w-full items-center justify-center py-2">
         <div
           class="flex h-full w-full max-w-[1024px] items-center justify-between rounded-xl bg-gradient-to-b from-white to-[#fff0f0] px-3 shadow-lg"
@@ -168,6 +168,11 @@ onMounted(() => {
               <i
                 class="fa-solid fa-gauge cursor-pointer text-xl text-[#F9595F] transition-transform duration-150 hover:rotate-[-10deg] hover:scale-125"
               ></i>
+
+              <!-- 透明區塊 -->
+              <div
+                class="absolute bottom-6 left-1/2 h-6 w-10 -translate-x-1/2"
+              ></div>
 
               <!-- 速度選單 -->
               <div

@@ -2,6 +2,8 @@
 import type { SongsList } from '~/types/song'
 import type { Tab, LangCode } from '~/types/lang'
 
+const showType = ref<'list' | 'grid'>('list')
+
 const languageMap: Record<Tab, LangCode> = {
   日本語: 'ja',
   臺語: 'tw',
@@ -58,7 +60,11 @@ const tabSongs = computed(() => {
 
     <div class="mt-2 flex w-full justify-end px-3">
       <div class="grid grid-cols-2 rounded-xl border-[4px] border-[#FFE5E5]">
-        <div class="bg-[#FFE5E5] px-2">
+        <div
+          class="cursor-pointer px-2"
+          :class="{ 'bg-[#FFE5E5]': showType === 'list' }"
+          @click="showType = 'list'"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="h-6 w-6 text-[#F9595F]"
@@ -75,7 +81,11 @@ const tabSongs = computed(() => {
           </svg>
         </div>
 
-        <div class="px-2">
+        <div
+          class="cursor-pointer px-2"
+          :class="{ 'bg-[#FFE5E5]': showType === 'grid' }"
+          @click="showType = 'grid'"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="h-6 w-6 text-[#F9595F]"

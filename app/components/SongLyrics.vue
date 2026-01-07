@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { LyricData } from '~/types/song'
+import type { LyricData, WordData } from '~/types/song'
 import type { LangCode } from '~/types/lang'
 
 const { lyrics, songData } = defineProps<{
@@ -8,6 +8,9 @@ const { lyrics, songData } = defineProps<{
 }>()
 
 const store = usePlayerStore()
+
+// 底下例句panel
+const isPanelOpen = ref(false)
 
 //這首歌的語言
 const songLang = computed<LangCode | null>(() => {
@@ -29,9 +32,32 @@ const lyricsRefs = ref<HTMLElement[]>([])
 const containerRef = ref<HTMLElement | null>(null)
 
 const getWords = (lyric: LyricData) => {
-  if(!songLang.value) return []
-return lyric[songLang.value] ?? []
+  if (!songLang.value) return []
+  return lyric[songLang.value] ?? []
 }
+
+// 傳進去tatoeba組件的單字
+const tatoebaWord = ref('')
+
+// 打開panel前的音樂播放狀態
+const wasListening = ref(false)
+
+// 打開下方panel區塊
+const openPanel = async (word: WordData) => {
+  // 記住打開前的播放狀態
+  wasListening.value = store.isPlaying
+
+  isPanelOpen.value = true
+  store.pause()
+
+  tatoebaWord.value = word.surface
+}
+
+watch(isPanelOpen, (open) => {
+  if (!open && wasListening.value) {
+    store.play()
+  }
+})
 
 // 現在在第幾句歌詞
 const currentLineIndex = computed(() => {
@@ -70,7 +96,7 @@ watch(currentLineIndex, (newLineIndex) => {
 <template>
   <div
     ref="containerRef"
-    class="hide-scroll relative h-[420px] space-y-3 overflow-y-scroll rounded-md border-[1px] border-gray-300"
+    class="hide-scroll relative h-[420px] space-y-3 overflow-y-scroll rounded-md border-[1px] border-gray-300 md:h-[640px]"
   >
     <div
       class="sticky top-0 z-10 flex h-[30px] w-full items-center bg-[#e6ebf1] pl-3"
@@ -85,60 +111,76 @@ watch(currentLineIndex, (newLineIndex) => {
         </div>
       </div>
     </div>
-    <p
+    <div
       v-for="(lyric, index) in lyrics"
       :key="lyric.start"
       :ref="(el) => (lyricsRefs[index] = el as HTMLElement)"
-      class="relative flex cursor-pointer flex-col px-3 py-2"
+      class="relative flex items-center justify-between px-3 py-2 text-sm md:text-base"
       :class="{ 'current-lyric': index === currentLineIndex }"
-      @click="store.seekToRequest(lyric.start)"
     >
-      <span>
-        <span
-          v-for="(word, wIndex) in getWords(lyric)"
-          :key="wIndex"
-          class="mr-1 inline-block"
-        >
-          <!-- 有 meaning 的詞 -->
+      <div class="flex flex-col">
+        <span>
           <span
-            v-if="word.meaning"
-            class="group relative inline-block cursor-pointer"
+            v-for="(word, wIndex) in getWords(lyric)"
+            :key="wIndex"
+            class="mr-1 inline-block"
           >
-            <!-- 單字本體 -->
+            <!-- 有 meaning 的詞 -->
             <span
-              class="rounded transition-colors group-hover:bg-red-100 group-hover:ring-1 group-hover:ring-red-400"
+              v-if="word.meaning"
+              class="group relative inline-block cursor-pointer"
+              @click="openPanel(word)"
             >
-              <ruby v-if="word.reading">
-                {{ word.surface }}
-                <rt
-                  class="text-xs text-gray-600 transition-opacity group-hover:opacity-20"
-                >
-                  {{ word.reading }}
-                </rt>
-              </ruby>
+              <!-- 單字本體 -->
+              <span
+                class="rounded transition-colors group-hover:bg-red-100 group-hover:ring-1 group-hover:ring-red-400"
+              >
+                <ruby v-if="word.reading">
+                  {{ word.surface }}
+                  <rt
+                    class="text-xs text-gray-600 transition-opacity group-hover:opacity-20"
+                  >
+                    {{ word.reading }}
+                  </rt>
+                </ruby>
 
-              <span v-else>
-                {{ word.surface }}
+                <span v-else>
+                  {{ word.surface }}
+                </span>
+              </span>
+
+              <!-- tooltip -->
+              <span
+                class="pointer-events-none absolute left-1/2 top-0 z-10 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 transition-opacity duration-150 group-hover:opacity-100"
+              >
+                {{ word.meaning }}
               </span>
             </span>
 
-            <!-- tooltip -->
-            <span
-              class="pointer-events-none absolute left-1/2 top-0 z-10 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 transition-opacity duration-150 group-hover:opacity-100"
-            >
-              {{ word.meaning }}
+            <!-- 沒 meaning 的普通字 -->
+            <span v-else>
+              {{ word.surface }}
             </span>
           </span>
-
-          <!-- 沒 meaning 的普通字 -->
-          <span v-else>
-            {{ word.surface }}
-          </span>
         </span>
-      </span>
 
-      <span class="text-[13px] text-gray-700">{{ lyric.zh }}</span>
-    </p>
+        <span class="text-[13px] text-gray-700">{{ lyric.zh }}</span>
+      </div>
+
+      <div
+        class="cursor-pointer text-[#E8D6D6] hover:text-[#A66B6B]"
+        :class="{ hidden: index === currentLineIndex }"
+        @click="store.seekToRequest(lyric.start)"
+      >
+        <i class="fa-solid fa-play text-lg"></i>
+      </div>
+    </div>
+
+    <BottomPanel
+      :open="isPanelOpen"
+      :word="tatoebaWord"
+      @close="isPanelOpen = false"
+    />
   </div>
 </template>
 

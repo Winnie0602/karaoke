@@ -12,7 +12,7 @@ const isOpen = ref(false)
         class="text-lg font-semibold tracking-wide text-gray-900"
         to="/"
       >
-        カラオケ 〜 歌を歌お-
+        カラオケ 〜 
         <span class="ml-1 text-[#F9595F]">♪</span>
       </NuxtLink>
 
