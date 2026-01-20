@@ -1,7 +1,10 @@
+import type { LangCode } from '~/types/lang'
+
 export interface SongData {
   id: string
   title: string
   artist: string
+  lang: LangCode
   lyrics: LyricData[]
 }
 
