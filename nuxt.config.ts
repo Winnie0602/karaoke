@@ -8,6 +8,7 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     'pinia-plugin-persistedstate/nuxt',
   ],
+  css: ['~/assets/css/main.css'],
   app: {
     head: {
       link: [

@@ -5,27 +5,25 @@ const steps = [1, 2, 3, 4] as const
 
 const stepConfig = {
   1: {
-    title: '選取開始歌詞',
+    title: '選取歌詞',
   },
   2: {
-    title: '選取結束歌詞',
-  },
-  3: {
     title: '選擇題目型態',
   },
+  3: {
+    title: '開始測驗',
+  },
   4: {
-    title: '調整播放速度',
+    title: '複習',
   },
 } as const
 </script>
 
 <template>
-  <div class="mx-auto w-full max-w-3xl">
-    <div class="flex items-center justify-between gap-4 text-sm">
+  <div class="mx-auto w-full max-w-3xl px-4 md:px-0">
+    <div class="hidden items-center justify-between gap-4 text-sm md:flex">
       <template v-for="(s, index) in steps" :key="s">
-        <!-- step + title -->
         <div class="flex items-center gap-2 whitespace-nowrap">
-          <!-- 數字 -->
           <div
             class="relative flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold transition-colors duration-150"
             :class="
@@ -35,15 +33,11 @@ const stepConfig = {
             "
           >
             {{ s }}
-
-            <!-- 光圈 -->
             <span
               v-if="s === step"
               class="absolute inset-0 rounded-full shadow-[0_0_0_6px_rgba(249,89,95,0.18)]"
             />
           </div>
-
-          <!-- 標題 -->
           <span
             class="font-medium transition-colors duration-150"
             :class="s === step ? 'text-[#7A3A3A]' : 'text-[#B58C8C]'"
@@ -51,11 +45,44 @@ const stepConfig = {
             {{ stepConfig[s].title }}
           </span>
         </div>
-
-        <!-- 分隔線 -->
-        <span v-if="index !== 3" class="mx-2 select-none text-[#E4BABA]">
+        <span v-if="index !== 3" class="mx-2 text-[#E4BABA] select-none">
           —
         </span>
+      </template>
+    </div>
+
+    <div class="flex items-center justify-between gap-2 md:hidden">
+      <template v-for="(s, index) in steps" :key="s">
+        <div
+          class="flex items-center"
+          :class="s === step ? 'flex-[2]' : 'flex-none'"
+        >
+          <div class="flex items-center gap-2">
+            <div
+              class="relative flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[10px] font-bold transition-all duration-300"
+              :class="
+                s <= step
+                  ? 'bg-[#F9595F] text-white'
+                  : 'bg-[#FFE5E5] text-[#A66B6B]'
+              "
+            >
+              {{ s }}
+              <span
+                v-if="s === step"
+                class="absolute inset-0 rounded-full shadow-[0_0_0_4px_rgba(249,89,95,0.18)]"
+              />
+            </div>
+
+            <span
+              v-if="s === step"
+              class="text-xs font-bold whitespace-nowrap text-[#7A3A3A] transition-opacity duration-300"
+            >
+              {{ stepConfig[s].title }}
+            </span>
+          </div>
+        </div>
+
+        <div v-if="index !== 3" class="mx-1 h-px flex-1 bg-[#E4BABA]/40"></div>
       </template>
     </div>
   </div>
