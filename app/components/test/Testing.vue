@@ -1,21 +1,28 @@
 <script setup lang="ts">
+import type TypingJa from '~/components/test/card/TypingJa.vue'
 import type { SongData, LyricData } from '~/types/song'
 
-const { currentSong, testLyrics, isPlaying } = defineProps<{
+const { currentSong, testLyrics, isPlaying, selectedQuizType } = defineProps<{
   currentSong: SongData
   testLyrics: LyricData[]
   isPlaying: boolean
+  selectedQuizType: '部分填空' | '整句填空' | '句子組合'
 }>()
 
 const emit = defineEmits<{
   (e: 'playSegment', value: { start: number; end: number }): void
+  (e: 'setAnswers', value: string[]): void
 }>()
 
 // 現在在寫第幾個題目
 const nowIndex = ref(0)
 
+const userAnswers = ref<string[]>([])
+
 // 聆聽生命蘋果 共三次機會
 const life = ref<0 | 1 | 2 | 3>(3)
+
+const cardRefs = ref<InstanceType<typeof TypingJa>[]>([])
 
 const playLyric = (eachLyric: LyricData) => {
   if (!isPlaying) {
@@ -27,6 +34,23 @@ const playLyric = (eachLyric: LyricData) => {
     life.value--
   } else {
     console.log('stop')
+  }
+}
+
+const handlePlay = (lyric: LyricData, i: number) => {
+  playLyric(lyric)
+
+  nextTick(() => {
+    cardRefs.value[i]?.focusInput()
+  })
+}
+
+const setAnswers = (ans: string, index: number) => {
+  userAnswers.value[index] = ans
+
+  // 全部題目都填滿了後再往頁面送
+  if (userAnswers.value.length === testLyrics.length) {
+    emit('setAnswers', userAnswers.value)
   }
 }
 
@@ -87,7 +111,7 @@ watch(nowIndex, (index) => {
               life < 1 && !isPlaying && 'pointer-events-none invisible',
             ]"
             :disabled="isPlaying || life < 1"
-            @click="playLyric(eachLyric)"
+            @click="handlePlay(eachLyric, i)"
           >
             <i
               class="fa-solid fa-play md:text-lg"
@@ -95,11 +119,24 @@ watch(nowIndex, (index) => {
             />
           </button>
 
-          <TestTypingCard
+          <TestCardTypingJa
+            v-if="currentSong.language === 'ja'"
+            ref="cardRefs"
             :each-lyric="eachLyric"
             :is-now-card="i === nowIndex"
             :life="life"
             @next-test="nowIndex = i + 1"
+            @set-answer="(ans) => setAnswers(ans, i)"
+          />
+
+          <TestCardTypingEn
+            v-if="currentSong.language === 'en'" 
+            ref="cardRefs"
+            :each-lyric="eachLyric"
+            :is-now-card="i === nowIndex"
+            :life="life"
+            @next-test="nowIndex = i + 1"
+            @set-answer="(ans) => setAnswers(ans, i)"
           />
         </div>
 

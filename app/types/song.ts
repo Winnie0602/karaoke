@@ -4,7 +4,7 @@ export interface SongData {
   id: string
   title: string
   artist: string
-  lang: LangCode
+  language: LangCode
   lyrics: LyricData[]
 }
 

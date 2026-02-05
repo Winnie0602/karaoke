@@ -140,9 +140,9 @@ watch(
           @click="setTestIndex(index)"
         >
           <div class="flex flex-col pr-12 md:pr-0">
-            <div class="flex flex-wrap">
+            <div class="flex flex-wrap text-[#8F5F5F]">
               <span
-                v-for="(word, wIndex) in lyric.ja"
+                v-for="(word, wIndex) in lyric[currentSong.language]"
                 :key="wIndex"
                 class="mr-1 inline-block md:font-medium"
               >

@@ -10,15 +10,20 @@ const { currentSong, isPlaying, selected } = defineProps<{
   }
 }>()
 
+const emit = defineEmits<{
+  (e: 'setSpeed', value: number): void
+  (e: 'setPlaying', value: boolean): void
+  (e: 'setQuizeType', value: '部分填空' | '整句填空' | '句子組合'): void
+}>()
+
 const currentSpeed = ref(1)
 
 // 控制底下題型預覽的動畫特效
 const animationOn = ref(false)
 
-const emit = defineEmits<{
-  (e: 'setSpeed', value: number): void
-  (e: 'setPlaying', value: boolean): void
-}>()
+const quizTypes = ['部分填空', '整句填空', '句子組合'] as const
+
+const selectedQuizType = ref<'部分填空' | '整句填空' | '句子組合'>('部分填空')
 
 // 速度設定
 const speedSteps = [0.5, 0.75, 1, 1.25, 1.5]
@@ -30,13 +35,10 @@ const handleSliderChange = (e: Event) => {
   emit('setSpeed', value)
 }
 
-// 題型
-const quizTypes = ['部分填空', '整句填空', '句子組合'] as const
-
-const selectedQuizType = ref<'部分填空' | '整句填空' | '句子組合'>('部分填空')
-
 // 題型更換時開啟特效
 watch(selectedQuizType, () => {
+  emit('setQuizeType', selectedQuizType.value)
+
   animationOn.value = true
 
   setTimeout(() => (animationOn.value = false), 300)
@@ -172,7 +174,7 @@ watch(selectedQuizType, () => {
                 <button
                   v-for="t in quizTypes"
                   :key="t"
-                  class="rounded-xl border-2 py-3.5 text-[13px] font-bold transition-all active:scale-95"
+                  class="rounded-xl border-2 py-2.5 text-[13px] font-bold transition-all active:scale-95 md:py-3.5"
                   :class="
                     selectedQuizType === t
                       ? 'border-[#F9595F] bg-white text-[#F9595F] shadow-[0_3px_0_0_#F9595F15]'
@@ -194,7 +196,7 @@ watch(selectedQuizType, () => {
                   {{ selectedQuizType }}
                 </span>
                 <div
-                  class="mb-6 flex items-center text-[14px] font-bold text-[#A66B6B]"
+                  class="mb-3 flex items-center text-[14px] font-bold text-[#A66B6B] md:mb-6"
                 >
                   <span class="mr-2">重新聆聽機會</span>
                   <div class="flex items-end space-x-1.5">
@@ -254,24 +256,24 @@ watch(selectedQuizType, () => {
                   </div>
                 </div>
                 <div v-show="selectedQuizType === '句子組合'" class="space-y-5">
-                  <div class="flex space-x-3">
+                  <div class="flex space-x-1.5 md:space-x-3">
                     <span
-                      class="rounded-md border-2 border-[#F9595F]/30 bg-white px-3 py-1 text-[15px] font-bold text-[#F9595F]"
+                      class="rounded-md border-2 border-[#F9595F]/30 bg-white px-1.5 py-0.5 text-sm font-medium text-[#F9595F] md:px-3 md:py-1 md:text-[15px] md:font-bold"
                     >
                       Today
                     </span>
                     <span
-                      class="rounded-md border-2 border-[#F9595F]/30 bg-white px-3 py-1 text-[15px] font-bold text-[#F9595F]"
+                      class="rounded-md border-2 border-[#F9595F]/30 bg-white px-1.5 py-0.5 text-sm font-medium text-[#F9595F] md:px-3 md:py-1 md:text-[15px] md:font-bold"
                     >
                       day
                     </span>
                     <span
-                      class="rounded-md border-2 border-[#F9595F]/30 bg-white px-3 py-1 text-[15px] font-bold text-[#F9595F]"
+                      class="rounded-md border-2 border-[#F9595F]/30 bg-white px-1.5 py-0.5 text-sm font-medium text-[#F9595F] md:px-3 md:py-1 md:text-[15px] md:font-bold"
                     >
                       sunny
                     </span>
                     <span
-                      class="rounded-md border-2 border-[#F9595F]/30 bg-white px-3 py-1 text-[15px] font-bold text-[#F9595F]"
+                      class="rounded-md border-2 border-[#F9595F]/30 bg-white px-1.5 py-0.5 text-sm font-medium text-[#F9595F] md:px-3 md:py-1 md:text-[15px] md:font-bold"
                     >
                       is
                     </span>

@@ -27,7 +27,6 @@ const {
   switchIsPlaying,
 } = useYoutubePlayerLocal(videoId)
 
-
 // 目前在第幾步驟
 const step = ref<1 | 2 | 3 | 4>(1)
 
@@ -36,6 +35,12 @@ const selectedLyricsIndex = reactive({
   start: -1,
   end: -1,
 })
+
+// 選擇的題型
+const selectedQuizType = ref<'部分填空' | '整句填空' | '句子組合'>('部分填空')
+
+// 使用者的答案
+const userAnswers = ref<string[]>([])
 
 // 想要考試的資料陣列
 const selectedLyrics = computed<LyricData[]>(() => {
@@ -67,7 +72,8 @@ const canNext = computed(() => {
   if (step.value === 1)
     return selectedLyricsIndex.start !== -1 && selectedLyricsIndex.end !== -1
   if (step.value === 2) return true
-  // if (step.value === 3) return questionType !== null
+  if (step.value === 3)
+    return userAnswers.value.length === selectedLyrics.value.length
   return true
 })
 
@@ -76,7 +82,10 @@ const setSpeed = (speed: number) => {
   if (currentSong.value && startIndex >= 0) {
     setPlaybackRate(speed)
 
-    switchIsPlaying(true)
+    playSegment(
+      currentSong.value?.lyrics[selectedLyricsIndex.start]?.start ?? 0,
+      currentSong.value?.lyrics[selectedLyricsIndex.end]?.end ?? 0,
+    )
   }
 }
 
@@ -90,7 +99,10 @@ watch(isPlaying, (isPlaying) => {
 
 watch(step, (newStep) => {
   if (newStep === 2) {
-    switchIsPlaying(true)
+    playSegment(
+      currentSong.value?.lyrics[selectedLyricsIndex.start]?.start ?? 0,
+      currentSong.value?.lyrics[selectedLyricsIndex.end]?.end ?? 0,
+    )
     seekTo(seekTime.value ?? 0)
   } else {
     switchIsPlaying(false)
@@ -130,6 +142,7 @@ onUnmounted(() => {})
       :step="step"
       @set-speed="(speed) => setSpeed(speed)"
       @set-playing="(boo) => switchIsPlaying(boo)"
+      @set-quize-type="(str) => (selectedQuizType = str)"
     />
 
     <!-- 第三步驟 開始考試 -->
@@ -138,7 +151,9 @@ onUnmounted(() => {})
       :current-song="currentSong"
       :test-lyrics="selectedLyrics"
       :is-playing="isPlaying"
+      :selected-quiz-type="selectedQuizType"
       @play-segment="(e) => playSegment(e.start, e.end)"
+      @set-answers="(ans) => (userAnswers = ans)"
     />
 
     <!-- 上／下一步 -->
