@@ -12,17 +12,14 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="fixed inset-x-0 bottom-6 z-50 flex justify-center">
-    <div class="flex gap-3">
+  <div
+    class="fixed inset-x-0 bottom-0 z-50 flex justify-center bg-gradient-to-t from-white via-white/90 to-transparent pb-6"
+  >
+    <div class="flex w-[80%] max-w-md items-center gap-3 px-4 md:w-full">
       <!-- 上一步 -->
       <button
         :disabled="!canPrev"
-        class="h-10 min-w-[96px] rounded-lg border text-sm font-medium transition-colors duration-150"
-        :class="
-          canPrev
-            ? 'border-[#F9595F]/40 text-[#A66B6B] hover:bg-[#FFECEC]'
-            : 'cursor-not-allowed border-[#E8CFCF] text-[#C9A3A3]'
-        "
+        class="h-8 flex-1 rounded-xl border border-[#B58C8C]/30 bg-white text-[13px] font-bold text-[#A66B6B] shadow-sm transition-all active:scale-95 disabled:opacity-30 md:h-10"
         @click="emit('prev')"
       >
         上一步
@@ -31,11 +28,11 @@ const emit = defineEmits<{
       <!-- 下一步 -->
       <button
         :disabled="!canNext"
-        class="h-10 min-w-[96px] rounded-lg text-sm font-semibold transition-colors duration-150"
+        class="h-8 flex-1 rounded-xl text-[13px] font-bold shadow-md shadow-[#F9595F]/20 transition-all active:scale-95 md:h-10"
         :class="
           canNext
-            ? 'bg-[#F9595F] text-white hover:bg-[#E94A50]'
-            : 'cursor-not-allowed bg-[#FFD6D6] text-[#B48C8C]'
+            ? 'bg-[#F9595F] text-white'
+            : 'cursor-not-allowed bg-[#FFE5E5] text-[#E4BABA]'
         "
         @click="emit('next')"
       >

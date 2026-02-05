@@ -41,7 +41,7 @@ watch(
 
 <template>
   <div
-    class="my-6 flex w-full flex-col space-y-8 px-4 md:max-w-[1280px] lg:flex-row lg:space-x-10 lg:space-y-0 lg:px-5 xl:px-0"
+    class="my-6 flex w-full flex-col space-y-8 px-4 md:max-w-[1280px] lg:flex-row lg:space-y-0 lg:space-x-10 lg:px-5 xl:px-0"
   >
     <!-- 左邊區塊 -->
     <div class="w-full lg:w-2/3">
@@ -66,7 +66,7 @@ watch(
     <!-- 右邊區塊 -->
     <div class="w-full lg:w-1/3 lg:min-w-[402px]">
       <div
-        class="mb-4 border-b-4 border-[#A66B6B] text-2xl font-medium text-[#A66B6B]"
+        class="mb-4 border-b-4 border-[#A66B6B] text-xl font-medium text-[#A66B6B] md:text-2xl"
       >
         Recommended Songs
       </div>

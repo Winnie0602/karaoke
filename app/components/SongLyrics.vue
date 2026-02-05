@@ -111,6 +111,7 @@ watch(currentLineIndex, (newLineIndex) => {
         </div>
       </div>
     </div>
+
     <div
       v-for="(lyric, index) in lyrics"
       :key="lyric.start"
@@ -151,7 +152,7 @@ watch(currentLineIndex, (newLineIndex) => {
 
               <!-- tooltip -->
               <span
-                class="pointer-events-none absolute left-1/2 top-0 z-10 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-0 transition-opacity duration-150 group-hover:opacity-100"
+                class="pointer-events-none absolute top-0 left-1/2 z-10 -translate-x-1/2 -translate-y-full rounded bg-gray-800 px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 transition-opacity duration-150 group-hover:opacity-100"
               >
                 {{ word.meaning }}
               </span>

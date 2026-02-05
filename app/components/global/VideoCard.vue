@@ -5,7 +5,7 @@ const { song } = defineProps<{ song: SongsList }>()
 </script>
 
 <template>
-  <div class="flex h-[94.5px] w-full space-x-2 px-2">
+  <div class="flex h-[94.5px] w-full space-x-2 md:px-2">
     <!-- 左邊圖片區 -->
     <NuxtLink
       :to="`/song/${song.id}`"

@@ -17,6 +17,7 @@ export interface LyricData {
   tw?: WordData[]
   hk?: WordData[]
   zh: string
+  ori: string
 }
 
 export interface WordData {
@@ -31,4 +32,5 @@ export interface SongsList {
   language: string
   title: string
   artist: string
+  hasLyrics: boolean
 }

@@ -149,14 +149,23 @@ const tabSongs = computed(() => {
         </div>
 
         <!-- Right -->
-        <a
-          :href="`https://www.youtube.com/watch?v=${song.id}`"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="inline-flex items-center rounded-full bg-[#FFE5E5] px-3 py-1 text-xs"
-        >
-          <i class="fa-brands fa-youtube text-lg text-[#F9595F]"></i>
-        </a>
+        <div class="flex space-x-1.5">
+          <NuxtLink
+            v-if="song.hasLyrics"
+            :to="`/song/test/${song.id}`"
+            class="flex items-center justify-center rounded-full bg-[#A66B6B] px-1.5 py-1 text-[13px] text-white"
+          >
+            Test!
+          </NuxtLink>
+          <a
+            :href="`https://www.youtube.com/watch?v=${song.id}`"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center rounded-full bg-[#FFE5E5] px-3 py-1 text-xs"
+          >
+            <i class="fa-brands fa-youtube text-lg text-[#F9595F]"></i>
+          </a>
+        </div>
       </div>
     </div>
   </div>

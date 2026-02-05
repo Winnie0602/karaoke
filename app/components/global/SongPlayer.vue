@@ -70,24 +70,20 @@ onMounted(() => {
     <div class="fixed bottom-0 h-[75px] w-full bg-[#ffe5e5] px-2">
       <div class="flex h-full w-full items-center justify-center py-2">
         <div
-          class="flex h-full w-full max-w-[1024px] items-center justify-between rounded-xl bg-gradient-to-b from-white to-[#fff0f0] px-3 shadow-lg"
+          class="flex h-full w-full max-w-[1024px] items-center justify-between rounded-xl bg-gradient-to-b from-white to-[#fff0f0] px-2 shadow-lg md:px-3"
         >
           <!-- 播放鍵 -->
           <button
-            class="flex h-12 w-12 flex-none items-center justify-center rounded-full border-2 border-pink-200 bg-white shadow-md transition-transform duration-150 hover:scale-110 active:scale-95"
+            class="flex h-8 w-8 flex-none items-center justify-center rounded-full border-2 border-pink-200 bg-white shadow-md transition-transform duration-150 hover:scale-110 active:scale-95 md:h-12 md:w-12"
             @click="store.isPlaying ? pause() : play()"
           >
             <i
-              v-if="!store.isPlaying"
-              class="fa-solid fa-play text-lg text-[#F9595F]"
-            ></i>
-            <i
-              v-if="store.isPlaying"
-              class="fa-solid fa-pause text-lg text-[#F9595F]"
+              class="fa-solid text-[#F9595F] md:text-lg"
+              :class="store.isPlaying ? 'fa-pause' : 'fa-play'"
             ></i>
           </button>
           <span class="ml-2 text-xs">{{ formatTime(store.currentTime) }}</span>
-          <div class="relative mx-4 w-[calc(100%-150px)]">
+          <div class="relative mx-3 w-[calc(100%-150px)] md:mx-4">
             <span class="absolute bottom-5 line-clamp-1 text-xs text-[#A66B6B]">
               {{ `${store.songArtist} - ${store.songTitle}` }}
             </span>
@@ -114,12 +110,12 @@ onMounted(() => {
           <span class="mr-2 text-xs">{{ formatTime(store.duration) }}</span>
 
           <!-- 右側 icon -->
-          <div class="flex items-center space-x-4">
+          <div class="flex items-center space-x-2 md:space-x-4">
             <!-- 音量 -->
             <div class="group relative flex items-center">
               <!-- 固定寬度 icon 區（避免擠版） -->
               <div
-                class="flex h-6 w-6 items-center justify-center"
+                class="hidden h-6 w-6 items-center justify-center md:flex"
                 @click="store.toggleMute"
               >
                 <i
@@ -166,7 +162,7 @@ onMounted(() => {
             <!-- 播放速度 -->
             <div class="group relative">
               <i
-                class="fa-solid fa-gauge cursor-pointer text-xl text-[#F9595F] transition-transform duration-150 hover:rotate-[-10deg] hover:scale-125"
+                class="fa-solid fa-gauge cursor-pointer text-xl text-[#F9595F] transition-transform duration-150 hover:scale-125 hover:rotate-[-10deg]"
               ></i>
 
               <!-- 透明區塊 -->
