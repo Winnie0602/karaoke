@@ -6,7 +6,7 @@ const { currentSong, testLyrics, isPlaying, selectedQuizType } = defineProps<{
   currentSong: SongData
   testLyrics: LyricData[]
   isPlaying: boolean
-  selectedQuizType: 'partial' | 'allBlank' | 'organize'
+  selectedQuizType: 'partial' | 'allBlank'
 }>()
 
 const emit = defineEmits<{
@@ -126,20 +126,22 @@ watch(nowIndex, (index) => {
             :each-lyric="eachLyric"
             :is-now-card="i === nowIndex"
             :life="life"
+            :language="currentSong.language"
             :selected-quiz-type="selectedQuizType"
             @next-test="nowIndex = i + 1"
             @set-answer="(ans) => setAnswers(ans, i)"
           />
 
-          <!-- <TestCardTypingEn
+          <TestCardTypingEn
             v-if="currentSong.language === 'en'"
             ref="cardRefs"
             :each-lyric="eachLyric"
             :is-now-card="i === nowIndex"
             :life="life"
+            :selected-quiz-type="selectedQuizType"
             @next-test="nowIndex = i + 1"
             @set-answer="(ans) => setAnswers(ans, i)"
-          /> -->
+          />
         </div>
 
         <!-- <template v-if="isFakeKeyboard">

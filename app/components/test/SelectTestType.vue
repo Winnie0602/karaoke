@@ -13,7 +13,7 @@ const { currentSong, isPlaying, selected } = defineProps<{
 const emit = defineEmits<{
   (e: 'setSpeed', value: number): void
   (e: 'setPlaying', value: boolean): void
-  (e: 'setQuizeType', value: 'partial' | 'allBlank' | 'organize'): void
+  (e: 'setQuizeType', value: 'partial' | 'allBlank'): void
 }>()
 
 const currentSpeed = ref(1)
@@ -21,9 +21,9 @@ const currentSpeed = ref(1)
 // 控制底下題型預覽的動畫特效
 const animationOn = ref(false)
 
-const quizTypes = ['partial', 'allBlank', 'organize'] as const
+const quizTypes = ['partial', 'allBlank'] as const
 
-const selectedQuizType = ref<'partial' | 'allBlank' | 'organize'>('partial')
+const selectedQuizType = ref<'partial' | 'allBlank'>('partial')
 
 // 速度設定
 const speedSteps = [0.5, 0.75, 1, 1.25, 1.5]
@@ -253,49 +253,6 @@ watch(selectedQuizType, () => {
                     <div
                       class="mt-1 h-1 w-full rounded-full bg-[#FFE5E5] transition-all duration-500 md:h-2"
                     />
-                  </div>
-                </div>
-                <div v-show="selectedQuizType === 'organize'" class="space-y-5">
-                  <div class="flex space-x-1.5 md:space-x-3">
-                    <span
-                      class="rounded-md border-2 border-[#F9595F]/30 bg-white px-1.5 py-0.5 text-sm font-medium text-[#F9595F] md:px-3 md:py-1 md:text-[15px] md:font-bold"
-                    >
-                      Today
-                    </span>
-                    <span
-                      class="rounded-md border-2 border-[#F9595F]/30 bg-white px-1.5 py-0.5 text-sm font-medium text-[#F9595F] md:px-3 md:py-1 md:text-[15px] md:font-bold"
-                    >
-                      day
-                    </span>
-                    <span
-                      class="rounded-md border-2 border-[#F9595F]/30 bg-white px-1.5 py-0.5 text-sm font-medium text-[#F9595F] md:px-3 md:py-1 md:text-[15px] md:font-bold"
-                    >
-                      sunny
-                    </span>
-                    <span
-                      class="rounded-md border-2 border-[#F9595F]/30 bg-white px-1.5 py-0.5 text-sm font-medium text-[#F9595F] md:px-3 md:py-1 md:text-[15px] md:font-bold"
-                    >
-                      is
-                    </span>
-                  </div>
-                  <div class="flex items-center space-x-3 md:space-x-5">
-                    <div
-                      v-for="(_, i) in 4"
-                      :key="i"
-                      class="flex flex-col items-center"
-                    >
-                      <div
-                        class="flex h-7 w-8 items-center justify-center text-xl font-black text-[#A66B6B] transition-all duration-200 md:h-11 md:w-12 md:text-4xl"
-                        :class="{
-                          'rounded-md bg-[#FFF9F9] text-[#F9595F] shadow-inner ring-2 ring-[#F9595F]/20 md:ring-4':
-                            i === 0,
-                        }"
-                      ></div>
-
-                      <div
-                        class="mt-1 h-1 w-full rounded-full bg-[#FFE5E5] transition-all duration-500 md:h-2"
-                      />
-                    </div>
                   </div>
                 </div>
               </div>

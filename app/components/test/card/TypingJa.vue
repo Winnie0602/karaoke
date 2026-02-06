@@ -1,11 +1,13 @@
 <script lang="ts" setup>
 import type { LyricData } from '~/types/song'
+import type { LangCode } from '~/types/lang'
 
-const { eachLyric, isNowCard, life, selectedQuizType } = defineProps<{
+const { eachLyric, isNowCard, life, selectedQuizType, language } = defineProps<{
   eachLyric: LyricData
   isNowCard: boolean
   life: 0 | 1 | 2 | 3
-  selectedQuizType: 'partial' | 'allBlank' | 'organize'
+  selectedQuizType: 'partial' | 'allBlank'
+  language: LangCode
 }>()
 
 const emit = defineEmits<{
@@ -24,6 +26,7 @@ const {
   answer: eachLyric.ori,
   mode: selectedQuizType,
   blankCount: 5,
+  language,
 })
 
 const inputRef = ref<HTMLInputElement | null>(null)
@@ -148,9 +151,7 @@ watch(
       </div>
     </div>
 
-    <div
-      class="relative z-10 flex flex-wrap items-center justify-center gap-2 transition md:gap-4"
-    >
+    <div class="relative">
       <!-- 真正打字的地方 -->
       <input
         v-if="!isFakeKeyboard && isNowCard"
@@ -167,53 +168,57 @@ watch(
 
       <!-- 顯示格子／字的地方 -->
       <div
-        v-for="(char, i) in displayChars"
-        :key="i"
-        class="flex flex-col items-center"
+        class="z-10 flex flex-wrap items-center justify-center gap-2 transition md:gap-4"
       >
         <div
-          class="flex h-9 w-7 items-center justify-center rounded-md text-xl font-black transition-all duration-200 md:h-16 md:w-12 md:text-4xl"
-          :class="{
-            'text-red-500': resultStates?.[i] === 'wrong',
-            'ring ring-[#F9595F]/80': i === userInput.length && isNowCard,
-          }"
+          v-for="(char, i) in displayChars"
+          :key="i"
+          class="flex flex-col items-center"
         >
-          <span
-            v-if="isLockedIndex(i) && i >= userInput.length"
-            class="text-[#D1B8B8]/40"
+          <div
+            class="flex h-9 w-7 items-center justify-center rounded-md text-xl font-black transition-all duration-200 md:h-16 md:w-12 md:text-4xl"
+            :class="{
+              'text-red-500': resultStates?.[i] === 'wrong',
+              'ring ring-[#F9595F]/80': i === userInput.length && isNowCard,
+            }"
           >
-            {{ char }}
-          </span>
-          <span
-            v-else-if="
-              isLockedIndex(i) &&
-              userInput.length < i + 1 &&
-              !isNowCard &&
-              resultStates?.length === length
-            "
-            class="text-[#D1B8B8]"
-          >
-            {{ char }}
-          </span>
+            <span
+              v-if="isLockedIndex(i) && i >= userInput.length"
+              class="text-[#D1B8B8]/40"
+            >
+              {{ char }}
+            </span>
+            <span
+              v-else-if="
+                isLockedIndex(i) &&
+                userInput.length < i + 1 &&
+                !isNowCard &&
+                resultStates?.length === length
+              "
+              class="text-[#D1B8B8]"
+            >
+              {{ char }}
+            </span>
 
-          <span v-else class="text-red-800">
-            {{ char }}
-          </span>
+            <span v-else class="text-red-800">
+              {{ char }}
+            </span>
+          </div>
+
+          <!-- 底線 -->
+          <div
+            class="mt-1 h-1 w-full rounded-full transition-all duration-500 md:h-2.5"
+            :class="[
+              i === userInput.length && isNowCard
+                ? 'bg-[#F9595F]/80'
+                : resultStates
+                  ? resultStates[i] === 'correct'
+                    ? 'bg-[#7A3A3A]'
+                    : 'bg-[#F9595F]'
+                  : 'bg-[#FFE5E5]',
+            ]"
+          />
         </div>
-
-        <!-- 底線 -->
-        <div
-          class="mt-1 h-1 w-full rounded-full transition-all duration-500 md:h-2.5"
-          :class="[
-            i === userInput.length && isNowCard
-              ? 'bg-[#F9595F]/80'
-              : resultStates
-                ? resultStates[i] === 'correct'
-                  ? 'bg-[#7A3A3A]'
-                  : 'bg-[#F9595F]'
-                : 'bg-[#FFE5E5]',
-          ]"
-        />
       </div>
     </div>
 

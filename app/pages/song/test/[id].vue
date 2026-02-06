@@ -37,10 +37,8 @@ const selectedLyricsIndex = reactive({
 })
 
 // 選擇的題型
-const selectedQuizType = ref<'partial' | 'allBlank' | 'organize'>('partial')
+const selectedQuizType = ref<'partial' | 'allBlank'>('partial')
 
-// 挖空比例
-const blankPercentage = ref(100)
 
 // 使用者的答案
 const userAnswers = ref<string[]>([])

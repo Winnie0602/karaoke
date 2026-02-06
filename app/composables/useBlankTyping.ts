@@ -1,7 +1,11 @@
+import type { LangCode } from '~/types/lang'
+import type { LyricData } from '~/types/song'
+
 interface UseTypingModeOptions {
   answer: string
-  mode: 'allBlank' | 'partial' | 'organize'
+  mode: 'allBlank' | 'partial'
   blankCount?: number // 只給 partialBlank 用
+  language: LangCode
 }
 
 export function useTypingMode(options: UseTypingModeOptions) {
