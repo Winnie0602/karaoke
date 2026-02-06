@@ -1,14 +1,11 @@
 <script lang="ts" setup>
 import type { LyricData } from '~/types/song'
 
-defineExpose({
-  focusInput: () => inputRef.value?.focus(),
-})
-
-const { eachLyric, isNowCard, life } = defineProps<{
+const { eachLyric, isNowCard, life, selectedQuizType } = defineProps<{
   eachLyric: LyricData
   isNowCard: boolean
   life: 0 | 1 | 2 | 3
+  selectedQuizType: 'partial' | 'allBlank' | 'organize'
 }>()
 
 const emit = defineEmits<{
@@ -16,18 +13,30 @@ const emit = defineEmits<{
   (e: 'setAnswer', value: string): void
 }>()
 
+const {
+  length,
+  displayChars,
+  resultStates,
+  handleInput,
+  isLockedIndex,
+  userInput,
+} = useTypingMode({
+  answer: eachLyric.ori,
+  mode: selectedQuizType,
+  blankCount: 5,
+})
+
+const inputRef = ref<HTMLInputElement | null>(null)
+
+defineExpose({
+  focusInput: () => inputRef.value?.focus(),
+})
+
 // 使用虛擬鍵盤？
 const isFakeKeyboard = ref(false)
 
-// 使用者輸入
-const userInput = ref('')
-const inputRef = ref<HTMLInputElement>()
-
 // IME 組字狀態
 const isComposing = ref(false)
-
-// 批改結果（打滿才會有）
-const resultStates = ref<string[] | null>(null)
 
 // IME 處理(開始)
 const onCompositionStart = () => {
@@ -43,10 +52,7 @@ const onCompositionEnd = (e: CompositionEvent) => {
     return
   }
   isComposing.value = false
-  userInput.value = (e.target as HTMLInputElement).value.slice(
-    0,
-    eachLyric.ori.length,
-  )
+  handleInput(e)
 }
 
 // 非IME拼打時觸發
@@ -55,17 +61,8 @@ const onInput = (e: Event) => {
     return
   }
   if (isComposing.value) return
-  userInput.value = (e.target as HTMLInputElement).value.slice(
-    0,
-    eachLyric.ori.length,
-  )
-}
 
-// 整句判斷答案對錯
-const checkAnswer = () => {
-  resultStates.value = eachLyric.ori.split('').map((char, i) => {
-    return userInput.value[i] === char ? 'correct' : 'wrong'
-  })
+  handleInput(e)
 }
 
 // 虛擬鍵盤新增字
@@ -80,14 +77,12 @@ const clickBlock = () => {
 
 // 完成答案拼打
 watch(userInput, (val) => {
-  if (val.length !== eachLyric.ori.length) {
-    resultStates.value = null
+  if (userInput.value.length !== length) {
     return
   }
-  checkAnswer()
 
   // 答案傳到父層
-  emit('setAnswer', userInput.value)
+  emit('setAnswer', val)
 
   emit('nextTest')
 })
@@ -96,7 +91,9 @@ watch(
   () => isNowCard,
   async (val) => {
     if (!val) return
+
     await nextTick()
+
     setTimeout(() => inputRef.value?.focus(), 30)
   },
 )
@@ -104,11 +101,11 @@ watch(
 
 <template>
   <div
-    class="relative flex items-center justify-center transition-all duration-500"
+    class="relative flex items-center justify-center border-[3px] transition-all duration-500 md:border-[5px] md:px-8 md:py-10"
     :class="[
       isNowCard
-        ? 'z-20 scale-[1.02] rounded-xl border-[3px] border-[#F9595F]/30 bg-white px-3 py-6 shadow-lg md:scale-100 md:rounded-3xl md:border-[5px] md:px-8 md:py-10'
-        : 'pointer-events-none scale-95 opacity-40 blur-[0.5px]',
+        ? 'z-20 rounded-xl border-[#F9595F]/30 bg-white px-3 py-6 shadow-lg md:rounded-3xl'
+        : 'scale-95 border-none opacity-50 blur-[0.5px]',
     ]"
     @click="clickBlock"
   >
@@ -154,6 +151,7 @@ watch(
     <div
       class="relative z-10 flex flex-wrap items-center justify-center gap-2 transition md:gap-4"
     >
+      <!-- 真正打字的地方 -->
       <input
         v-if="!isFakeKeyboard && isNowCard"
         ref="inputRef"
@@ -167,30 +165,53 @@ watch(
         @input="onInput"
       />
 
+      <!-- 顯示格子／字的地方 -->
       <div
-        v-for="(_, i) in eachLyric.ori.length"
+        v-for="(char, i) in displayChars"
         :key="i"
         class="flex flex-col items-center"
       >
         <div
-          class="flex h-9 w-7 items-center justify-center text-xl font-black text-[#7A3A3A] transition-all duration-200 md:h-16 md:w-12 md:text-4xl"
+          class="flex h-9 w-7 items-center justify-center rounded-md text-xl font-black transition-all duration-200 md:h-16 md:w-12 md:text-4xl"
           :class="{
             'text-red-500': resultStates?.[i] === 'wrong',
+            'ring ring-[#F9595F]/80': i === userInput.length && isNowCard,
           }"
         >
-          {{ userInput[i] || '' }}
+          <span
+            v-if="isLockedIndex(i) && i >= userInput.length"
+            class="text-[#D1B8B8]/40"
+          >
+            {{ char }}
+          </span>
+          <span
+            v-else-if="
+              isLockedIndex(i) &&
+              userInput.length < i + 1 &&
+              !isNowCard &&
+              resultStates?.length === length
+            "
+            class="text-[#D1B8B8]"
+          >
+            {{ char }}
+          </span>
+
+          <span v-else class="text-red-800">
+            {{ char }}
+          </span>
         </div>
 
+        <!-- 底線 -->
         <div
           class="mt-1 h-1 w-full rounded-full transition-all duration-500 md:h-2.5"
           :class="[
-            resultStates
-              ? resultStates[i] === 'correct'
-                ? 'bg-[#7A3A3A]'
-                : 'bg-[#F9595F]'
-              : isNowCard
-                ? 'bg-[#FFE5E5]'
-                : 'bg-stone-100',
+            i === userInput.length && isNowCard
+              ? 'bg-[#F9595F]/80'
+              : resultStates
+                ? resultStates[i] === 'correct'
+                  ? 'bg-[#7A3A3A]'
+                  : 'bg-[#F9595F]'
+                : 'bg-[#FFE5E5]',
           ]"
         />
       </div>

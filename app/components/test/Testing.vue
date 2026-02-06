@@ -6,7 +6,7 @@ const { currentSong, testLyrics, isPlaying, selectedQuizType } = defineProps<{
   currentSong: SongData
   testLyrics: LyricData[]
   isPlaying: boolean
-  selectedQuizType: '部分填空' | '整句填空' | '句子組合'
+  selectedQuizType: 'partial' | 'allBlank' | 'organize'
 }>()
 
 const emit = defineEmits<{
@@ -56,6 +56,7 @@ const setAnswers = (ans: string, index: number) => {
 
 // 一進來頁面就播放第一句
 onMounted(() => {
+  cardRefs.value[0]?.focusInput()
   emit('playSegment', {
     start: testLyrics[0]?.start ?? 0,
     end: testLyrics[0]?.end ?? 0,
@@ -99,10 +100,10 @@ watch(nowIndex, (index) => {
         <div
           v-for="(eachLyric, i) in testLyrics"
           :key="eachLyric.start"
-          class="flex items-center space-y-3 md:space-y-5 md:space-x-5"
+          class="flex items-center space-y-3 md:space-y-5"
         >
           <button
-            class="relative h-8 w-8 items-center justify-center rounded-full transition-all"
+            class="relative mr-3 h-8 w-8 items-center justify-center rounded-full transition-all"
             :class="[
               i === nowIndex ? 'hidden md:flex' : 'hidden',
               isPlaying
@@ -125,19 +126,20 @@ watch(nowIndex, (index) => {
             :each-lyric="eachLyric"
             :is-now-card="i === nowIndex"
             :life="life"
+            :selected-quiz-type="selectedQuizType"
             @next-test="nowIndex = i + 1"
             @set-answer="(ans) => setAnswers(ans, i)"
           />
 
-          <TestCardTypingEn
-            v-if="currentSong.language === 'en'" 
+          <!-- <TestCardTypingEn
+            v-if="currentSong.language === 'en'"
             ref="cardRefs"
             :each-lyric="eachLyric"
             :is-now-card="i === nowIndex"
             :life="life"
             @next-test="nowIndex = i + 1"
             @set-answer="(ans) => setAnswers(ans, i)"
-          />
+          /> -->
         </div>
 
         <!-- <template v-if="isFakeKeyboard">

@@ -13,7 +13,7 @@ const { eachLyric, isNowCard, life } = defineProps<{
 
 const emit = defineEmits<{
   (e: 'nextTest'): void
-  (e: 'setAnswer', value: string): void
+  (e: 'setAnswer', value: string[]): void
 }>()
 
 // 使用虛擬鍵盤？
@@ -67,7 +67,7 @@ watch(userInput, (val) => {
   checkAnswer()
 
   // 答案傳到父層
-  emit('setAnswer', userInput.value)
+  emit('setAnswer', val)
 
   emit('nextTest')
 })

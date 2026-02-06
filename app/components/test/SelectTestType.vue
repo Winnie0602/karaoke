@@ -13,7 +13,7 @@ const { currentSong, isPlaying, selected } = defineProps<{
 const emit = defineEmits<{
   (e: 'setSpeed', value: number): void
   (e: 'setPlaying', value: boolean): void
-  (e: 'setQuizeType', value: '部分填空' | '整句填空' | '句子組合'): void
+  (e: 'setQuizeType', value: 'partial' | 'allBlank' | 'organize'): void
 }>()
 
 const currentSpeed = ref(1)
@@ -21,9 +21,9 @@ const currentSpeed = ref(1)
 // 控制底下題型預覽的動畫特效
 const animationOn = ref(false)
 
-const quizTypes = ['部分填空', '整句填空', '句子組合'] as const
+const quizTypes = ['partial', 'allBlank', 'organize'] as const
 
-const selectedQuizType = ref<'部分填空' | '整句填空' | '句子組合'>('部分填空')
+const selectedQuizType = ref<'partial' | 'allBlank' | 'organize'>('partial')
 
 // 速度設定
 const speedSteps = [0.5, 0.75, 1, 1.25, 1.5]
@@ -209,7 +209,7 @@ watch(selectedQuizType, () => {
                   </div>
                 </div>
                 <div
-                  v-show="selectedQuizType === '整句填空'"
+                  v-show="selectedQuizType === 'allBlank'"
                   class="flex items-center space-x-3 md:space-x-5"
                 >
                   <div
@@ -231,7 +231,7 @@ watch(selectedQuizType, () => {
                   </div>
                 </div>
                 <div
-                  v-show="selectedQuizType === '部分填空'"
+                  v-show="selectedQuizType === 'partial'"
                   class="flex items-center space-x-3 md:space-x-5"
                 >
                   <div
@@ -255,7 +255,7 @@ watch(selectedQuizType, () => {
                     />
                   </div>
                 </div>
-                <div v-show="selectedQuizType === '句子組合'" class="space-y-5">
+                <div v-show="selectedQuizType === 'organize'" class="space-y-5">
                   <div class="flex space-x-1.5 md:space-x-3">
                     <span
                       class="rounded-md border-2 border-[#F9595F]/30 bg-white px-1.5 py-0.5 text-sm font-medium text-[#F9595F] md:px-3 md:py-1 md:text-[15px] md:font-bold"
