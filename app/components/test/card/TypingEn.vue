@@ -23,7 +23,7 @@ const {
   isLockedIndex,
   userInput,
 } = useTypingMode({
-  answer: eachLyric.ori,
+  lyricData: eachLyric,
   mode: selectedQuizType,
   blankCount: 5,
   language,

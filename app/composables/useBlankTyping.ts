@@ -2,14 +2,41 @@ import type { LangCode } from '~/types/lang'
 import type { LyricData } from '~/types/song'
 
 interface UseTypingModeOptions {
-  answer: string
+  lyricData: LyricData
   mode: 'allBlank' | 'partial'
   blankCount?: number // 只給 partialBlank 用
   language: LangCode
 }
 
+function handleLanguageData(lyricData: LyricData, language: LangCode) {
+  const arr: string[] = []
+
+  if (language === 'en') {
+    lyricData.en?.forEach((e) => {
+      arr.push(e.surface)
+    })
+
+    return arr.join(' ')
+  }
+
+  if (language === 'ja') {
+    lyricData.ja?.forEach((e) => {
+      if (e.reading) {
+        arr.push(e.reading)
+      } else {
+        arr.push(e.surface)
+      }
+    })
+
+    return arr.join('')
+  }
+  return arr.join('')
+}
+
 export function useTypingMode(options: UseTypingModeOptions) {
-  const { answer, mode, blankCount = 3 } = options
+  const { mode, blankCount = 3, language, lyricData } = options
+  const answer = handleLanguageData(lyricData, language)
+
 
   const chars = answer.split('') // 正確答案陣列
   const length = chars.length

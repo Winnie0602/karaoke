@@ -138,6 +138,7 @@ watch(nowIndex, (index) => {
             :each-lyric="eachLyric"
             :is-now-card="i === nowIndex"
             :life="life"
+            :language="currentSong.language"
             :selected-quiz-type="selectedQuizType"
             @next-test="nowIndex = i + 1"
             @set-answer="(ans) => setAnswers(ans, i)"
