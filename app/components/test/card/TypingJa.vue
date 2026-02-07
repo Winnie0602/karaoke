@@ -55,17 +55,9 @@ const onCompositionEnd = (e: CompositionEvent) => {
     return
   }
   isComposing.value = false
-  handleInput(e)
-}
 
-// 非IME拼打時觸發
-const onInput = (e: Event) => {
-  if (isFakeKeyboard.value) {
-    return
-  }
-  if (isComposing.value) return
-
-  handleInput(e)
+  const target = e.target as HTMLInputElement
+  handleInput(target)
 }
 
 // 虛擬鍵盤新增字
@@ -163,7 +155,6 @@ watch(
         autocapitalize="off"
         @compositionstart="onCompositionStart"
         @compositionend="onCompositionEnd"
-        @input="onInput"
       />
 
       <!-- 顯示格子／字的地方 -->
@@ -214,7 +205,7 @@ watch(
                 : resultStates
                   ? resultStates[i] === 'correct'
                     ? 'bg-[#7A3A3A]'
-                    : 'bg-[#F9595F]'
+                    : 'bg-red-500'
                   : 'bg-[#FFE5E5]',
             ]"
           />

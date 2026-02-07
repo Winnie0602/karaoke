@@ -37,7 +37,6 @@ export function useTypingMode(options: UseTypingModeOptions) {
   const { mode, blankCount = 3, language, lyricData } = options
   const answer = handleLanguageData(lyricData, language)
 
-
   const chars = answer.split('') // 正確答案陣列
   const length = chars.length
 
@@ -53,18 +52,26 @@ export function useTypingMode(options: UseTypingModeOptions) {
       return
     }
 
-    // 每個字的index [0,1,2,3,4]
-    const all = Array.from({ length }, (_, i) => i)
+    // 只取「字母」index（排除空白及符號）
+    const letterIndexes = chars
+      .map((char, i) => ([' ', '?', ',', ':', "'"].includes(char) ? null : i))
+      .filter((i): i is number => i !== null)
 
-    // 哪些要給空白的index(排重)
+    if (letterIndexes.length === 0) {
+      revealedIndexes.value = []
+      return
+    }
+
+    // 要被挖空的 index
     const blanks = new Set<number>()
 
-    while (blanks.size < Math.min(blankCount, length)) {
-      const r = Math.floor(Math.random() * length)
+    while (blanks.size < Math.min(blankCount, letterIndexes.length)) {
+      const r = letterIndexes[Math.floor(Math.random() * letterIndexes.length)]!
       blanks.add(r)
     }
 
-    revealedIndexes.value = all.filter((i) => !blanks.has(i))
+    // 要顯示的字母 index
+    revealedIndexes.value = letterIndexes.filter((i) => !blanks.has(i))
   }
 
   generateRevealedIndexes()
@@ -74,6 +81,8 @@ export function useTypingMode(options: UseTypingModeOptions) {
     return chars.map((char, i) => {
       // 顯示答案 格子
       if (revealedIndexes.value.includes(i)) return userInput.value[i] || char
+
+      // if (isOriBlank(i)) return 'blk'
 
       // 挖空 格子
       return userInput.value[i] || ''
@@ -85,16 +94,24 @@ export function useTypingMode(options: UseTypingModeOptions) {
     return revealedIndexes.value.includes(i)
   }
 
+  // 這格是不是單字與單字間的空白
+  const isOriBlank = (i: number) => {
+    return chars[i] === ' '
+  }
+
   // 判斷答案
   const checkAnswer = () => {
     resultStates.value = chars.map((char, i) => {
-      return userInput.value[i] === char ? 'correct' : 'wrong'
+      return isOriBlank(i)
+        ? 'correct'
+        : userInput.value[i] === char
+          ? 'correct'
+          : 'wrong'
     })
   }
 
   // 外部傳入輸入
-  const handleInput = (e: Event | CompositionEvent) => {
-    const target = e.target as HTMLInputElement
+  const handleInput = (target: HTMLInputElement) => {
     userInput.value = target.value.slice(0, length)
 
     if (userInput.value.length === length) {
@@ -118,7 +135,9 @@ export function useTypingMode(options: UseTypingModeOptions) {
     resultStates, // 檢查答案結果 [correct,correct,wrong,correct]
     handleInput,
     isLockedIndex, // 判斷這格能不能輸入
+    isOriBlank, // 這格是不是單字與單字間的空白
     userInput, // 使用者傳來的字
     blankIndexes,
+    answer,
   }
 }

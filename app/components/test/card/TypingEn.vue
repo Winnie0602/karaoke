@@ -21,7 +21,9 @@ const {
   resultStates,
   handleInput,
   isLockedIndex,
+  isOriBlank,
   userInput,
+  answer,
 } = useTypingMode({
   lyricData: eachLyric,
   mode: selectedQuizType,
@@ -34,6 +36,8 @@ const inputRef = ref<HTMLInputElement | null>(null)
 defineExpose({
   focusInput: () => inputRef.value?.focus(),
 })
+
+console.log(displayChars.value)
 
 // 使用虛擬鍵盤？
 const isFakeKeyboard = ref(false)
@@ -49,15 +53,6 @@ const onCompositionStart = () => {
   isComposing.value = true
 }
 
-// IME 處理(結束)
-const onCompositionEnd = (e: CompositionEvent) => {
-  if (isFakeKeyboard.value) {
-    return
-  }
-  isComposing.value = false
-  handleInput(e)
-}
-
 // 非IME拼打時觸發
 const onInput = (e: Event) => {
   if (isFakeKeyboard.value) {
@@ -65,7 +60,14 @@ const onInput = (e: Event) => {
   }
   if (isComposing.value) return
 
-  handleInput(e)
+  const target = e.target as HTMLInputElement
+
+  // 下一個字是空白的話幫使用者打空白
+  if (isOriBlank(target.value.length)) {
+    target.value = target.value.concat(' ')
+  }
+
+  handleInput(target)
 }
 
 // 虛擬鍵盤新增字
@@ -151,7 +153,7 @@ watch(
       </div>
     </div>
 
-    <div class="relative">
+    <div class="relative w-full">
       <!-- 真正打字的地方 -->
       <input
         v-if="!isFakeKeyboard && isNowCard"
@@ -162,62 +164,45 @@ watch(
         spellcheck="false"
         autocapitalize="off"
         @compositionstart="onCompositionStart"
-        @compositionend="onCompositionEnd"
         @input="onInput"
       />
 
       <!-- 顯示格子／字的地方 -->
       <div
-        class="z-10 flex flex-wrap items-center justify-center gap-2 transition md:gap-4"
+        class="z-10 flex w-full flex-wrap items-center justify-center space-x-0.5 transition"
       >
         <div
           v-for="(char, i) in displayChars"
           :key="i"
           class="flex flex-col items-center"
         >
-          <div
-            class="flex h-9 w-7 items-center justify-center rounded-md text-xl font-black transition-all duration-200 md:h-16 md:w-12 md:text-4xl"
-            :class="{
-              'text-red-500': resultStates?.[i] === 'wrong',
-              'ring ring-[#F9595F]/80': i === userInput.length && isNowCard,
-            }"
-          >
-            <span
-              v-if="isLockedIndex(i) && i >= userInput.length"
-              class="text-[#D1B8B8]/40"
-            >
-              {{ char }}
-            </span>
-            <span
-              v-else-if="
-                isLockedIndex(i) &&
-                userInput.length < i + 1 &&
-                !isNowCard &&
-                resultStates?.length === length
-              "
-              class="text-[#D1B8B8]"
-            >
-              {{ char }}
-            </span>
+          <div v-if="isOriBlank(i)" class="w-4 md:w-8"></div>
 
-            <span v-else class="text-red-800">
-              {{ char }}
-            </span>
-          </div>
-
-          <!-- 底線 -->
           <div
-            class="mt-1 h-1 w-full rounded-full transition-all duration-500 md:h-2.5"
+            v-else
+            class="relative flex h-10 w-3 items-center justify-center border-b-[3px] text-2xl font-black transition-all duration-200 md:h-16 md:w-6 md:text-4xl"
             :class="[
+              // 錯誤時的文字顏色
+              resultStates?.[i] === 'wrong'
+                ? 'border-red-500 text-red-500'
+                : 'text-[#7A3A3A]',
+
+              // 正在打字的格子：底線顏色加深 + 閃爍動畫
               i === userInput.length && isNowCard
-                ? 'bg-[#F9595F]/80'
-                : resultStates
-                  ? resultStates[i] === 'correct'
-                    ? 'bg-[#7A3A3A]'
-                    : 'bg-[#F9595F]'
-                  : 'bg-[#FFE5E5]',
+                ? 'animate-blink border-[#F9595F]'
+                : 'border-[#FFE5E5]',
+
+              // 已經打過的格子，底線變深色
+              i < userInput.length ? 'border-[#7A3A3A]' : 'text-[#D1B8B8]',
             ]"
-          />
+          >
+            {{ char || '' }}
+
+            <div
+              v-if="i === userInput.length && isNowCard"
+              class="absolute inset-0 -z-10 bg-[#F9595F]/20"
+            ></div>
+          </div>
         </div>
       </div>
     </div>
@@ -232,3 +217,19 @@ watch(
     </button>
   </div>
 </template>
+
+<style lang="postcss" scoped>
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.animate-blink {
+  animation: blink 1s infinite;
+}
+</style>
