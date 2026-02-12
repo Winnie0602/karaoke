@@ -51,7 +51,11 @@
       "start": 39,
       "end": 46,
       "ja": [
-        { "surface": "でんぐり返し", "meaning": "翻滾、顛倒" },
+        {
+          "surface": "でんぐり返し",
+          "reading": "でんぐりかえし",
+          "meaning": "翻滾、顛倒"
+        },
         { "surface": "の" },
         { "surface": "日々", "reading": "ひび", "meaning": "日子" },
         { "surface": "可哀想", "reading": "かわいそう", "meaning": "可憐的" },

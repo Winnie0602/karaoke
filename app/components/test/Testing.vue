@@ -11,13 +11,13 @@ const { currentSong, testLyrics, isPlaying, selectedQuizType } = defineProps<{
 
 const emit = defineEmits<{
   (e: 'playSegment', value: { start: number; end: number }): void
-  (e: 'setAnswers', value: string[]): void
+  (e: 'setAnswers', value: { cAnswer: string; uAnswer: string }[]): void
 }>()
 
 // 現在在寫第幾個題目
 const nowIndex = ref(0)
 
-const userAnswers = ref<string[]>([])
+const userAnswers = ref<{ cAnswer: string; uAnswer: string }[]>([])
 
 // 聆聽生命蘋果 共三次機會
 const life = ref<0 | 1 | 2 | 3>(3)
@@ -45,8 +45,11 @@ const handlePlay = (lyric: LyricData, i: number) => {
   })
 }
 
-const setAnswers = (ans: string, index: number) => {
-  userAnswers.value[index] = ans
+const setAnswers = (
+  ans: { cAnswer: string; uAnswer: string },
+  index: number,
+) => {
+  userAnswers.value[index] = { cAnswer: ans.cAnswer, uAnswer: ans.uAnswer }
 
   // 全部題目都填滿了後再往頁面送
   if (userAnswers.value.length === testLyrics.length) {

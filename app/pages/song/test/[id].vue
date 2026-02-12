@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import SelectLyrics from '~/components/test/SelectLyrics.vue'
 import SelectTestType from '~/components/test/SelectTestType.vue'
+import { useCheckComfirm } from '~/composables/useCheckComfirm'
 import type { SongData, LyricData } from '~/types/song'
 
 definePageMeta({
@@ -8,6 +9,8 @@ definePageMeta({
 })
 
 const route = useRoute()
+
+const router = useRouter()
 
 const videoId = computed(() => route.params.id as string)
 
@@ -39,9 +42,8 @@ const selectedLyricsIndex = reactive({
 // 選擇的題型
 const selectedQuizType = ref<'partial' | 'allBlank'>('partial')
 
-
 // 使用者的答案
-const userAnswers = ref<string[]>([])
+const userAnswers = ref<{ cAnswer: string; uAnswer: string }[]>([])
 
 // 想要考試的資料陣列
 const selectedLyrics = computed<LyricData[]>(() => {
@@ -59,23 +61,6 @@ const seekTime = computed(() => {
   } else {
     return 0
   }
-})
-
-const nextStep = () => {
-  if (step.value < 4) step.value++
-}
-
-const prevStep = () => {
-  if (step.value > 1) step.value--
-}
-
-const canNext = computed(() => {
-  if (step.value === 1)
-    return selectedLyricsIndex.start !== -1 && selectedLyricsIndex.end !== -1
-  if (step.value === 2) return true
-  if (step.value === 3)
-    return userAnswers.value.length === selectedLyrics.value.length
-  return true
 })
 
 const setSpeed = (speed: number) => {
@@ -96,6 +81,47 @@ watch(isPlaying, (isPlaying) => {
   } else {
     pause()
   }
+})
+
+// ===== 頁面控制邏輯 =====
+const { isModalOpen, title, content, open, confirm, cancel } = useCheckComfirm()
+
+const nextStep = () => {
+  if (step.value === 4) {
+    router.push('/')
+
+    return
+  }
+  step.value++
+}
+
+const nextLabel = computed(() => {
+  if (step.value === 2) return '開始考試'
+  if (step.value === 4) return '回首頁'
+  return '下一步'
+})
+
+const prevStep = async () => {
+  if (step.value > 1) {
+    if (step.value === 3) {
+      const check = await open(
+        '確認返回?',
+        '返回上一步將會遺失目前輸入的內容。',
+      )
+
+      if (!check) return
+    }
+    step.value--
+  }
+}
+
+const canNext = computed(() => {
+  if (step.value === 1)
+    return selectedLyricsIndex.start !== -1 && selectedLyricsIndex.end !== -1
+  if (step.value === 2) return true
+  if (step.value === 3)
+    return userAnswers.value.length === selectedLyrics.value.length
+  return true
 })
 
 watch(step, (newStep) => {
@@ -153,17 +179,37 @@ onUnmounted(() => {})
       :test-lyrics="selectedLyrics"
       :is-playing="isPlaying"
       :selected-quiz-type="selectedQuizType"
-      @play-segment="(e) => playSegment(e.start, e.end)"
+      @play-segment="
+        (e: { start: number; end: number }) => playSegment(e.start, e.end)
+      "
       @set-answers="(ans) => (userAnswers = ans)"
+    />
+
+    <!-- 第四步驟 複習 -->
+    <TestReview
+      v-if="currentSong && step === 4"
+      :user-answers="userAnswers"
+      :test-lyrics="selectedLyrics"
+      @play-segment="
+        (e: { start: number; end: number }) => playSegment(e.start, e.end)
+      "
     />
 
     <!-- 上／下一步 -->
     <TestControlProgressButton
-      :can-prev="step > 1"
+      :can-prev="step > 1 && step < 4"
       :can-next="canNext"
-      :next-label="step === 2 ? '開始考試' : '下一步'"
+      :next-label="nextLabel"
       @prev="prevStep"
       @next="nextStep"
+    />
+
+    <DailogModal
+      :open="isModalOpen"
+      :title="title"
+      :content="content"
+      @confirm="confirm"
+      @close="cancel"
     />
 
     <!-- Youtube實體 -->

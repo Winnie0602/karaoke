@@ -4,7 +4,7 @@ import type { LyricData } from '~/types/song'
 interface UseTypingModeOptions {
   lyricData: LyricData
   mode: 'allBlank' | 'partial'
-  blankCount?: number // 只給 partialBlank 用
+  blankCountPercent?: number // 只給 partialBlank 用
   language: LangCode
 }
 
@@ -34,11 +34,13 @@ function handleLanguageData(lyricData: LyricData, language: LangCode) {
 }
 
 export function useTypingMode(options: UseTypingModeOptions) {
-  const { mode, blankCount = 3, language, lyricData } = options
+  const { mode, blankCountPercent = 50, language, lyricData } = options
   const answer = handleLanguageData(lyricData, language)
 
   const chars = answer.split('') // 正確答案陣列
   const length = chars.length
+
+  const blankCount = blankCountPercent * 0.01 * length
 
   const userInput = ref<string>('') // 使用者輸入
   const resultStates = ref<('correct' | 'wrong')[] | null>(null)

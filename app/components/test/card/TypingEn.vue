@@ -12,7 +12,7 @@ const { eachLyric, isNowCard, life, selectedQuizType, language } = defineProps<{
 
 const emit = defineEmits<{
   (e: 'nextTest'): void
-  (e: 'setAnswer', value: string): void
+  (e: 'setAnswer', value: { cAnswer: string; uAnswer: string }): void
 }>()
 
 const {
@@ -20,14 +20,13 @@ const {
   displayChars,
   resultStates,
   handleInput,
-  isLockedIndex,
   isOriBlank,
   userInput,
   answer,
 } = useTypingMode({
   lyricData: eachLyric,
   mode: selectedQuizType,
-  blankCount: 5,
+  blankCountPercent: 50,
   language,
 })
 
@@ -37,20 +36,18 @@ defineExpose({
   focusInput: () => inputRef.value?.focus(),
 })
 
-console.log(displayChars.value)
-
 // 使用虛擬鍵盤？
 const isFakeKeyboard = ref(false)
 
-// IME 組字狀態
-const isComposing = ref(false)
+const isDeleting = ref(false)
 
-// IME 處理(開始)
-const onCompositionStart = () => {
+// 捕捉目前按下的鍵
+const onKeydown = (e: KeyboardEvent) => {
   if (isFakeKeyboard.value) {
     return
   }
-  isComposing.value = true
+
+  isDeleting.value = e.key === 'Backspace' || e.key === 'Delete'
 }
 
 // 非IME拼打時觸發
@@ -58,23 +55,24 @@ const onInput = (e: Event) => {
   if (isFakeKeyboard.value) {
     return
   }
-  if (isComposing.value) return
 
   const target = e.target as HTMLInputElement
 
   // 下一個字是空白的話幫使用者打空白
-  if (isOriBlank(target.value.length)) {
+  if (!isDeleting.value && isOriBlank(target.value.length)) {
     target.value = target.value.concat(' ')
   }
 
-  handleInput(target)
-}
+  // 正在按刪除鍵且下一個字為空白，刪除空白
+  if (isDeleting.value && target.value[target.value.length - 1] === ' ') {
+    target.value = target.value.slice(0, -1)
+  }
 
-// 虛擬鍵盤新增字
-// const onKeyboardInput = (char: string) => {
-//   if (userInput.value.length >= answer.length) return
-//   userInput.value += char
-// }
+  handleInput(target)
+
+  // reset
+  isDeleting.value = false
+}
 
 const clickBlock = () => {
   if (isNowCard) inputRef.value?.focus()
@@ -87,7 +85,7 @@ watch(userInput, (val) => {
   }
 
   // 答案傳到父層
-  emit('setAnswer', val)
+  emit('setAnswer', { cAnswer: answer, uAnswer: val })
 
   emit('nextTest')
 })
@@ -163,8 +161,8 @@ watch(
         type="text"
         spellcheck="false"
         autocapitalize="off"
-        @compositionstart="onCompositionStart"
         @input="onInput"
+        @keydown="onKeydown"
       />
 
       <!-- 顯示格子／字的地方 -->

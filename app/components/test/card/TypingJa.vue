@@ -12,7 +12,7 @@ const { eachLyric, isNowCard, life, selectedQuizType, language } = defineProps<{
 
 const emit = defineEmits<{
   (e: 'nextTest'): void
-  (e: 'setAnswer', value: string): void
+  (e: 'setAnswer', value: { cAnswer: string; uAnswer: string }): void
 }>()
 
 const {
@@ -22,10 +22,11 @@ const {
   handleInput,
   isLockedIndex,
   userInput,
+  answer,
 } = useTypingMode({
   lyricData: eachLyric,
   mode: selectedQuizType,
-  blankCount: 5,
+  blankCountPercent: 50,
   language,
 })
 
@@ -41,12 +42,20 @@ const isFakeKeyboard = ref(false)
 // IME 組字狀態
 const isComposing = ref(false)
 
+// 組字中的字
+const composingText = ref('')
+
+const onCompositionUpdate = (e: CompositionEvent) => {
+  composingText.value = e.data
+}
+
 // IME 處理(開始)
 const onCompositionStart = () => {
   if (isFakeKeyboard.value) {
     return
   }
   isComposing.value = true
+  composingText.value = ''
 }
 
 // IME 處理(結束)
@@ -55,16 +64,23 @@ const onCompositionEnd = (e: CompositionEvent) => {
     return
   }
   isComposing.value = false
+  composingText.value = ''
 
   const target = e.target as HTMLInputElement
+
   handleInput(target)
 }
 
-// 虛擬鍵盤新增字
-// const onKeyboardInput = (char: string) => {
-//   if (userInput.value.length >= answer.length) return
-//   userInput.value += char
-// }
+// 非IME拼打時觸發
+const onInput = (e: Event) => {
+  if (isFakeKeyboard.value) {
+    return
+  }
+  if (isComposing.value) return
+  const target = e.target as HTMLInputElement
+
+  handleInput(target)
+}
 
 const clickBlock = () => {
   if (isNowCard) inputRef.value?.focus()
@@ -77,7 +93,7 @@ watch(userInput, (val) => {
   }
 
   // 答案傳到父層
-  emit('setAnswer', val)
+  emit('setAnswer', { cAnswer: answer, uAnswer: val })
 
   emit('nextTest')
 })
@@ -153,8 +169,10 @@ watch(
         type="text"
         spellcheck="false"
         autocapitalize="off"
+        @input="onInput"
         @compositionstart="onCompositionStart"
         @compositionend="onCompositionEnd"
+        @compositionupdate="onCompositionUpdate"
       />
 
       <!-- 顯示格子／字的地方 -->
@@ -174,10 +192,14 @@ watch(
             }"
           >
             <span
-              v-if="isLockedIndex(i) && i >= userInput.length"
-              class="text-[#D1B8B8]/40"
+              v-if="i >= userInput.length"
+              :class="
+                i === userInput.length && isComposing
+                  ? 'text-[#F9595F]/80'
+                  : 'text-[#D1B8B8]/40'
+              "
             >
-              {{ char }}
+              {{ i === userInput.length && isComposing ? composingText : char }}
             </span>
             <span
               v-else-if="
