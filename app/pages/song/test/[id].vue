@@ -4,9 +4,11 @@ import SelectTestType from '~/components/test/SelectTestType.vue'
 import { useCheckComfirm } from '~/composables/useCheckComfirm'
 import type { SongData, LyricData } from '~/types/song'
 
-definePageMeta({
-  layout: 'test',
-})
+// definePageMeta({
+//   layout: 'test',
+// })
+
+const store = usePlayerStore()
 
 const route = useRoute()
 
@@ -18,17 +20,18 @@ const videoId = computed(() => route.params.id as string)
 const { data: currentSong, pending } = await useFetch<SongData | null>(
   `/api/song/${videoId.value}`,
 )
-
-const {
-  createPlayer,
-  play,
-  pause,
-  seekTo,
-  setPlaybackRate,
-  playSegment,
-  isPlaying,
-  switchIsPlaying,
-} = useYoutubePlayerLocal(videoId)
+// console.log(videoId.value)
+// const {
+//   createPlayer,
+//   play,
+//   player,
+//   pause,
+//   seekTo,
+//   setPlaybackRate,
+//   playSegment,
+//   testPageIsPlaying,
+//   switchTestIsPlaying,
+// } = useYoutubePlayer(toRef(store, 'testVideoId'))
 
 // 目前在第幾步驟
 const step = ref<1 | 2 | 3 | 4>(1)
@@ -66,22 +69,30 @@ const seekTime = computed(() => {
 const setSpeed = (speed: number) => {
   const startIndex = selectedLyricsIndex.start
   if (currentSong.value && startIndex >= 0) {
-    setPlaybackRate(speed)
+    // setPlaybackRate(speed)
 
-    playSegment(
-      currentSong.value?.lyrics[selectedLyricsIndex.start]?.start ?? 0,
-      currentSong.value?.lyrics[selectedLyricsIndex.end]?.end ?? 0,
-    )
+    // playSegment(
+    //   currentSong.value?.lyrics[selectedLyricsIndex.start]?.start ?? 0,
+    //   currentSong.value?.lyrics[selectedLyricsIndex.end]?.end ?? 0,
+    // )
   }
 }
 
-watch(isPlaying, (isPlaying) => {
-  if (isPlaying) {
-    play()
+// watch(testPageIsPlaying, (isPlaying) => {
+//   if (isPlaying) {
+//     play()
+//   } else {
+//     pause()
+//   }
+// })
+
+const handlePlay = (boo: boolean) => {
+  if (boo) {
+    store.play()
   } else {
-    pause()
+    store.pause()
   }
-})
+}
 
 // ===== 頁面控制邏輯 =====
 const { isModalOpen, title, content, open, confirm, cancel } = useCheckComfirm()
@@ -124,27 +135,45 @@ const canNext = computed(() => {
   return true
 })
 
-watch(step, (newStep) => {
-  if (newStep === 2) {
-    playSegment(
-      currentSong.value?.lyrics[selectedLyricsIndex.start]?.start ?? 0,
-      currentSong.value?.lyrics[selectedLyricsIndex.end]?.end ?? 0,
-    )
-    seekTo(seekTime.value ?? 0)
-  } else {
-    switchIsPlaying(false)
-  }
-})
+// watch(step, (newStep) => {
+//   if (newStep === 2) {
+//     playSegment(
+//       currentSong.value?.lyrics[selectedLyricsIndex.start]?.start ?? 0,
+//       currentSong.value?.lyrics[selectedLyricsIndex.end]?.end ?? 0,
+//     )
+//     seekTo(seekTime.value ?? 0)
+//   } else {
+//     switchTestIsPlaying(false)
+//   }
+// })
 
 onMounted(async () => {
-  await createPlayer('yt-player')
+  // await createPlayer('yt-player')
+  store.setMode('test')
+
+  store.setTestVideoId(videoId.value)
+
+  console.log(store.testVideoId)
 })
 
-onUnmounted(() => {})
+onUnmounted(() => {
+  store.setMode('normal')
+
+  // destroy()
+})
+
+// watch(
+//   () => store.testVideoId,
+//   (id) => {
+//     if (!id) return
+//     console.log(player.value)
+//   },
+//   { immediate: true },
+// )
 </script>
 
 <template>
-  <div class="">
+  <div class="my-6 w-full px-4 md:max-w-[1280px] lg:space-y-0 lg:px-5 xl:px-0">
     <div class="mt-4 mb-5">
       <TestStepProgress :step="step" />
     </div>
@@ -165,10 +194,10 @@ onUnmounted(() => {})
       v-if="currentSong && step === 2"
       :current-song="currentSong"
       :selected="selectedLyricsIndex"
-      :is-playing="isPlaying"
+      :is-playing="true"
       :step="step"
       @set-speed="(speed) => setSpeed(speed)"
-      @set-playing="(boo) => switchIsPlaying(boo)"
+      @set-playing="(boo) => handlePlay(boo)"
       @set-quize-type="(str) => (selectedQuizType = str)"
     />
 
@@ -177,10 +206,10 @@ onUnmounted(() => {})
       v-if="currentSong && step === 3"
       :current-song="currentSong"
       :test-lyrics="selectedLyrics"
-      :is-playing="isPlaying"
+      :is-playing="true"
       :selected-quiz-type="selectedQuizType"
       @play-segment="
-        (e: { start: number; end: number }) => playSegment(e.start, e.end)
+        (e: { start: number; end: number }) => console.log(1)
       "
       @set-answers="(ans) => (userAnswers = ans)"
     />
@@ -191,7 +220,7 @@ onUnmounted(() => {})
       :user-answers="userAnswers"
       :test-lyrics="selectedLyrics"
       @play-segment="
-        (e: { start: number; end: number }) => playSegment(e.start, e.end)
+        (e: { start: number; end: number }) => console.log(1)
       "
     />
 
@@ -211,8 +240,5 @@ onUnmounted(() => {})
       @confirm="confirm"
       @close="cancel"
     />
-
-    <!-- Youtube實體 -->
-    <div id="yt-player" class="hidden" />
   </div>
 </template>

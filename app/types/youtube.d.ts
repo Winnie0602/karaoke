@@ -56,6 +56,7 @@ declare global {
       getAvailablePlaybackRates(): array
       getDuration(): number
       loadVideoById(videoId: string, startSeconds: number): void
+      cueVideoById(videoId: string, startSeconds: number): void
     }
 
     const PlayerState: {

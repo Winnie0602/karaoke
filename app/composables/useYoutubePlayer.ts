@@ -2,6 +2,8 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
   const store = usePlayerStore()
   const player = ref<YT.Player | null>(null)
 
+  const testPageIsPlaying = ref(false)
+
   let rafId: number | null = null
 
   // YouTube API 載入
@@ -9,12 +11,14 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
     return new Promise((resolve) => {
       if (!import.meta.client) return resolve()
 
+      // 如果已經載入完成，直接 resolve
       if (window.YT && window.YT.Player) {
         resolve()
         return
       }
 
       const tag = document.createElement('script')
+      tag.id = 'youtube-sdk'
       tag.src = 'https://www.youtube.com/iframe_api'
       document.body.appendChild(tag)
 
@@ -23,13 +27,12 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
       }
     })
   }
-
   // 播放時間追蹤
   function startTick() {
     if (rafId !== null) return
 
     const tick = () => {
-      if (!store.isPlaying || store.isSeeking) {
+      if ((!store.isPlaying || store.isSeeking) && store.storeMode === 'test') {
         rafId = requestAnimationFrame(tick)
         return
       }
@@ -48,11 +51,29 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
     }
   }
 
+  function setPlaybackRate(rate: number) {
+    player.value?.setPlaybackRate(rate)
+  }
+
   //  換歌（不重建 player）
   watch(videoId, (id) => {
     if (!player.value || !id) return
     player.value.loadVideoById(id, 0)
   })
+
+  // 考試頁面換歌
+  watch(
+    () => store.storeMode,
+    (mode) => {
+      if (!player.value) return
+      if (mode === 'normal' && videoId.value) {
+        player.value.loadVideoById(videoId.value, store.currentTime)
+
+        return
+      }
+      if (store.testVideoId) player.value.loadVideoById(store.testVideoId, 0)
+    },
+  )
 
   // state的速度變數改變時，call youtube API改變速度
   watch(
@@ -159,6 +180,7 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
 
   // 對外控制方法
   function play() {
+    console.log(player.value)
     player.value?.playVideo()
   }
 
@@ -172,14 +194,58 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
     player.value.playVideo()
   }
 
+  function destroy() {
+    clearSegmentTimer()
+    player.value?.destroy()
+    player.value = null
+  }
+
+  let segmentTimer: number | null = null
+
+  function clearSegmentTimer() {
+    if (segmentTimer) {
+      clearInterval(segmentTimer)
+      segmentTimer = null
+    }
+  }
+
+  /** 播放某段時間區間（歌詞逐句播放用） */
+  function playSegment(start: number, end: number) {
+    if (!player.value) return
+    if (start >= end) return
+
+    clearSegmentTimer()
+
+    seekTo(start)
+    play()
+
+    segmentTimer = window.setInterval(() => {
+      const current = player.value?.getCurrentTime() ?? 0
+
+      if (current >= end) {
+        pause()
+        clearSegmentTimer()
+      }
+    }, 100)
+  }
+
+  function switchTestIsPlaying(boo: boolean) {
+    testPageIsPlaying.value = boo
+  }
+
   return {
     // state
     player,
+    testPageIsPlaying,
 
     // methods
     createPlayer,
+    destroy,
     play,
     pause,
     seekTo,
+    playSegment,
+    setPlaybackRate,
+    switchTestIsPlaying,
   }
 }

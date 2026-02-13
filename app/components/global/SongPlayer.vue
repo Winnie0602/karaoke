@@ -7,7 +7,11 @@ const store = usePlayerStore()
 const seekingTime = ref(0)
 
 // 只有 song/[id] 頁顯示影片
-const showVideo = computed(() => route.path.startsWith('/song/'))
+const showVideo = computed(
+  () => store.storeMode === 'normal' && route.path.startsWith('/song/'),
+)
+
+const showPlayer = computed(() => store.storeMode === 'normal')
 
 const { createPlayer, play, pause, seekTo } = useYoutubePlayer(
   toRef(store, 'videoId'),
@@ -48,6 +52,7 @@ watch(
 )
 
 onMounted(() => {
+  store.setMode('normal')
   createPlayer('player')
 })
 </script>
@@ -62,12 +67,13 @@ onMounted(() => {
     </ClientOnly>
 
     <!-- 中間頁面內容 -->
-    <div class="flex-1">
-      <slot />
-    </div>
+    <slot />
 
     <!-- 底部播放器 -->
-    <div class="fixed bottom-0 h-[75px] w-full bg-[#ffe5e5] px-2">
+    <div
+      class="fixed bottom-0 h-[75px] w-full bg-[#ffe5e5] px-2"
+      :class="{ hidden: !showPlayer }"
+    >
       <div class="flex h-full w-full items-center justify-center py-2">
         <div
           class="flex h-full w-full max-w-[1024px] items-center justify-between rounded-xl bg-gradient-to-b from-white to-[#fff0f0] px-2 shadow-lg md:px-3"

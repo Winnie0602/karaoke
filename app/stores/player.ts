@@ -1,9 +1,11 @@
 export const usePlayerStore = defineStore(
   'player',
   () => {
-    const videoId = ref<string | null>(null)
-    const currentTime = ref(0)
-    const duration = ref(0)
+    const storeMode = ref<'test' | 'normal'>('normal')
+    const testVideoId = ref<string | null>(null) // 考試頁面音樂
+    const videoId = ref<string | null>(null) // 一般頁面音樂
+    const currentTime = ref(0) // 一般
+    const duration = ref(0) // 一般
     const isPlaying = ref(false)
     const playbackRate = ref(1) // 影片播放速度
     const availableRates = ref<number[]>([]) //可用的播放速度
@@ -17,6 +19,14 @@ export const usePlayerStore = defineStore(
 
     const songTitle = ref('')
     const songArtist = ref('')
+
+    function setMode(mode: 'test' | 'normal') {
+      storeMode.value = mode
+    }
+
+    function setTestVideoId(id: string) {
+      testVideoId.value = id
+    }
 
     function loadVideo(id: string, time = 0) {
       videoId.value = id
@@ -33,19 +43,26 @@ export const usePlayerStore = defineStore(
     }
 
     function setTime(time: number) {
+      if (storeMode.value === 'test') return
       currentTime.value = time
     }
 
     function setDuration(time: number) {
+      if (storeMode.value === 'test') return
+
       duration.value = time
     }
 
     function setSongInfo(title: string, artist: string) {
+      if (storeMode.value === 'test') return
+
       songTitle.value = title
       songArtist.value = artist
     }
 
     function setPlaybackRate(rate: number) {
+      if (storeMode.value === 'test') return
+
       playbackRate.value = rate
     }
 
@@ -57,7 +74,7 @@ export const usePlayerStore = defineStore(
       volume.value = vol
     }
 
-      function toggleMute() {
+    function toggleMute() {
       if (volume.value === 0) {
         volume.value = lastVolume.value || 60
       } else {
@@ -68,11 +85,15 @@ export const usePlayerStore = defineStore(
 
     // 由歌詞組件呼叫，使影片跳到該段
     function seekToRequest(time: number) {
+      if (storeMode.value === 'test') return
+
       seekToTime.value = time
     }
 
     return {
       // state
+      storeMode,
+      testVideoId,
       videoId,
       currentTime,
       duration,
@@ -88,6 +109,8 @@ export const usePlayerStore = defineStore(
       isSeeking,
 
       // actions
+      setMode,
+      setTestVideoId,
       loadVideo,
       play,
       pause,
@@ -98,12 +121,14 @@ export const usePlayerStore = defineStore(
       setPlaybackRate,
       setAvailableRates,
       setVolume,
-      toggleMute
+      toggleMute,
     }
   },
   {
     persist: {
       pick: [
+        'storeMode',
+        'testVideoId',
         'videoId',
         'currentTime',
         'duration',
