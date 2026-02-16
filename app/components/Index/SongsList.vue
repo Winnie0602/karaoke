@@ -105,66 +105,127 @@ const tabSongs = computed(() => {
     </div>
 
     <!-- Song List -->
-    <div class="mt-3 space-y-3">
+    <div class="mt-3">
+      <div v-if="showType === 'list'" class="space-y-3">
+        <div
+          v-for="song in tabSongs"
+          :key="song.id"
+          class="group flex items-center justify-between rounded-xl border border-[#F9595F]/20 bg-white px-4 py-3 shadow-sm transition hover:bg-[#FFF3F3]"
+        >
+          <!-- Left -->
+          <div class="flex items-center space-x-4">
+            <!-- Thumbnail -->
+            <NuxtLink
+              :to="`/song/${song.id}`"
+              class="relative h-[56px] w-[56px] overflow-hidden rounded-lg"
+            >
+              <img
+                :src="`https://img.youtube.com/vi/${song.id}/mqdefault.jpg`"
+                alt="thumbnail"
+                class="h-full w-full object-cover"
+              />
+
+              <!-- Play Icon -->
+              <div
+                class="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition group-hover:opacity-100"
+              >
+                <div
+                  class="flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-[#F9595F]"
+                >
+                  ▶
+                </div>
+              </div>
+            </NuxtLink>
+
+            <!-- Song Info -->
+            <NuxtLink
+              :to="`/song/${song.id}`"
+              class="flex cursor-pointer flex-col"
+            >
+              <span class="text-lg font-medium text-[#5A3E3E]">
+                {{ song.title }}
+              </span>
+              <span class="mt-1 text-sm text-[#A66B6B]">{{ song.artist }}</span>
+            </NuxtLink>
+          </div>
+
+          <!-- Right -->
+          <div class="flex items-center space-x-1.5">
+            <NuxtLink
+              v-if="song.hasLyrics"
+              :to="`/song/test/${song.id}`"
+              class="flex h-[28px] items-center justify-center rounded-full border border-[#F9595F]/10 bg-[#FFE5E5] px-2.5 text-[10px] font-bold text-[#F9595F] shadow-sm transition hover:bg-[#F9595F] hover:text-white"
+            >
+              TEST!
+            </NuxtLink>
+
+            <a
+              :href="`https://www.youtube.com/watch?v=${song.id}`"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex h-[28px] items-center justify-center rounded-full bg-[#FFE5E5] px-3 shadow-sm transition hover:bg-[#F9595F]/10"
+            >
+              <i class="fa-brands fa-youtube text-lg text-[#F9595F]"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
       <div
-        v-for="song in tabSongs"
-        :key="song.id"
-        class="group flex items-center justify-between rounded-xl border border-[#F9595F]/20 bg-white px-4 py-3 shadow-sm transition hover:bg-[#FFF3F3]"
+        v-else
+        class="grid grid-cols-2 gap-4 px-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
       >
-        <!-- Left -->
-        <div class="flex items-center space-x-4">
-          <!-- Thumbnail -->
+        <div
+          v-for="song in tabSongs"
+          :key="song.id"
+          class="group flex flex-col overflow-hidden rounded-2xl border border-[#F9595F]/10 bg-white shadow-sm transition hover:shadow-md"
+        >
           <NuxtLink
             :to="`/song/${song.id}`"
-            class="relative h-[56px] w-[56px] overflow-hidden rounded-lg"
+            class="relative aspect-video w-full overflow-hidden"
           >
             <img
               :src="`https://img.youtube.com/vi/${song.id}/mqdefault.jpg`"
-              alt="thumbnail"
-              class="h-full w-full object-cover"
+              class="h-full w-full object-cover transition duration-300 group-hover:scale-110"
             />
-
-            <!-- Play Icon -->
             <div
-              class="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition group-hover:opacity-100"
+              class="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition group-hover:opacity-100"
             >
               <div
-                class="flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-[#F9595F]"
+                class="flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#F9595F] shadow-lg"
               >
                 ▶
               </div>
             </div>
           </NuxtLink>
 
-          <!-- Song Info -->
-          <NuxtLink
-            :to="`/song/${song.id}`"
-            class="flex cursor-pointer flex-col"
-          >
-            <span class="text-lg font-medium text-[#5A3E3E]">
+          <div class="flex flex-1 flex-col p-3">
+            <NuxtLink
+              :to="`/song/${song.id}`"
+              class="line-clamp-1 text-base font-bold text-[#5A3E3E] group-hover:text-[#F9595F]"
+            >
               {{ song.title }}
-            </span>
-            <span class="mt-1 text-sm text-[#A66B6B]">{{ song.artist }}</span>
-          </NuxtLink>
-        </div>
+            </NuxtLink>
+            <span class="mt-1 text-xs text-[#A66B6B]">{{ song.artist }}</span>
 
-        <!-- Right -->
-        <div class="flex space-x-1.5">
-          <NuxtLink
-            v-if="song.hasLyrics"
-            :to="`/song/test/${song.id}`"
-            class="flex items-center justify-center rounded-full bg-[#A66B6B] px-1.5 py-1 text-[13px] text-white"
-          >
-            Test!
-          </NuxtLink>
-          <a
-            :href="`https://www.youtube.com/watch?v=${song.id}`"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center rounded-full bg-[#FFE5E5] px-3 py-1 text-xs"
-          >
-            <i class="fa-brands fa-youtube text-lg text-[#F9595F]"></i>
-          </a>
+            <div class="mt-3 flex items-center border-t border-gray-50 pt-3">
+              <NuxtLink v-if="song.hasLyrics" :to="`/song/test/${song.id}`">
+                <div
+                  class="rounded-full border border-[#F9595F]/10 bg-[#FFE5E5] px-2.5 py-0.5 text-[10px] font-bold text-[#F9595F] shadow-sm"
+                >
+                  TEST!
+                </div>
+              </NuxtLink>
+
+              <a
+                :href="`https://www.youtube.com/watch?v=${song.id}`"
+                target="_blank"
+                class="ml-auto text-[#F9595F] transition hover:scale-110"
+              >
+                <i class="fa-brands fa-youtube text-xl"></i>
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </div>

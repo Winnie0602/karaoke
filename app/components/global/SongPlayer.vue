@@ -41,18 +41,7 @@ watch(
   { immediate: true },
 )
 
-// 歌詞被點 -> 影片跳到該行
-watch(
-  () => store.seekToTime,
-  (time) => {
-    if (time == null) return
-    seekTo(time)
-    store.seekToTime = null // consume
-  },
-)
-
 onMounted(() => {
-  store.setMode('normal')
   createPlayer('player')
 })
 </script>

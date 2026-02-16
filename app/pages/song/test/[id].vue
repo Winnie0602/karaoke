@@ -16,22 +16,14 @@ const router = useRouter()
 
 const videoId = computed(() => route.params.id as string)
 
+store.setMode('test')
+store.setTestVideoId(videoId.value)
+store.setPlaybackRate(1)
+
 // 該歌詞
 const { data: currentSong, pending } = await useFetch<SongData | null>(
   `/api/song/${videoId.value}`,
 )
-// console.log(videoId.value)
-// const {
-//   createPlayer,
-//   play,
-//   player,
-//   pause,
-//   seekTo,
-//   setPlaybackRate,
-//   playSegment,
-//   testPageIsPlaying,
-//   switchTestIsPlaying,
-// } = useYoutubePlayer(toRef(store, 'testVideoId'))
 
 // 目前在第幾步驟
 const step = ref<1 | 2 | 3 | 4>(1)
@@ -69,22 +61,13 @@ const seekTime = computed(() => {
 const setSpeed = (speed: number) => {
   const startIndex = selectedLyricsIndex.start
   if (currentSong.value && startIndex >= 0) {
-    // setPlaybackRate(speed)
-
-    // playSegment(
-    //   currentSong.value?.lyrics[selectedLyricsIndex.start]?.start ?? 0,
-    //   currentSong.value?.lyrics[selectedLyricsIndex.end]?.end ?? 0,
-    // )
+    store.setPlaybackRate(speed)
+    store.playSegmentRequest(
+      currentSong.value?.lyrics[selectedLyricsIndex.start]?.start ?? 0,
+      currentSong.value?.lyrics[selectedLyricsIndex.end]?.end ?? 0,
+    )
   }
 }
-
-// watch(testPageIsPlaying, (isPlaying) => {
-//   if (isPlaying) {
-//     play()
-//   } else {
-//     pause()
-//   }
-// })
 
 const handlePlay = (boo: boolean) => {
   if (boo) {
@@ -135,41 +118,23 @@ const canNext = computed(() => {
   return true
 })
 
-// watch(step, (newStep) => {
-//   if (newStep === 2) {
-//     playSegment(
-//       currentSong.value?.lyrics[selectedLyricsIndex.start]?.start ?? 0,
-//       currentSong.value?.lyrics[selectedLyricsIndex.end]?.end ?? 0,
-//     )
-//     seekTo(seekTime.value ?? 0)
-//   } else {
-//     switchTestIsPlaying(false)
-//   }
-// })
-
-onMounted(async () => {
-  // await createPlayer('yt-player')
-  store.setMode('test')
-
-  store.setTestVideoId(videoId.value)
-
-  console.log(store.testVideoId)
+watch(step, (newStep) => {
+  if (newStep === 2) {
+    store.playSegmentRequest(
+      currentSong.value?.lyrics[selectedLyricsIndex.start]?.start ?? 0,
+      currentSong.value?.lyrics[selectedLyricsIndex.end]?.end ?? 0,
+    )
+    store.seekToRequest(seekTime.value ?? 0)
+  } else if (newStep === 4) {
+    store.setPlaybackRate(1)
+  } else {
+    store.isPlaying = false
+  }
 })
 
 onUnmounted(() => {
   store.setMode('normal')
-
-  // destroy()
 })
-
-// watch(
-//   () => store.testVideoId,
-//   (id) => {
-//     if (!id) return
-//     console.log(player.value)
-//   },
-//   { immediate: true },
-// )
 </script>
 
 <template>
@@ -194,7 +159,7 @@ onUnmounted(() => {
       v-if="currentSong && step === 2"
       :current-song="currentSong"
       :selected="selectedLyricsIndex"
-      :is-playing="true"
+      :is-playing="store.isPlaying"
       :step="step"
       @set-speed="(speed) => setSpeed(speed)"
       @set-playing="(boo) => handlePlay(boo)"
@@ -206,10 +171,11 @@ onUnmounted(() => {
       v-if="currentSong && step === 3"
       :current-song="currentSong"
       :test-lyrics="selectedLyrics"
-      :is-playing="true"
+      :is-playing="store.isPlaying"
       :selected-quiz-type="selectedQuizType"
       @play-segment="
-        (e: { start: number; end: number }) => console.log(1)
+        (e: { start: number; end: number }) =>
+          store.playSegmentRequest(e.start, e.end)
       "
       @set-answers="(ans) => (userAnswers = ans)"
     />
@@ -220,7 +186,8 @@ onUnmounted(() => {
       :user-answers="userAnswers"
       :test-lyrics="selectedLyrics"
       @play-segment="
-        (e: { start: number; end: number }) => console.log(1)
+        (e: { start: number; end: number }) =>
+          store.playSegmentRequest(e.start, e.end)
       "
     />
 

@@ -2,12 +2,27 @@ export const usePlayerStore = defineStore(
   'player',
   () => {
     const storeMode = ref<'test' | 'normal'>('normal')
-    const testVideoId = ref<string | null>(null) // 考試頁面音樂
+
+    const test_videoId = ref<string | null>(null) // 考試頁面音樂
     const videoId = ref<string | null>(null) // 一般頁面音樂
+
     const currentTime = ref(0) // 一般
+    const test_currentTime = ref(0)
+
     const duration = ref(0) // 一般
+
     const isPlaying = ref(false)
+
+    // 播放速度
     const playbackRate = ref(1) // 影片播放速度
+    const test_playbackRate = ref(1) // 考試頁面影片播放速度
+
+    const finalPlaybackRate = computed(() => {
+      return storeMode.value === 'test'
+        ? test_playbackRate.value
+        : playbackRate.value
+    })
+
     const availableRates = ref<number[]>([]) //可用的播放速度
 
     const volume = ref(100)
@@ -25,7 +40,7 @@ export const usePlayerStore = defineStore(
     }
 
     function setTestVideoId(id: string) {
-      testVideoId.value = id
+      test_videoId.value = id
     }
 
     function loadVideo(id: string, time = 0) {
@@ -43,30 +58,31 @@ export const usePlayerStore = defineStore(
     }
 
     function setTime(time: number) {
-      if (storeMode.value === 'test') return
-      currentTime.value = time
+      if (storeMode.value === 'test') {
+        test_currentTime.value = time
+      } else {
+        currentTime.value = time
+      }
     }
 
     function setDuration(time: number) {
-      if (storeMode.value === 'test') return
-
       duration.value = time
     }
 
     function setSongInfo(title: string, artist: string) {
-      if (storeMode.value === 'test') return
-
       songTitle.value = title
       songArtist.value = artist
     }
 
     function setPlaybackRate(rate: number) {
-      if (storeMode.value === 'test') return
-
-      playbackRate.value = rate
+      if (storeMode.value === 'test') {
+        test_playbackRate.value = rate
+      } else {
+        playbackRate.value = rate
+      }
     }
 
-    function setAvailableRates(rates: []) {
+    function setAvailableRates(rates: number[]) {
       availableRates.value = rates
     }
 
@@ -85,20 +101,38 @@ export const usePlayerStore = defineStore(
 
     // 由歌詞組件呼叫，使影片跳到該段
     function seekToRequest(time: number) {
-      if (storeMode.value === 'test') return
-
       seekToTime.value = time
+    }
+
+    // 播放某段時間區間
+    const segmentRequest = ref<{
+      start: number
+      end: number
+      id: number
+    } | null>(null)
+
+    let segmentRequestId = 0
+
+    function playSegmentRequest(start: number, end: number) {
+      segmentRequestId++
+      segmentRequest.value = {
+        start,
+        end,
+        id: segmentRequestId,
+      }
     }
 
     return {
       // state
       storeMode,
-      testVideoId,
+      test_videoId,
       videoId,
       currentTime,
       duration,
       isPlaying,
       playbackRate,
+      test_playbackRate,
+      finalPlaybackRate,
       availableRates,
       volume,
       lastVolume,
@@ -107,6 +141,7 @@ export const usePlayerStore = defineStore(
       songArtist,
       seekToTime,
       isSeeking,
+      segmentRequest,
 
       // actions
       setMode,
@@ -122,17 +157,19 @@ export const usePlayerStore = defineStore(
       setAvailableRates,
       setVolume,
       toggleMute,
+      playSegmentRequest,
     }
   },
   {
     persist: {
       pick: [
-        'storeMode',
-        'testVideoId',
         'videoId',
         'currentTime',
         'duration',
         'isPlaying',
+        'volume',
+        'playbackRate',
+        'test_playbackRate',
         'songTitle',
         'songArtist',
       ],

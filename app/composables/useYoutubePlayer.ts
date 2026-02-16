@@ -2,8 +2,6 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
   const store = usePlayerStore()
   const player = ref<YT.Player | null>(null)
 
-  const testPageIsPlaying = ref(false)
-
   let rafId: number | null = null
 
   // YouTube API 載入
@@ -32,12 +30,19 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
     if (rafId !== null) return
 
     const tick = () => {
-      if ((!store.isPlaying || store.isSeeking) && store.storeMode === 'test') {
+      if (!store.isPlaying || store.isSeeking) {
         rafId = requestAnimationFrame(tick)
         return
       }
 
-      store.setTime(player.value?.getCurrentTime() ?? 0)
+      const time = player.value?.getCurrentTime() ?? 0
+
+      if (store.storeMode === 'test') {
+        store.setTime(time)
+      } else {
+        store.setTime(time)
+      }
+
       rafId = requestAnimationFrame(tick)
     }
 
@@ -55,37 +60,46 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
     player.value?.setPlaybackRate(rate)
   }
 
+  function setTestPlaybackRate(rate: number) {
+    player.value?.setPlaybackRate(rate)
+  }
+
   //  換歌（不重建 player）
   watch(videoId, (id) => {
     if (!player.value || !id) return
+
     player.value.loadVideoById(id, 0)
   })
 
-  // 考試頁面換歌
+  // 更換模式時
   watch(
     () => store.storeMode,
     (mode) => {
       if (!player.value) return
+      // 一般頁面
       if (mode === 'normal' && videoId.value) {
         player.value.loadVideoById(videoId.value, store.currentTime)
-
-        return
+        player.value.setVolume(store.volume)
+      } else if (mode === 'test' && store.test_videoId) {
+        player.value.cueVideoById(store.test_videoId, 0)
+        setTimeout(() => player.value?.setVolume(100), 500)
       }
-      if (store.testVideoId) player.value.loadVideoById(store.testVideoId, 0)
     },
   )
 
   // state的速度變數改變時，call youtube API改變速度
   watch(
-    () => store.playbackRate,
+    () => store.finalPlaybackRate,
     (rate) => {
       if (!player.value) return
 
       const current = player.value.getPlaybackRate()
+
       if (current !== rate) {
         player.value.setPlaybackRate(rate)
       }
     },
+    { immediate: true },
   )
 
   // state isPlayinge改變時，call youtube API暫停/播放
@@ -119,16 +133,33 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
     },
   )
 
+  // 歌詞被點 -> 影片跳到該行
+  watch(
+    () => store.seekToTime,
+    (time) => {
+      if (time == null) return
+      seekTo(time)
+      store.seekToTime = null
+    },
+  )
+
   // 建立播放器
   async function createPlayer(elementId: string) {
     if (!import.meta.client) return
     if (player.value) return
     if (!videoId.value) return
 
+    const initialId =
+      store.storeMode === 'test'
+        ? store.test_videoId || videoId.value
+        : videoId.value
+
+    if (!initialId) return
+
     await loadYoutubeAPI()
 
     player.value = new YT.Player(elementId, {
-      videoId: videoId.value,
+      videoId: initialId,
       playerVars: {
         playsinline: 1,
       },
@@ -139,20 +170,18 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
           if (store.currentTime > 0) {
             player.value!.seekTo(store.currentTime, true)
           }
-
-          // 取得目前影片速度
-          const rate = player.value!.getPlaybackRate()
-
-          store.setPlaybackRate(rate)
-
-          // 將目前音量設至store
-          const vol = player.value!.getVolume()
-
-          store.setVolume(vol)
-
           // 取得可用影片速度
           const rates = player.value!.getAvailablePlaybackRates()
           store.setAvailableRates(rates)
+
+          if (store.finalPlaybackRate !== 1) {
+            player.value?.setPlaybackRate(store.finalPlaybackRate)
+          }
+
+          // 音量設定
+          if (store.volume !== 100) {
+            player.value?.setVolume(store.volume)
+          }
 
           if (store.isPlaying) {
             player.value!.playVideo()
@@ -180,7 +209,6 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
 
   // 對外控制方法
   function play() {
-    console.log(player.value)
     player.value?.playVideo()
   }
 
@@ -188,6 +216,7 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
     player.value?.pauseVideo()
   }
 
+  // 跳到該片段(無結束點)
   function seekTo(time: number) {
     if (!player.value) return
     player.value.seekTo(time, true)
@@ -209,6 +238,14 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
     }
   }
 
+  watch(
+    () => store.segmentRequest,
+    (seg) => {
+      if (!seg) return
+      playSegment(seg.start, seg.end)
+    },
+  )
+
   /** 播放某段時間區間（歌詞逐句播放用） */
   function playSegment(start: number, end: number) {
     if (!player.value) return
@@ -229,14 +266,9 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
     }, 100)
   }
 
-  function switchTestIsPlaying(boo: boolean) {
-    testPageIsPlaying.value = boo
-  }
-
   return {
     // state
     player,
-    testPageIsPlaying,
 
     // methods
     createPlayer,
@@ -246,6 +278,6 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
     seekTo,
     playSegment,
     setPlaybackRate,
-    switchTestIsPlaying,
+    setTestPlaybackRate,
   }
 }
