@@ -51,98 +51,77 @@ const wordWithComparison = (lyric: LyricData, answerIndex: number) => {
 </script>
 
 <template>
-  <div
-    class="hide-scroll flex h-[calc(100vh-190px)] flex-col overflow-y-auto rounded-xl border-[1px] border-[#B58C8C]/40 bg-white shadow-sm md:h-[calc(100vh-210px)]"
-  >
-    <div
-      class="sticky top-0 z-20 flex h-10 shrink-0 items-center bg-[#B58C8C]/20 px-4 backdrop-blur-md"
-    >
-      <div class="flex items-center space-x-1.5">
-        <div class="h-2.5 w-2.5 rounded-full bg-[#FF5F57]"></div>
-        <div class="h-2.5 w-2.5 rounded-full bg-[#FFBD2E]"></div>
-        <div class="h-2.5 w-2.5 rounded-full bg-[#28C840]"></div>
-        <span class="ml-4 text-[11px] font-bold tracking-widest text-[#7A3A3A]">
-          REVIEW_MODE
-        </span>
-      </div>
-    </div>
-
-    <div class="flex flex-col items-center p-4 md:p-10">
-      <div class="w-full max-w-5xl space-y-12">
-        <div
-          v-for="(lyric, index) in testLyrics"
-          :key="index"
-          class="group relative border-b border-[#B58C8C]/20 pb-12 last:border-0"
+  <div class="flex flex-col items-center p-4 md:p-10">
+    <div class="w-full max-w-5xl space-y-12">
+      <div
+        v-for="(lyric, index) in testLyrics"
+        :key="index"
+        class="group relative border-b border-[#B58C8C]/20 pb-12 last:border-0"
+      >
+        <button
+          class="absolute top-10 -left-2 flex h-10 w-10 items-center justify-center rounded-full bg-[#FFE5E5] text-[#F9595F] transition-all hover:bg-[#F9595F] hover:text-white active:scale-90 md:h-12 md:w-12"
+          @click="emit('playSegment', { start: lyric.start, end: lyric.end })"
         >
-          <button
-            class="absolute top-10 -left-2 flex h-10 w-10 items-center justify-center rounded-full bg-[#FFE5E5] text-[#F9595F] transition-all hover:bg-[#F9595F] hover:text-white active:scale-90 md:h-12 md:w-12"
-            @click="emit('playSegment', { start: lyric.start, end: lyric.end })"
-          >
-            <i class="fa-solid fa-play ml-0.5 text-xs"></i>
-          </button>
+          <i class="fa-solid fa-play ml-0.5 text-xs"></i>
+        </button>
 
-          <div v-if="userAnswers[index]" class="pl-12 md:pl-16">
-            <div class="flex flex-wrap items-end gap-x-3 gap-y-5 md:gap-x-5">
-              <div
-                v-for="(word, wIdx) in wordWithComparison(lyric, index)"
-                :key="wIdx"
-                class="flex flex-col items-center"
+        <div v-if="userAnswers[index]" class="pl-12 md:pl-16">
+          <div class="flex flex-wrap items-end gap-x-3 gap-y-5 md:gap-x-5">
+            <div
+              v-for="(word, wIdx) in wordWithComparison(lyric, index)"
+              :key="wIdx"
+              class="flex flex-col items-center"
+            >
+              <span class="text-[10px] font-medium text-[#A66B6B] md:text-xs">
+                {{ word.reading || '' }}
+              </span>
+              <span
+                class="text-2xl font-black md:text-4xl"
+                :class="word.isWrong ? 'text-[#F9595F]' : 'text-[#7A3A3A]'"
               >
-                <span class="text-[10px] font-medium text-[#A66B6B] md:text-xs">
-                  {{ word.reading || '' }}
-                </span>
-                <span
-                  class="text-2xl font-black md:text-4xl"
-                  :class="word.isWrong ? 'text-[#F9595F]' : 'text-[#7A3A3A]'"
-                >
-                  {{ word.surface }}
-                </span>
+                {{ word.surface }}
+              </span>
+            </div>
+          </div>
+
+          <p class="mt-4 text-sm font-bold text-[#A66B6B] md:text-lg">
+            {{ lyric.zh }}
+          </p>
+
+          <div class="mt-6 space-y-2 rounded-lg bg-[#FFE5E5]/20 p-4 md:p-6">
+            <div class="flex items-center space-x-4">
+              <span class="w-12 shrink-0 text-[10px] font-black text-[#B58C8C]">
+                正解
+              </span>
+              <div class="flex flex-wrap gap-x-0.5 text-base md:text-xl">
+                {{ userAnswers[index]?.cAnswer }}
               </div>
             </div>
 
-            <p class="mt-4 text-sm font-bold text-[#A66B6B] md:text-lg">
-              {{ lyric.zh }}
-            </p>
-
-            <div class="mt-6 space-y-2 rounded-lg bg-[#FFE5E5]/20 p-4 md:p-6">
-              <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-4">
+              <span class="w-12 shrink-0 text-[10px] font-black text-[#F9595F]">
+                回答
+              </span>
+              <div class="flex flex-wrap gap-x-0.5">
                 <span
-                  class="w-12 shrink-0 text-[10px] font-black text-[#B58C8C]"
+                  v-for="(uAns, i) in userAnswers[index].uAnswer"
+                  :key="i"
+                  class="text-base font-black whitespace-pre md:text-xl"
+                  :class="
+                    uAns !== userAnswers[index].cAnswer[i]
+                      ? 'text-[#F9595F] underline underline-offset-4'
+                      : 'text-[#7A3A3A]/40'
+                  "
                 >
-                  正解
+                  {{ uAns }}
                 </span>
-                <div class="flex flex-wrap gap-x-0.5 text-base md:text-xl">
-                  {{ userAnswers[index]?.cAnswer }}
-                </div>
-              </div>
-
-              <div class="flex items-center space-x-4">
-                <span
-                  class="w-12 shrink-0 text-[10px] font-black text-[#F9595F]"
-                >
-                  回答
-                </span>
-                <div class="flex flex-wrap gap-x-0.5">
-                  <span
-                    v-for="(uAns, i) in userAnswers[index].uAnswer"
-                    :key="i"
-                    class="text-base font-black whitespace-pre md:text-xl"
-                    :class="
-                      uAns !== userAnswers[index].cAnswer[i]
-                        ? 'text-[#F9595F] underline underline-offset-4'
-                        : 'text-[#7A3A3A]/40'
-                    "
-                  >
-                    {{ uAns }}
-                  </span>
-                </div>
               </div>
             </div>
           </div>
         </div>
-
-        <div class="h-10"></div>
       </div>
+
+      <div class="h-10"></div>
     </div>
   </div>
 </template>

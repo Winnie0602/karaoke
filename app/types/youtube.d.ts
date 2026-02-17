@@ -29,6 +29,7 @@ declare global {
     interface PlayerEvents {
       onReady?: (event: PlayerEvent) => void
       onStateChange?: (event: OnStateChangeEvent) => void
+      onError?: (event: OnErrorEvent) => void
     }
 
     interface PlayerEvent {
@@ -38,6 +39,10 @@ declare global {
     interface OnStateChangeEvent {
       data: number
       target: Player
+    }
+
+    interface OnErrorEvent extends YT.PlayerEvent {
+      data: number
     }
 
     class Player {

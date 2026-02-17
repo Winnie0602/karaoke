@@ -12,6 +12,14 @@ const { data: currentSong, pending } = await useFetch<SongData | null>(
   `/api/song/${videoId.value}`,
 )
 
+if (!currentSong.value && !pending.value) {
+  throw createError({
+    statusCode: 404,
+    statusMessage: 'Not Found',
+    message: '找不到這首歌曲，請檢查網址是否正確。',
+  })
+}
+
 const { data: songList } = await useFetch<SongsList[]>('/api/list/songs')
 
 const songData = computed(() => {
@@ -71,7 +79,7 @@ watch(
         Recommended Songs
       </div>
 
-      <div class="space-y-2">
+      <div class="mb-20 space-y-2">
         <ClientOnly>
           <VideoCard
             v-for="song in songData.randomSongs"

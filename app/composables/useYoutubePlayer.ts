@@ -203,6 +203,16 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
             stopTick()
           }
         },
+        onError: (event) => {
+          console.error('YT Error', event.data)
+
+          if ([100, 101, 150, 2, 5].includes(event.data)) {
+            showError({
+              statusCode: 404,
+              statusMessage: '影片不存在或無法播放',
+            })
+          }
+        },
       },
     })
   }

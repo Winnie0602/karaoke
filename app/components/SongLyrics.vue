@@ -180,6 +180,7 @@ watch(currentLineIndex, (newLineIndex) => {
     <BottomPanel
       :open="isPanelOpen"
       :word="tatoebaWord"
+      :song-lang="songLang"
       @close="isPanelOpen = false"
     />
   </div>

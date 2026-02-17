@@ -47,7 +47,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex min-h-screen flex-col">
+  <div class="flex h-screen flex-col overflow-hidden">
     <!--  影片（只有需要時才顯示） -->
     <ClientOnly>
       <div :class="{ hidden: !showVideo }">
@@ -56,7 +56,9 @@ onMounted(() => {
     </ClientOnly>
 
     <!-- 中間頁面內容 -->
-    <slot />
+    <main class="relative flex-1 overflow-y-auto bg-[#FFF9F9]">
+      <slot />
+    </main>
 
     <!-- 底部播放器 -->
     <div

@@ -1,30 +1,37 @@
 import { readFile } from 'fs/promises'
 import { join } from 'path'
+import { createError } from 'h3'
 
 export default defineEventHandler(async (event) => {
   const id = getRouterParam(event, 'id')
-  if (!id) return null
+  if (!id) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Missing id',
+    })
+  }
 
   const filePath = join(process.cwd(), 'server/data/songs', `${id}.json`)
 
   try {
     const json = await readFile(filePath, 'utf-8')
     return JSON.parse(json)
-  } catch (err) {
+  } catch (err: unknown) {
     if (
       typeof err === 'object' &&
       err !== null &&
       'code' in err &&
-      err.code === 'ENOENT'
+      (err as { code?: string }).code === 'ENOENT'
     ) {
-      return {
-        id,
-        title: '',
-        artist: '',
-        lyrics: [],
-      }
+      throw createError({
+        statusCode: 404,
+        statusMessage: 'Song not found',
+      })
     }
 
-    throw err
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Server error',
+    })
   }
 })
