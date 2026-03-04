@@ -3,16 +3,16 @@ const isOpen = ref(false)
 </script>
 
 <template>
-  <div class="font-medium tracking-wide">
+  <div class="fixed top-0 z-50 w-full font-medium tracking-wide">
     <nav
-      class="relative z-50 flex h-14 items-center border-b border-gray-200 bg-white px-4"
+      class="relative] flex h-14 items-center border-b border-gray-200 bg-white px-4"
     >
       <!-- Logo -->
       <NuxtLink
         class="text-lg font-semibold tracking-wide text-gray-900"
         to="/"
       >
-        カラオケ 〜 
+        カラオケ 〜
         <span class="ml-1 text-[#F9595F]">♪</span>
       </NuxtLink>
 
@@ -23,15 +23,15 @@ const isOpen = ref(false)
         @click="isOpen = !isOpen"
       >
         <span
-          class="absolute left-0 top-1/2 h-0.5 w-6 bg-gray-800 transition-all duration-300"
+          class="absolute top-1/2 left-0 h-0.5 w-6 bg-gray-800 transition-all duration-300"
           :class="isOpen ? 'rotate-45' : '-translate-y-2'"
         />
         <span
-          class="absolute left-0 top-1/2 h-0.5 w-6 bg-gray-800 transition-all duration-300"
+          class="absolute top-1/2 left-0 h-0.5 w-6 bg-gray-800 transition-all duration-300"
           :class="isOpen ? 'opacity-0' : 'opacity-100'"
         />
         <span
-          class="absolute left-0 top-1/2 h-0.5 w-6 bg-gray-800 transition-all duration-300"
+          class="absolute top-1/2 left-0 h-0.5 w-6 bg-gray-800 transition-all duration-300"
           :class="isOpen ? '-rotate-45' : 'translate-y-2'"
         />
       </button>
