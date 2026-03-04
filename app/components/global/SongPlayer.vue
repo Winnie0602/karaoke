@@ -66,13 +66,15 @@ onMounted(() => {
     </ClientOnly>
 
     <!-- 中間頁面內容 -->
-    <main class="relative flex-1 overflow-y-auto bg-[#FFF9F9]">
+    <main
+      class="relative mb-[65px] flex-1 overflow-y-auto bg-[#FFF9F9] md:mb-[75px]"
+    >
       <slot />
     </main>
 
     <!-- 底部播放器 -->
     <div
-      class="fixed bottom-0 h-[60px] w-full bg-[#ffe5e5] px-2 md:h-[75px]"
+      class="fixed bottom-0 h-[65px] w-full bg-[#ffe5e5] px-2 md:h-[75px]"
       :class="{ hidden: !showPlayer }"
     >
       <div class="flex h-full w-full items-center justify-center py-2">

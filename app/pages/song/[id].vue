@@ -79,7 +79,7 @@ watch(
         Recommended Songs
       </div>
 
-      <div class="mb-20 space-y-2">
+      <div class="space-y-2">
         <ClientOnly>
           <VideoCard
             v-for="song in songData.randomSongs"

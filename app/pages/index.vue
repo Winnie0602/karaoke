@@ -27,16 +27,18 @@ const filteredSongs = computed(() => {
     <IndexTopCarousel :songs="songs ?? []" />
 
     <div
-      class="mx-auto my-4 w-full space-y-8 px-4 md:my-8 md:max-w-[1280px] md:px-8"
+      class="mx-auto my-4 w-full space-y-5 px-4 md:my-8 md:max-w-[1280px] md:space-y-8 md:px-8"
     >
-      <div class="flex h-[50px] w-full items-center gap-3 rounded-full">
+      <div
+        class="flex h-[35px] w-full items-center gap-3 rounded-full md:h-[50px]"
+      >
         <i class="fa-solid fa-magnifying-glass text-lg text-[#F9595F]"></i>
 
         <input
           v-model="searchQuery"
           type="text"
           placeholder="Search ..."
-          class="text-md h-full w-full rounded-xl border-4 border-[#FFE5E5] bg-white px-4 text-gray-700 transition-colors outline-none placeholder:text-gray-400 focus:border-[#F9595F]/30"
+          class="md:text-md h-full w-full rounded-xl border-4 border-[#FFE5E5] bg-white px-4 text-sm text-gray-700 transition-colors outline-none placeholder:text-gray-400 focus:border-[#F9595F]/30"
         />
 
         <button

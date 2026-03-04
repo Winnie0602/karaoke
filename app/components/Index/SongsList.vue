@@ -58,10 +58,10 @@ const tabSongs = computed(() => {
       </div>
     </div>
 
-    <div class="mt-2 flex w-full justify-end px-3">
+    <div class="mt-2 flex w-full justify-end md:px-3">
       <div class="grid grid-cols-2 rounded-xl border-[4px] border-[#FFE5E5]">
         <div
-          class="cursor-pointer px-2"
+          class="cursor-pointer px-1 md:px-2"
           :class="{ 'bg-[#FFE5E5]': showType === 'list' }"
           @click="showType = 'list'"
         >
@@ -82,7 +82,7 @@ const tabSongs = computed(() => {
         </div>
 
         <div
-          class="cursor-pointer px-2"
+          class="cursor-pointer px-1 md:px-2"
           :class="{ 'bg-[#FFE5E5]': showType === 'grid' }"
           @click="showType = 'grid'"
         >
@@ -106,11 +106,12 @@ const tabSongs = computed(() => {
 
     <!-- Song List -->
     <div class="mt-3">
+      <!-- 條列式 -->
       <div v-if="showType === 'list'" class="space-y-3">
         <div
           v-for="song in tabSongs"
           :key="song.id"
-          class="group flex items-center justify-between rounded-xl border border-[#F9595F]/20 bg-white px-4 py-3 shadow-sm transition hover:bg-[#FFF3F3]"
+          class="group flex items-center justify-between rounded-xl border border-[#F9595F]/20 bg-white px-2 py-3 shadow-sm transition hover:bg-[#FFF3F3] md:px-4"
         >
           <!-- Left -->
           <div class="flex items-center space-x-4">
@@ -142,10 +143,12 @@ const tabSongs = computed(() => {
               :to="`/song/${song.id}`"
               class="flex cursor-pointer flex-col"
             >
-              <span class="text-lg font-medium text-[#5A3E3E]">
+              <span class="text-sm font-medium text-[#5A3E3E] md:text-lg">
                 {{ song.title }}
               </span>
-              <span class="mt-1 text-sm text-[#A66B6B]">{{ song.artist }}</span>
+              <span class="mt-1 text-xs text-[#A66B6B] md:text-sm">
+                {{ song.artist }}
+              </span>
             </NuxtLink>
           </div>
 
@@ -154,7 +157,7 @@ const tabSongs = computed(() => {
             <NuxtLink
               v-if="song.hasLyrics"
               :to="`/song/test/${song.id}`"
-              class="flex h-[28px] items-center justify-center rounded-full border border-[#F9595F]/10 bg-[#FFE5E5] px-2.5 text-[10px] font-bold text-[#F9595F] shadow-sm transition hover:bg-[#F9595F] hover:text-white"
+              class="flex h-[28px] items-center justify-center rounded-full border border-[#F9595F]/10 bg-[#FFE5E5] px-1.5 text-[10px] font-bold text-[#F9595F] shadow-sm transition hover:bg-[#F9595F] hover:text-white md:px-2.5"
             >
               TEST!
             </NuxtLink>
@@ -163,7 +166,7 @@ const tabSongs = computed(() => {
               :href="`https://www.youtube.com/watch?v=${song.id}`"
               target="_blank"
               rel="noopener noreferrer"
-              class="flex h-[28px] items-center justify-center rounded-full bg-[#FFE5E5] px-3 shadow-sm transition hover:bg-[#F9595F]/10"
+              class="flex h-[28px] items-center justify-center rounded-full bg-[#FFE5E5] px-2 shadow-sm transition hover:bg-[#F9595F]/10 md:px-3"
             >
               <i class="fa-brands fa-youtube text-lg text-[#F9595F]"></i>
             </a>
@@ -171,6 +174,7 @@ const tabSongs = computed(() => {
         </div>
       </div>
 
+      <!-- 卡片式 -->
       <div
         v-else
         class="grid grid-cols-2 gap-4 px-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
@@ -202,19 +206,21 @@ const tabSongs = computed(() => {
           <div class="flex flex-1 flex-col p-3">
             <NuxtLink
               :to="`/song/${song.id}`"
-              class="line-clamp-1 text-base font-bold text-[#5A3E3E] group-hover:text-[#F9595F]"
+              class="line-clamp-1 text-sm font-medium text-[#5A3E3E] group-hover:text-[#F9595F] md:text-lg"
             >
               {{ song.title }}
             </NuxtLink>
-            <span class="mt-1 text-xs text-[#A66B6B]">{{ song.artist }}</span>
+            <span class="mt-1 text-xs text-[#A66B6B] md:text-sm">
+              {{ song.artist }}
+            </span>
 
             <div class="mt-3 flex items-center border-t border-gray-50 pt-3">
-              <NuxtLink v-if="song.hasLyrics" :to="`/song/test/${song.id}`">
-                <div
-                  class="rounded-full border border-[#F9595F]/10 bg-[#FFE5E5] px-2.5 py-0.5 text-[10px] font-bold text-[#F9595F] shadow-sm"
-                >
-                  TEST!
-                </div>
+              <NuxtLink
+                v-if="song.hasLyrics"
+                :to="`/song/test/${song.id}`"
+                class="flex h-6 items-center justify-center rounded-full border border-[#F9595F]/10 bg-[#FFE5E5] px-1.5 text-[10px] font-bold text-[#F9595F] shadow-sm transition hover:bg-[#F9595F] hover:text-white md:px-2.5"
+              >
+                TEST!
               </NuxtLink>
 
               <a
