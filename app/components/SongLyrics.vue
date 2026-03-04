@@ -99,14 +99,14 @@ watch(currentLineIndex, (newLineIndex) => {
     class="hide-scroll relative h-[420px] space-y-3 overflow-y-scroll rounded-md border-[1px] border-gray-300 md:h-[640px]"
   >
     <div
-      class="sticky top-0 z-10 flex h-[30px] w-full items-center bg-[#e6ebf1] pl-3"
+      class="sticky top-0 z-10 flex h-[24px] w-full items-center bg-[#e6ebf1] pl-3 md:h-[30px]"
     >
       <div class="flex items-center space-x-1.5">
         <div class="h-3 w-3 rounded-full bg-[#FF5F57]"></div>
         <div class="h-3 w-3 rounded-full bg-[#FFBD2E]"></div>
         <div class="h-3 w-3 rounded-full bg-[#28C840]"></div>
 
-        <div class="relative top-[1px] text-sm text-stone-800">
+        <div class="relative top-[1px] text-xs text-stone-800 md:text-sm">
           {{ songData.artist }} - {{ songData.title }}
         </div>
       </div>
@@ -116,7 +116,7 @@ watch(currentLineIndex, (newLineIndex) => {
       v-for="(lyric, index) in lyrics"
       :key="lyric.start"
       :ref="(el) => (lyricsRefs[index] = el as HTMLElement)"
-      class="relative flex items-center justify-between px-3 py-2 text-sm md:text-base"
+      class="relative flex items-center justify-between px-3 text-sm md:text-base"
       :class="{ 'current-lyric': index === currentLineIndex }"
     >
       <div class="flex flex-col">
@@ -139,7 +139,7 @@ watch(currentLineIndex, (newLineIndex) => {
                 <ruby v-if="word.reading">
                   {{ word.surface }}
                   <rt
-                    class="text-xs text-gray-600 transition-opacity group-hover:opacity-20"
+                    class="text-[11px] text-gray-600 transition-opacity group-hover:opacity-20"
                   >
                     {{ word.reading }}
                   </rt>
@@ -165,7 +165,9 @@ watch(currentLineIndex, (newLineIndex) => {
           </span>
         </span>
 
-        <span class="text-[13px] text-gray-700">{{ lyric.zh }}</span>
+        <span class="text-[11px] text-gray-700 md:text-[13px]">
+          {{ lyric.zh }}
+        </span>
       </div>
 
       <div

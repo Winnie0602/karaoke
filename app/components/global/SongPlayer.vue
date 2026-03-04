@@ -6,6 +6,8 @@ const store = usePlayerStore()
 
 const seekingTime = ref(0)
 
+const isVideoCollapsed = ref(false)
+
 // 只有 song/[id] 頁顯示影片
 const showVideo = computed(
   () => store.storeMode === 'normal' && route.path.startsWith('/song/'),
@@ -50,8 +52,16 @@ onMounted(() => {
   <div class="flex h-screen flex-col overflow-hidden">
     <!--  影片（只有需要時才顯示） -->
     <ClientOnly>
-      <div :class="{ hidden: !showVideo }">
-        <div id="player" class="aspect-video w-full bg-black" />
+      <div
+        :class="[
+          { hidden: !showVideo || isVideoCollapsed },
+          'flex-none transition-all duration-300',
+        ]"
+      >
+        <div
+          id="player"
+          class="h-[150px] w-full bg-black md:aspect-video md:h-[360px]"
+        />
       </div>
     </ClientOnly>
 
@@ -62,7 +72,7 @@ onMounted(() => {
 
     <!-- 底部播放器 -->
     <div
-      class="fixed bottom-0 h-[75px] w-full bg-[#ffe5e5] px-2"
+      class="fixed bottom-0 h-[60px] w-full bg-[#ffe5e5] px-2 md:h-[75px]"
       :class="{ hidden: !showPlayer }"
     >
       <div class="flex h-full w-full items-center justify-center py-2">
