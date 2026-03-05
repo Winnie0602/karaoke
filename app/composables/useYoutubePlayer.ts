@@ -75,14 +75,23 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
   watch(
     () => store.storeMode,
     (mode) => {
+      console.log(player.value)
       if (!player.value) return
+      console.log(2)
+
       // 一般頁面
       if (mode === 'normal' && videoId.value) {
+        console.log(3)
+
         player.value.loadVideoById(videoId.value, store.currentTime)
         player.value.setVolume(store.volume)
+        // 考試頁面
       } else if (mode === 'test' && store.test_videoId) {
         player.value.cueVideoById(store.test_videoId, 0)
         setTimeout(() => player.value?.setVolume(100), 500)
+      } else if (mode === 'admin') {
+        console.log(123)
+        setTimeout(() => player.value?.stopVideo())
       }
     },
   )

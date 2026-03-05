@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import SelectLyrics from '~/components/test/SelectLyrics.vue'
 import SelectTestType from '~/components/test/SelectTestType.vue'
-import { useCheckComfirm } from '~/composables/useCheckComfirm'
 import type { SongData, LyricData } from '~/types/song'
 
 const store = usePlayerStore()
@@ -82,7 +81,7 @@ const handlePlay = (boo: boolean) => {
 }
 
 // ===== 頁面控制邏輯 =====
-const { isModalOpen, title, content, open, confirm, cancel } = useCheckComfirm()
+const { open } = useCheckConfirm()
 
 const nextStep = () => {
   if (step.value === 4) {
@@ -106,7 +105,7 @@ const prevStep = async () => {
         '確認返回?',
         '返回上一步將會遺失目前輸入的內容。',
       )
-
+      console.log(check)
       if (!check) return
     }
     step.value--
@@ -224,14 +223,6 @@ onUnmounted(() => {
       :next-label="nextLabel"
       @prev="prevStep"
       @next="nextStep"
-    />
-
-    <DailogModal
-      :open="isModalOpen"
-      :title="title"
-      :content="content"
-      @confirm="confirm"
-      @close="cancel"
     />
   </div>
 </template>

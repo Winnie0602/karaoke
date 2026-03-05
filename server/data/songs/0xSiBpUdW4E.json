@@ -8,19 +8,18 @@
       "start": 20,
       "end": 28,
       "ja": [
-        { "surface": "風", "reading": "かぜ", "meaning": "風" },
+        { "surface": "風", "meaning": "風" },
         { "surface": "の" },
-        { "surface": "強さ", "reading": "つよさ", "meaning": "強度" },
+        { "surface": "強さ",  "meaning": "強度" },
         { "surface": "が" },
         { "surface": "ちょっと", "meaning": "有點" },
-        { "surface": "心", "reading": "こころ", "meaning": "心" },
+        { "surface": "心",  "meaning": "心" },
         {
           "surface": "を",
           "meaning": "受詞"
         },
         {
           "surface": "揺さぶり",
-          "reading": "ゆさぶり",
           "meaning": "動搖",
           "origin": "揺さぶる"
         },

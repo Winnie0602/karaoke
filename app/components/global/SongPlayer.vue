@@ -11,10 +11,15 @@ const showFullPlayer = ref(false)
 
 // 只有 song/[id] 頁顯示影片
 const showVideo = computed(
-  () => store.storeMode === 'normal' && route.path.startsWith('/song/'),
+  () =>
+    store.storeMode === 'normal' &&
+    route.path.startsWith('/song/') &&
+    !route.path.startsWith('/admin'),
 )
 
-const showPlayer = computed(() => store.storeMode === 'normal')
+const showPlayer = computed(
+  () => store.storeMode === 'normal' || store.storeMode === 'admin',
+)
 
 const { createPlayer, play, pause, seekTo } = useYoutubePlayer(
   toRef(store, 'videoId'),

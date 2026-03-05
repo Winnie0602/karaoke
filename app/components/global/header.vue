@@ -3,7 +3,7 @@ const isOpen = ref(false)
 </script>
 
 <template>
-  <div class="fixed top-0 z-50 w-full font-medium tracking-wide">
+  <div class="w-full font-medium tracking-wide">
     <nav
       class="relative] flex h-14 items-center border-b border-gray-200 bg-white px-4"
     >

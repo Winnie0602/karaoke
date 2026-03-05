@@ -140,9 +140,7 @@ watch(currentLineIndex, (newLineIndex) => {
                   {{ word.surface }}
                   <rt
                     class="text-[11px] text-gray-600 transition-opacity group-hover:opacity-20"
-                  >
-                    {{ word.reading }}
-                  </rt>
+                  ></rt>
                 </ruby>
 
                 <span v-else>

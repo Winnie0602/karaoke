@@ -1,7 +1,7 @@
 export const usePlayerStore = defineStore(
   'player',
   () => {
-    const storeMode = ref<'test' | 'normal'>('normal')
+    const storeMode = ref<'test' | 'normal' | 'admin'>('normal')
 
     const test_videoId = ref<string | null>(null) // 考試頁面音樂
     const videoId = ref<string | null>(null) // 一般頁面音樂
@@ -35,7 +35,7 @@ export const usePlayerStore = defineStore(
     const songTitle = ref('')
     const songArtist = ref('')
 
-    function setMode(mode: 'test' | 'normal') {
+    function setMode(mode: 'test' | 'normal' | 'admin') {
       storeMode.value = mode
     }
 
