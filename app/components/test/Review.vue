@@ -1,53 +1,18 @@
 <script setup lang="ts">
 import type { LyricData } from '~/types/song'
+import type { LangCode } from '~/types/lang'
 
-const { userAnswers, testLyrics } = defineProps<{
+const store = usePlayerStore()
+
+const { userAnswers, testLyrics, lang } = defineProps<{
   userAnswers: { cAnswer: string; uAnswer: string }[]
   testLyrics: LyricData[]
+  lang: LangCode
 }>()
 
 const emit = defineEmits<{
   (e: 'playSegment', value: { start: number; end: number }): void
 }>()
-
-const diffCharIndexArr = computed(() =>
-  userAnswers.map((e) => {
-    const cAnswerArr = Array.from(e.cAnswer)
-    const uAnswerArr = Array.from(e.uAnswer)
-
-    return cAnswerArr.reduce<number[]>((acc, char, idx) => {
-      if (char !== uAnswerArr[idx]) acc.push(idx)
-      return acc
-    }, [])
-  }),
-)
-
-const wordWithComparison = (lyric: LyricData, answerIndex: number) => {
-  const wrongIndexes = diffCharIndexArr.value[answerIndex] ?? []
-
-  const wordArr = lyric.ja ?? lyric.en ?? []
-  if (!wordArr.length) return []
-
-  let pointer = 0
-
-  return wordArr.map((item, i) => {
-    const len = item.reading?.length ?? item.surface.length
-
-    const start = pointer
-    const end = pointer + len
-
-    const isWrong = wrongIndexes.some((idx) => idx >= start && idx < end)
-
-    pointer = end
-
-    // 如果是英文 且不是最後一個字 要加一個空白 pointer
-    if (lyric.en && i !== wordArr.length - 1) {
-      pointer += 1
-    }
-
-    return { ...item, isWrong }
-  })
-}
 </script>
 
 <template>
@@ -56,72 +21,72 @@ const wordWithComparison = (lyric: LyricData, answerIndex: number) => {
       <div
         v-for="(lyric, index) in testLyrics"
         :key="index"
-        class="group relative border-b border-[#B58C8C]/20 pb-12 last:border-0"
+        class="group border-b border-[#B58C8C]/20 pb-12 last:border-0"
       >
-        <button
-          class="absolute top-10 -left-2 flex h-10 w-10 items-center justify-center rounded-full bg-[#FFE5E5] text-[#F9595F] transition-all hover:bg-[#F9595F] hover:text-white active:scale-90 md:h-12 md:w-12"
-          @click="emit('playSegment', { start: lyric.start, end: lyric.end })"
-        >
-          <i class="fa-solid fa-play ml-0.5 text-xs"></i>
-        </button>
+        <div class="flex items-center space-x-5">
+          <button
+            class="flex h-10 w-10 flex-none items-center justify-center rounded-full bg-[#FFE5E5] text-[#F9595F] transition-all hover:bg-[#F9595F] hover:text-white active:scale-90 md:h-12 md:w-12"
+            :disabled="store.isPlaying"
+            @click="emit('playSegment', { start: lyric.start, end: lyric.end })"
+          >
+            <i class="fa-solid fa-play ml-0.5 text-xs"></i>
+          </button>
+          <div class="">
+            <span class="text-2xl font-black tracking-wide md:text-4xl">
+              {{ lyric[lang] }}
+            </span>
 
-        <div v-if="userAnswers[index]" class="pl-12 md:pl-16">
-          <div class="flex flex-wrap items-end gap-x-3 gap-y-5 md:gap-x-5">
-            <!-- <div
-              v-for="(word, wIdx) in wordWithComparison(lyric, index)"
-              :key="wIdx"
-              class="flex flex-col items-center"
+            <p
+              class="mt-3 text-sm font-medium tracking-wide text-[#A66B6B] md:text-lg"
             >
-              <span class="text-[10px] font-medium text-[#A66B6B] md:text-xs">
-                {{ word.reading || '' }}
-              </span>
-              <span
-                class="text-2xl font-black md:text-4xl"
-                :class="word.isWrong ? 'text-[#F9595F]' : 'text-[#7A3A3A]'"
-              >
-                {{ word.surface }}
-              </span>
-            </div> -->
+              {{ lyric.zh }}
+            </p>
           </div>
-
-          <p class="mt-4 text-sm font-bold text-[#A66B6B] md:text-lg">
-            {{ lyric.zh }}
-          </p>
-
-          <div class="mt-6 space-y-2 rounded-lg bg-[#FFE5E5]/20 p-4 md:p-6">
-            <div class="flex items-center space-x-4">
-              <span class="w-12 shrink-0 text-[10px] font-black text-[#B58C8C]">
+        </div>
+        <div v-if="userAnswers[index]" class="">
+          <div
+            class="mt-6 flex items-center gap-4 rounded-2xl bg-[#FFE5E5]/30 p-3 md:p-8"
+          >
+            <div class="flex flex-none flex-col space-y-2">
+              <span
+                class="h-6 text-[10px] leading-6 font-black text-[#B58C8C] md:h-8 md:leading-8"
+              >
                 正解
               </span>
-              <div class="flex flex-wrap gap-x-0.5 text-base md:text-xl">
-                {{ userAnswers[index]?.cAnswer }}
-              </div>
-            </div>
-
-            <div class="flex items-center space-x-4">
-              <span class="w-12 shrink-0 text-[10px] font-black text-[#F9595F]">
+              <span
+                class="h-6 text-[10px] leading-6 font-black text-[#F9595F] md:h-8 md:leading-8"
+              >
                 回答
               </span>
-              <div class="flex flex-wrap gap-x-0.5">
+            </div>
+
+            <div class="flex flex-wrap justify-start gap-x-2 gap-y-4">
+              <div
+                v-for="(char, i) in userAnswers[index].cAnswer"
+                :key="i"
+                class="flex w-[1.2rem] flex-col items-center space-y-2 md:w-[1.5rem]"
+              >
                 <span
-                  v-for="(uAns, i) in userAnswers[index].uAnswer"
-                  :key="i"
-                  class="text-base font-black whitespace-pre md:text-xl"
+                  class="h-6 font-mono text-base leading-6 font-bold text-[#7A3A3A] md:h-8 md:text-xl md:leading-8"
+                >
+                  {{ char }}
+                </span>
+
+                <span
+                  class="h-6 w-full border-b-[2px] text-center font-mono text-base leading-6 font-black whitespace-pre transition-all md:h-8 md:text-xl md:leading-8"
                   :class="
-                    uAns !== userAnswers[index].cAnswer[i]
-                      ? 'text-[#F9595F] underline underline-offset-4'
-                      : 'text-[#7A3A3A]/40'
+                    userAnswers[index].uAnswer[i] !== char
+                      ? 'border-[#F9595F] text-[#F9595F]'
+                      : 'border-[#B58C8C]/20 text-[#7A3A3A]/30'
                   "
                 >
-                  {{ uAns }}
+                  {{ userAnswers[index].uAnswer[i] || ' ' }}
                 </span>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      <div class="h-10"></div>
     </div>
   </div>
 </template>

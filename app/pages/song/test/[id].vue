@@ -209,6 +209,7 @@ onUnmounted(() => {
         v-if="currentSong && step === 4"
         :user-answers="userAnswers"
         :test-lyrics="selectedLyrics"
+        :lang="currentSong.language"
         @play-segment="
           (e: { start: number; end: number }) =>
             store.playSegmentRequest(e.start, e.end)

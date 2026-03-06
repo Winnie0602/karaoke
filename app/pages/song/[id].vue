@@ -91,10 +91,10 @@ watch(
         </div>
       </div>
     </div>
-    <div class="mt-6 mb-4 flex justify-center md:mt-12 md:mb-8">
+    <div class="mt-6 mb-4 flex w-full justify-center md:mt-12 md:mb-8">
       <NuxtLink
         :to="`/song/test/${videoId}`"
-        class="relative inline-flex items-center justify-center rounded-full bg-[#F9595F] px-7 py-3 font-bold text-white shadow-lg shadow-pink-100 transition-all duration-200 hover:ring-4 hover:ring-red-300 hover:ring-offset-2 hover:ring-offset-white"
+        class="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#F9595F] py-3 font-bold text-white shadow-lg shadow-red-100 transition-all hover:brightness-110 active:scale-[0.98] md:w-[240px] md:py-4"
       >
         <i class="fa-solid fa-pen-to-square mr-2"></i>
         <span class="text-sm tracking-widest md:text-base">Take Exam</span>
@@ -102,4 +102,3 @@ watch(
     </div>
   </div>
 </template>
-
