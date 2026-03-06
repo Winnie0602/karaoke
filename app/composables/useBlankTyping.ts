@@ -8,36 +8,12 @@ interface UseTypingModeOptions {
   language: LangCode
 }
 
-function handleLanguageData(lyricData: LyricData, language: LangCode) {
-  const arr: string[] = []
-
-  if (language === 'en') {
-    lyricData.en?.forEach((e) => {
-      arr.push(e.surface)
-    })
-
-    return arr.join(' ')
-  }
-
-  if (language === 'ja') {
-    lyricData.ja?.forEach((e) => {
-      if (e.reading) {
-        arr.push(e.reading)
-      } else {
-        arr.push(e.surface)
-      }
-    })
-
-    return arr.join('')
-  }
-  return arr.join('')
-}
-
 export function useTypingMode(options: UseTypingModeOptions) {
   const { mode, blankCountPercent = 50, language, lyricData } = options
-  const answer = handleLanguageData(lyricData, language)
 
-  const chars = answer.split('') // 正確答案陣列
+  const answer = lyricData[language] || ''
+
+  const chars = answer?.split('') // 正確答案陣列
   const length = chars.length
 
   const blankCount = blankCountPercent * 0.01 * length

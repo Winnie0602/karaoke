@@ -67,7 +67,7 @@ const wordWithComparison = (lyric: LyricData, answerIndex: number) => {
 
         <div v-if="userAnswers[index]" class="pl-12 md:pl-16">
           <div class="flex flex-wrap items-end gap-x-3 gap-y-5 md:gap-x-5">
-            <div
+            <!-- <div
               v-for="(word, wIdx) in wordWithComparison(lyric, index)"
               :key="wIdx"
               class="flex flex-col items-center"
@@ -81,7 +81,7 @@ const wordWithComparison = (lyric: LyricData, answerIndex: number) => {
               >
                 {{ word.surface }}
               </span>
-            </div>
+            </div> -->
           </div>
 
           <p class="mt-4 text-sm font-bold text-[#A66B6B] md:text-lg">

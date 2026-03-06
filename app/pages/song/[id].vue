@@ -49,45 +49,57 @@ watch(
 
 <template>
   <div
-    class="my-4 flex w-full flex-col space-y-8 px-4 md:my-6 md:max-w-[1280px] lg:flex-row lg:space-y-0 lg:space-x-10 lg:px-5 xl:px-0"
+    class="mx-auto my-4 w-full px-4 md:my-6 md:max-w-[1280px] lg:px-5 xl:px-0"
   >
-    <!-- 左邊區塊 -->
-    <div class="w-full lg:w-2/3">
-      <div v-if="pending">Loading…</div>
+    <div class="flex flex-col space-y-8 lg:flex-row lg:space-y-0 lg:space-x-10">
+      <!-- 左邊區塊 -->
+      <div class="w-full lg:w-2/3">
+        <div v-if="pending">Loading…</div>
 
-      <div v-else-if="!currentSong || currentSong.lyrics.length === 0">
-        目前沒有歌詞
+        <div v-else-if="!currentSong || currentSong.lyrics.length === 0">
+          目前沒有歌詞
+        </div>
+
+        <div v-else class="space-y-5">
+          <ClientOnly>
+            <SongLyrics
+              :lyrics="currentSong.lyrics"
+              :song-data="{
+                title: currentSong.title,
+                artist: currentSong.artist,
+              }"
+            />
+          </ClientOnly>
+        </div>
       </div>
+      <!-- 右邊區塊 -->
+      <div class="w-full lg:w-1/3 lg:min-w-[402px]">
+        <div
+          class="mb-4 border-b-4 border-[#A66B6B] text-xl font-medium text-[#A66B6B] md:text-2xl"
+        >
+          Recommended Songs
+        </div>
 
-      <div v-else class="space-y-5">
-        <ClientOnly>
-          <SongLyrics
-            :lyrics="currentSong.lyrics"
-            :song-data="{
-              title: currentSong.title,
-              artist: currentSong.artist,
-            }"
-          />
-        </ClientOnly>
+        <div class="space-y-2">
+          <ClientOnly>
+            <VideoCard
+              v-for="song in songData.randomSongs"
+              :key="song.id"
+              :song="song"
+            />
+          </ClientOnly>
+        </div>
       </div>
     </div>
-    <!-- 右邊區塊 -->
-    <div class="w-full lg:w-1/3 lg:min-w-[402px]">
-      <div
-        class="mb-4 border-b-4 border-[#A66B6B] text-xl font-medium text-[#A66B6B] md:text-2xl"
+    <div class="mt-6 mb-4 flex justify-center md:mt-12 md:mb-8">
+      <NuxtLink
+        :to="`/song/test/${videoId}`"
+        class="relative inline-flex items-center justify-center rounded-full bg-[#F9595F] px-7 py-3 font-bold text-white shadow-lg shadow-pink-100 transition-all duration-200 hover:ring-4 hover:ring-red-300 hover:ring-offset-2 hover:ring-offset-white"
       >
-        Recommended Songs
-      </div>
-
-      <div class="space-y-2">
-        <ClientOnly>
-          <VideoCard
-            v-for="song in songData.randomSongs"
-            :key="song.id"
-            :song="song"
-          />
-        </ClientOnly>
-      </div>
+        <i class="fa-solid fa-pen-to-square mr-2"></i>
+        <span class="text-sm tracking-widest md:text-base">Take Exam</span>
+      </NuxtLink>
     </div>
   </div>
 </template>
+

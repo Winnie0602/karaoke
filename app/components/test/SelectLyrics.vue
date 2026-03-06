@@ -130,7 +130,7 @@ watch(
               :key="wIndex"
               class="mr-1 inline-block md:font-medium"
             >
-              {{ word.surface }}
+              {{ word }}
             </span>
           </div>
           <span class="mt-1 text-[12px] text-gray-500 md:text-[13px]">
@@ -168,4 +168,3 @@ watch(
     </div>
   </div>
 </template>
-

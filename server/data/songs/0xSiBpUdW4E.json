@@ -3,788 +3,110 @@
   "title": "マリーゴールド",
   "artist": "あいみょん",
   "language": "ja",
+  "vocabularies": [
+    {
+      "vocabulary": "風",
+      "zh": "風",
+      "en": "wind",
+      "kr": "바람"
+    },
+    {
+      "vocabulary": "強さ",
+      "zh": "強度",
+      "en": "strength",
+      "kr": "강도"
+    }
+  ],
   "lyrics": [
     {
       "start": 20,
       "end": 28,
-      "ja": [
-        { "surface": "風", "meaning": "風" },
-        { "surface": "の" },
-        { "surface": "強さ",  "meaning": "強度" },
-        { "surface": "が" },
-        { "surface": "ちょっと", "meaning": "有點" },
-        { "surface": "心",  "meaning": "心" },
-        {
-          "surface": "を",
-          "meaning": "受詞"
-        },
-        {
-          "surface": "揺さぶり",
-          "meaning": "動搖",
-          "origin": "揺さぶる"
-        },
-        { "surface": "すぎて", "meaning": "過度" }
-      ],
-      "zh": "風的強度有點過頭地動搖了我的心"
+      "ja": "風の強さがちょっと心を揺さぶりすぎて",
+      "zh": "風的強度有點過頭地動搖了我的心",
+      "en": "The strength of the wind shakes my heart a little too much",
+      "kr": "바람의 세기가 내 마음을 조금 너무 흔들어 놓아서",
+      "ruby": "<ruby>風<rt>かぜ</rt></ruby>の<ruby>強さ<rt>つよさ</rt></ruby>がちょっと<ruby>心<rt>こころ</rt></ruby>を<ruby>揺さぶり<rt>ゆさぶり</rt></ruby>すぎて"
     },
     {
       "start": 29,
       "end": 38,
-      "ja": [
-        { "surface": "真面目", "reading": "まじめ", "meaning": "認真" },
-        { "surface": "に" },
-        {
-          "surface": "見つめた",
-          "reading": "みつめた",
-          "meaning": "凝視",
-          "origin": "見つめる"
-        },
-        { "surface": "君", "reading": "きみ", "meaning": "你" },
-        { "surface": "が" },
-        { "surface": "恋しい", "reading": "こいしい", "meaning": "想念的" }
-      ],
-      "zh": "那個認真凝視著的你，讓我好想念"
+      "ja": "真面目に見つめた君が恋しい",
+      "zh": "那個認真凝視著的你，讓我好想念",
+      "en": "I miss the way you looked at me so sincerely",
+      "kr": "진지하게 바라보던 네가 그리워",
+      "ruby": "<ruby>真面目<rt>まじめ</rt></ruby>に<ruby>見<rt>み</rt></ruby>つめた君が<ruby>恋<rt>こい</rt></ruby>しい"
     },
-
     {
       "start": 39,
       "end": 46,
-      "ja": [
-        {
-          "surface": "でんぐり返し",
-          "reading": "でんぐりかえし",
-          "meaning": "翻滾、顛倒"
-        },
-        { "surface": "の" },
-        { "surface": "日々", "reading": "ひび", "meaning": "日子" },
-        { "surface": "可哀想", "reading": "かわいそう", "meaning": "可憐的" },
-        { "surface": "な" },
-        { "surface": "ふり", "meaning": "假裝" },
-        { "surface": "を" },
-        {
-          "surface": "して",
-          "meaning": "做～",
-          "origin": "する"
-        }
-      ],
-      "zh": "在顛倒混亂的日子裡，裝出一副可憐的樣子"
+      "ja": "でんぐり返しの日々可哀想なふりをして",
+      "zh": "在顛倒混亂的日子裡，裝出一副可憐的樣子",
+      "en": "In these topsy-turvy days, pretending to be pitiful",
+      "kr": "뒤죽박죽인 나날 속에서 불쌍한 척을 하며",
+      "ruby": "<ruby>でんぐり返し<rt>でんぐりがえし</rt></ruby>の<ruby>日々<rt>ひび</rt></ruby>可哀想な<ruby>ふり<rt>ふり</rt></ruby>をして"
     },
     {
       "start": 48,
       "end": 56,
-      "ja": [
-        {
-          "surface": "だらけて",
-          "meaning": "懶散地過",
-          "origin": "だらける"
-        },
-        { "surface": "みた", "meaning": "試著做" },
-        { "surface": "けど" },
-        { "surface": "希望", "reading": "きぼう", "meaning": "希望" },
-        { "surface": "の" },
-        { "surface": "光", "reading": "ひかり", "meaning": "光芒" },
-        { "surface": "は" }
-      ],
-      "zh": "試著放縱自己，但希望的光芒"
+      "ja": "だらけてみたけど希望の光は",
+      "zh": "試著放縱自己，但希望的光芒",
+      "en": "I tried lazing around, but the light of hope",
+      "kr": "게으르게 지내 보았지만 희망의 빛은",
+      "ruby": "だらけてみたけど<ruby>希望<rt>きぼう</rt></ruby>の<ruby>光<rt>ひかり</rt></ruby>は"
     },
-
     {
       "start": 57,
       "end": 61,
-      "ja": [
-        { "surface": "目", "reading": "め", "meaning": "眼睛" },
-        { "surface": "の" },
-        { "surface": "前", "reading": "まえ", "meaning": "眼前" },
-        { "surface": "で" },
-        { "surface": "ずっと", "meaning": "一直" },
-        {
-          "surface": "輝いて",
-          "reading": "かがやいて",
-          "meaning": "閃耀著",
-          "origin": "輝く"
-        },
-        { "surface": "いる" }
-      ],
-      "zh": "一直在我眼前閃耀著"
+      "ja": "目の前でずっと輝いている",
+      "zh": "一直在我眼前閃耀著",
+      "en": "keeps shining right in front of me",
+      "kr": "내 눈앞에서 계속 빛나고 있어",
+      "ruby": "<ruby>目<rt>め</rt></ruby>の<ruby>前<rt>まえ</rt></ruby>でずっと<ruby>輝<rt>かがや</rt></ruby>いている"
     },
     {
       "start": 61,
       "end": 64,
-      "ja": [
-        { "surface": "幸せ", "reading": "しあわせ", "meaning": "幸福" },
-        { "surface": "だ" }
-      ],
-      "zh": "這就是幸福"
+      "ja": "幸せだ",
+      "zh": "這就是幸福",
+      "en": "I feel happy",
+      "kr": "행복해",
+      "ruby": "<ruby>幸<rt>しあわ</rt></ruby>せだ"
     },
-
     {
       "start": 65,
       "end": 69,
-      "ja": [
-        { "surface": "麦わら", "reading": "むぎわら", "meaning": "麥稈" },
-        { "surface": "の" },
-        { "surface": "帽子", "reading": "ぼうし", "meaning": "帽子" },
-        { "surface": "の" },
-        { "surface": "君", "reading": "きみ", "meaning": "你" },
-        { "surface": "が" }
-      ],
-      "zh": "戴著草帽的你"
+      "ja": "麦わらの帽子の君が",
+      "zh": "戴著草帽的你",
+      "en": "You wearing a straw hat",
+      "kr": "밀짚모자를 쓴 너는",
+      "ruby": "<ruby>麦わら<rt>むぎわら</rt></ruby>の<ruby>帽子<rt>ぼうし</rt></ruby>の君が"
     },
     {
       "start": 69,
       "end": 74,
-      "ja": [
-        {
-          "surface": "揺れた",
-          "reading": "ゆれた",
-          "meaning": "搖曳",
-          "origin": "揺れる"
-        },
-        { "surface": "マリーゴールド", "meaning": "萬壽菊" },
-        { "surface": "に" },
-        {
-          "surface": "似てる",
-          "reading": "にてる",
-          "meaning": "相似",
-          "origin": "似る"
-        }
-      ],
-      "zh": "就像隨風搖曳的萬壽菊一樣"
+      "ja": "揺れたマリーゴールドに似てる",
+      "zh": "就像隨風搖曳的萬壽菊一樣",
+      "en": "look like a swaying marigold",
+      "kr": "흔들리는 마리골드와 닮았어",
+      "ruby": "<ruby>揺<rt>ゆ</rt></ruby>れたマリーゴールドに似てる"
     },
     {
       "start": 75,
       "end": 79,
-      "ja": [
-        { "surface": "あれ", "meaning": "那是" },
-        { "surface": "空", "reading": "そら", "meaning": "天空" },
-        { "surface": "が" },
-        { "surface": "まだ", "meaning": "還" },
-        { "surface": "青い", "reading": "あおい", "meaning": "湛藍的" },
-        { "surface": "夏", "reading": "なつ", "meaning": "夏天" },
-        { "surface": "の" },
-        { "surface": "こと", "meaning": "事情" }
-      ],
-      "zh": "那是天空還很藍的夏天"
+      "ja": "あれは空がまだ青い夏のこと",
+      "zh": "那是天空還很藍的夏天",
+      "en": "That was in a summer when the sky was still blue",
+      "kr": "그건 하늘이 아직 파랗던 여름의 일이야",
+      "ruby": "あれは<ruby>空<rt>そら</rt></ruby>がまだ<ruby>青<rt>あお</rt></ruby>い<ruby>夏<rt>なつ</rt></ruby>のこと"
     },
-
     {
       "start": 79,
       "end": 83,
-      "ja": [
-        {
-          "surface": "懐かしい",
-          "reading": "なつかしい",
-          "meaning": "令人懷念的"
-        },
-        { "surface": "と" },
-        {
-          "surface": "笑えた",
-          "reading": "わらえた",
-          "meaning": "能笑著回想",
-          "origin": "笑う"
-        },
-        { "surface": "あの", "meaning": "那個" },
-        { "surface": "日", "reading": "ひ", "meaning": "日子" },
-        { "surface": "の" },
-        { "surface": "恋", "reading": "こい", "meaning": "戀情" }
-      ],
-      "zh": "能笑著說出「真令人懷念」的那一天的戀情"
-    },
-
-    {
-      "start": 84,
-      "end": 87,
-      "ja": [
-        { "surface": "もう", "meaning": "已經" },
-        {
-          "surface": "離れないで",
-          "reading": "はなれないで",
-          "meaning": "不要離開",
-          "origin": "離れる"
-        },
-        { "surface": "と" }
-      ],
-      "zh": "「不要再離開我了」"
-    },
-    {
-      "start": 87,
-      "end": 92,
-      "ja": [
-        {
-          "surface": "泣きそう",
-          "reading": "なきそう",
-          "meaning": "快哭出來的樣子"
-        },
-        { "surface": "な" },
-        { "surface": "目", "reading": "め", "meaning": "眼睛" },
-        { "surface": "で" },
-        {
-          "surface": "見つめる",
-          "reading": "みつめる",
-          "meaning": "凝視"
-        },
-        { "surface": "君", "reading": "きみ", "meaning": "你" },
-        { "surface": "を" }
-      ],
-      "zh": "你用快要哭出來的眼神看著我"
-    },
-
-    {
-      "start": 93,
-      "end": 97,
-      "ja": [
-        { "surface": "雲", "reading": "くも", "meaning": "雲" },
-        { "surface": "の" },
-        { "surface": "よう", "meaning": "像～一樣" },
-        { "surface": "な" },
-        { "surface": "優しさ", "reading": "やさしさ", "meaning": "溫柔" },
-        { "surface": "で" },
-        { "surface": "そっと", "meaning": "輕輕地" },
-        { "surface": "ぎゅっと", "meaning": "緊緊地" }
-      ],
-      "zh": "用像雲一樣溫柔的方式，輕輕又緊緊地"
-    },
-    {
-      "start": 97,
-      "end": 102,
-      "ja": [
-        {
-          "surface": "抱きしめて",
-          "reading": "だきしめて",
-          "meaning": "抱緊",
-          "origin": "抱きしめる"
-        },
-        { "surface": "抱きしめて" },
-        { "surface": "離さない", "reading": "はなさない", "meaning": "不放開" }
-      ],
-      "zh": "緊緊抱著你，再也不放開"
-    },
-
-    {
-      "start": 107,
-      "end": 110,
-      "ja": [
-        { "surface": "本当", "reading": "ほんとう", "meaning": "真正的" },
-        { "surface": "の" },
-        { "surface": "気持ち", "reading": "きもち", "meaning": "心情" },
-        { "surface": "全部", "reading": "ぜんぶ", "meaning": "全部" }
-      ],
-      "zh": "真正的心情全部"
-    },
-    {
-      "start": 110,
-      "end": 114,
-      "ja": [
-        {
-          "surface": "吐き出せる",
-          "reading": "はきだせる",
-          "meaning": "說出口",
-          "origin": "吐き出す"
-        },
-        { "surface": "ほど" },
-        { "surface": "強く", "reading": "つよく", "meaning": "堅強地" },
-        { "surface": "は" },
-        { "surface": "ない" }
-      ],
-      "zh": "我還沒有強大到能全部說出口"
-    },
-    {
-      "start": 115,
-      "end": 120,
-      "ja": [
-        { "surface": "でも" },
-        { "surface": "不思議", "reading": "ふしぎ", "meaning": "不可思議的" },
-        { "surface": "な" },
-        { "surface": "くらい", "meaning": "到～程度" },
-        { "surface": "に" }
-      ],
-      "zh": "但不可思議的是"
-    },
-    {
-      "start": 120,
-      "end": 124,
-      "ja": [
-        { "surface": "絶望", "reading": "ぜつぼう", "meaning": "絕望" },
-        { "surface": "は" },
-        {
-          "surface": "見えない",
-          "reading": "みえない",
-          "meaning": "看不見",
-          "origin": "見える"
-        }
-      ],
-      "zh": "我卻看不見任何絕望"
-    },
-    {
-      "start": 124,
-      "end": 128,
-      "ja": [
-        { "surface": "目", "reading": "め", "meaning": "眼睛" },
-        { "surface": "の" },
-        { "surface": "奥", "reading": "おく", "meaning": "深處" },
-        { "surface": "に" },
-        { "surface": "ずっと", "meaning": "一直" },
-        {
-          "surface": "写る",
-          "reading": "うつる",
-          "meaning": "映照",
-          "origin": "写る"
-        },
-        { "surface": "シルエット", "meaning": "身影、剪影" }
-      ],
-      "zh": "一直映照在我眼底深處的那個身影"
-    },
-    {
-      "start": 128,
-      "end": 132,
-      "ja": [
-        { "surface": "大好き", "reading": "だいすき", "meaning": "最喜歡" },
-        { "surface": "さ", "meaning": "語氣詞（強調感情）" }
-      ],
-      "zh": "我真的好喜歡你"
-    },
-
-    {
-      "start": 133,
-      "end": 137,
-      "ja": [
-        {
-          "surface": "柔らかな",
-          "reading": "やわらかな",
-          "meaning": "柔軟的、溫柔的"
-        },
-        { "surface": "肌", "reading": "はだ", "meaning": "肌膚" },
-        { "surface": "を" },
-        {
-          "surface": "寄せあい",
-          "reading": "よせあい",
-          "meaning": "彼此靠近",
-          "origin": "寄せ合う"
-        }
-      ],
-      "zh": "彼此貼近著柔軟的肌膚"
-    },
-    {
-      "start": 137,
-      "end": 142,
-      "ja": [
-        { "surface": "少し", "meaning": "有點" },
-        { "surface": "冷たい", "reading": "つめたい", "meaning": "微冷的" },
-        { "surface": "空気", "reading": "くうき", "meaning": "空氣" },
-        { "surface": "を" },
-        { "surface": "2人", "reading": "ふたり", "meaning": "兩個人" }
-      ],
-      "zh": "在微微冰涼的空氣中，我們兩個人"
-    },
-    {
-      "start": 142,
-      "end": 146,
-      "ja": [
-        {
-          "surface": "かみしめて",
-          "reading": "かみしめて",
-          "meaning": "細細感受",
-          "origin": "噛みしめる"
-        },
-        {
-          "surface": "歩く",
-          "reading": "あるく",
-          "meaning": "走著"
-        },
-        { "surface": "今日", "reading": "きょう", "meaning": "今天" },
-        { "surface": "という" },
-        { "surface": "日", "reading": "ひ", "meaning": "日子" },
-        { "surface": "に" }
-      ],
-      "zh": "細細感受著空氣，走在名為「今天」的日子裡"
-    },
-    {
-      "start": 146,
-      "end": 151,
-      "ja": [
-        { "surface": "何", "reading": "なん", "meaning": "什麼" },
-        { "surface": "と" },
-        { "surface": "名前", "reading": "なまえ", "meaning": "名字" },
-        { "surface": "を" },
-        {
-          "surface": "つけよう",
-          "reading": "つけよう",
-          "meaning": "要取名",
-          "origin": "つける"
-        },
-        { "surface": "か" },
-        { "surface": "なんて" },
-        {
-          "surface": "話して",
-          "reading": "はなして",
-          "meaning": "聊著",
-          "origin": "話す"
-        }
-      ],
-      "zh": "聊著要替這一天取什麼名字才好"
-    },
-
-    {
-      "start": 152,
-      "end": 158,
-      "ja": [
-        { "surface": "ああ", "meaning": "啊啊（感嘆）" },
-        { "surface": "アイラブユー", "meaning": "I love you" },
-        { "surface": "の" },
-        { "surface": "言葉", "reading": "ことば", "meaning": "話語" },
-        { "surface": "じゃ" },
-        {
-          "surface": "足りない",
-          "reading": "たりない",
-          "meaning": "不夠",
-          "origin": "足りる"
-        },
-        { "surface": "から", "meaning": "因為" }
-      ],
-      "zh": "啊啊，只用「我愛你」這句話還不夠"
-    },
-    {
-      "start": 158,
-      "end": 160,
-      "ja": [
-        { "surface": "と" },
-        {
-          "surface": "キスして",
-          "reading": "きすして",
-          "meaning": "親吻",
-          "origin": "キスする"
-        }
-      ],
-      "zh": "於是這麼說著便親了你"
-    },
-    {
-      "start": 160,
-      "end": 165,
-      "ja": [
-        { "surface": "雲", "reading": "くも", "meaning": "雲" },
-        { "surface": "が" },
-        { "surface": "まだ", "meaning": "仍然" },
-        { "surface": "2人", "reading": "ふたり", "meaning": "兩個人" },
-        { "surface": "の" },
-        { "surface": "影", "reading": "かげ", "meaning": "影子" },
-        { "surface": "を" },
-        {
-          "surface": "残す",
-          "reading": "のこす",
-          "meaning": "留下",
-          "origin": "残す"
-        },
-        { "surface": "から" }
-      ],
-      "zh": "因為雲朵還替我們留下了影子"
-    },
-    {
-      "start": 165,
-      "end": 170,
-      "ja": [
-        { "surface": "いつまでも", "meaning": "無論到何時" },
-        { "surface": "いつまでも", "meaning": "一直一直" },
-        { "surface": "この", "meaning": "這樣" },
-        { "surface": "まま", "meaning": "保持不變" }
-      ],
-      "zh": "所以希望能一直、一直就這樣下去"
-    },
-
-    {
-      "start": 171,
-      "end": 176,
-      "ja": [
-        { "surface": "遥か", "reading": "はるか", "meaning": "遙遠地" },
-        { "surface": "遠い", "reading": "とおい", "meaning": "遙遠的" },
-        { "surface": "場所", "reading": "ばしょ", "meaning": "地方" },
-        { "surface": "に" },
-        {
-          "surface": "いても",
-          "meaning": "即使在"
-        }
-      ],
-      "zh": "即使身處遙遠的地方"
-    },
-    {
-      "start": 176,
-      "end": 180,
-      "ja": [
-        {
-          "surface": "繋がって",
-          "reading": "つながって",
-          "meaning": "連繫著",
-          "origin": "繋がる"
-        },
-        { "surface": "いたい", "meaning": "想要保持" },
-        { "surface": "なあ", "meaning": "語氣詞（願望）" }
-      ],
-      "zh": "也希望我們能一直連繫著"
-    },
-    {
-      "start": 180,
-      "end": 183,
-      "ja": [
-        { "surface": "2人", "reading": "ふたり", "meaning": "兩個人" },
-        { "surface": "の" },
-        { "surface": "想い", "reading": "おもい", "meaning": "思念、心意" },
-        { "surface": "が" }
-      ],
-      "zh": "我們兩個人的心意"
-    },
-    {
-      "start": 183,
-      "end": 189,
-      "ja": [
-        { "surface": "同じ", "reading": "おなじ", "meaning": "相同的" },
-        { "surface": "で" },
-        {
-          "surface": "あります",
-          "reading": "あります",
-          "meaning": "存在、是",
-          "origin": "ある"
-        },
-        { "surface": "よう", "meaning": "希望如此" },
-        { "surface": "に" }
-      ],
-      "zh": "希望能一直是相同的"
-    },
-    {
-      "start": 203,
-      "end": 207,
-      "ja": [
-        { "surface": "麦わら", "reading": "むぎわら", "meaning": "麥稈、草編" },
-        { "surface": "の" },
-        { "surface": "帽子", "reading": "ぼうし", "meaning": "帽子" },
-        { "surface": "の" },
-        { "surface": "君", "reading": "きみ", "meaning": "你" },
-        { "surface": "が" }
-      ],
-      "zh": "戴著草帽的你"
-    },
-    {
-      "start": 207,
-      "end": 212,
-      "ja": [
-        {
-          "surface": "揺れた",
-          "reading": "ゆれた",
-          "meaning": "搖曳的",
-          "origin": "揺れる"
-        },
-        { "surface": "マリーゴールド", "meaning": "金盞花" },
-        { "surface": "に" },
-        {
-          "surface": "似てる",
-          "reading": "にてる",
-          "meaning": "很像",
-          "origin": "似る"
-        }
-      ],
-      "zh": "就像隨風搖曳的金盞花一樣"
-    },
-    {
-      "start": 212,
-      "end": 217,
-      "ja": [
-        { "surface": "あれ", "meaning": "那是" },
-        { "surface": "は" },
-        { "surface": "空", "reading": "そら", "meaning": "天空" },
-        { "surface": "が" },
-        { "surface": "まだ", "meaning": "仍然" },
-        { "surface": "青い", "reading": "あおい", "meaning": "湛藍的" },
-        { "surface": "夏", "reading": "なつ", "meaning": "夏天" },
-        { "surface": "の" },
-        { "surface": "こと", "meaning": "時候、事情" }
-      ],
-      "zh": "那是天空仍然湛藍的夏天"
-    },
-    {
-      "start": 217,
-      "end": 222,
-      "ja": [
-        {
-          "surface": "懐かしい",
-          "reading": "なつかしい",
-          "meaning": "令人懷念的"
-        },
-        { "surface": "と" },
-        {
-          "surface": "笑えた",
-          "reading": "わらえた",
-          "meaning": "能笑著說",
-          "origin": "笑う"
-        },
-        { "surface": "あの", "meaning": "那個" },
-        { "surface": "日", "reading": "ひ", "meaning": "那一天" },
-        { "surface": "の" },
-        { "surface": "恋", "reading": "こい", "meaning": "戀情" }
-      ],
-      "zh": "如今能笑著說懷念的，那一天的戀情"
-    },
-    {
-      "start": 222,
-      "end": 225,
-      "ja": [
-        { "surface": "もう", "meaning": "已經、再也" },
-        {
-          "surface": "離れないで",
-          "reading": "はなれないで",
-          "meaning": "不要離開",
-          "origin": "離れる"
-        },
-        { "surface": "と", "meaning": "引用語氣" }
-      ],
-      "zh": "你說著「不要再離開我了」"
-    },
-    {
-      "start": 225,
-      "end": 230,
-      "ja": [
-        {
-          "surface": "泣きそう",
-          "reading": "なきそう",
-          "meaning": "快要哭出來的"
-        },
-        { "surface": "な" },
-        { "surface": "目", "reading": "め", "meaning": "眼睛" },
-        { "surface": "で" },
-        {
-          "surface": "見つめる",
-          "reading": "みつめる",
-          "meaning": "凝視",
-          "origin": "見つめる"
-        },
-        { "surface": "君", "reading": "きみ", "meaning": "你" },
-        { "surface": "を" }
-      ],
-      "zh": "你用快要哭出來的眼神看著我"
-    },
-    {
-      "start": 230,
-      "end": 235,
-      "ja": [
-        { "surface": "雲", "reading": "くも", "meaning": "雲" },
-        { "surface": "の" },
-        { "surface": "よう", "meaning": "像是" },
-        { "surface": "な" },
-        { "surface": "優しさ", "reading": "やさしさ", "meaning": "溫柔" },
-        { "surface": "で" },
-        { "surface": "そっと", "meaning": "輕輕地" },
-        { "surface": "ぎゅっと", "meaning": "緊緊地" }
-      ],
-      "zh": "我用像雲一樣的溫柔，輕輕卻緊緊地"
-    },
-    {
-      "start": 235,
-      "end": 240,
-      "ja": [
-        {
-          "surface": "抱きしめて",
-          "reading": "だきしめて",
-          "meaning": "抱緊",
-          "origin": "抱きしめる"
-        },
-        {
-          "surface": "離さない",
-          "reading": "はなさない",
-          "meaning": "不放開",
-          "origin": "離す"
-        }
-      ],
-      "zh": "抱緊你，絕不放手"
-    },
-    {
-      "start": 240,
-      "end": 246,
-      "ja": [
-        { "surface": "ああ", "meaning": "啊啊（感嘆）" },
-        { "surface": "アイラブユー", "meaning": "I love you" },
-        { "surface": "の" },
-        { "surface": "言葉", "reading": "ことば", "meaning": "話語" },
-        { "surface": "じゃ" },
-        {
-          "surface": "足りない",
-          "reading": "たりない",
-          "meaning": "不夠",
-          "origin": "足りる"
-        },
-        { "surface": "から" }
-      ],
-      "zh": "啊，只用「我愛你」這句話還不夠"
-    },
-    {
-      "start": 246,
-      "end": 248,
-      "ja": [
-        { "surface": "と" },
-        {
-          "surface": "キスして",
-          "reading": "きすして",
-          "meaning": "親吻",
-          "origin": "キスする"
-        }
-      ],
-      "zh": "所以用親吻來代替"
-    },
-    {
-      "start": 248,
-      "end": 253,
-      "ja": [
-        { "surface": "雲", "reading": "くも", "meaning": "雲" },
-        { "surface": "が" },
-        { "surface": "まだ", "meaning": "仍然" },
-        { "surface": "2人", "reading": "ふたり", "meaning": "兩個人" },
-        { "surface": "の" },
-        { "surface": "影", "reading": "かげ", "meaning": "影子" },
-        { "surface": "を" },
-        {
-          "surface": "残す",
-          "reading": "のこす",
-          "meaning": "留下",
-          "origin": "残す"
-        },
-        { "surface": "から" }
-      ],
-      "zh": "因為雲朵還替我們留下了兩人的影子"
-    },
-    {
-      "start": 253,
-      "end": 259,
-      "ja": [
-        { "surface": "いつまでも", "meaning": "無論到何時" },
-        { "surface": "いつまでも", "meaning": "一直一直" },
-        { "surface": "この", "meaning": "這樣" },
-        { "surface": "まま", "meaning": "保持不變" }
-      ],
-      "zh": "所以希望能一直、一直就這樣下去"
-    },
-    {
-      "start": 262,
-      "end": 264,
-      "ja": [
-        {
-          "surface": "離さない",
-          "reading": "はなさない",
-          "meaning": "不放開",
-          "origin": "離す"
-        }
-      ],
-      "zh": "不會放開你"
-    },
-    {
-      "start": 266,
-      "end": 273,
-      "ja": [
-        { "surface": "いつまでも", "meaning": "無論到何時" },
-        { "surface": "いつまでも", "meaning": "一直一直" },
-        {
-          "surface": "離さない",
-          "reading": "はなさない",
-          "meaning": "不放開",
-          "origin": "離す"
-        }
-      ],
-      "zh": "無論到什麼時候，都不會放開你"
+      "ja": "懐かしいと笑えたあの日の恋",
+      "zh": "能笑著說出「真令人懷念」的那一天的戀情",
+      "en": "The love from that day that we can now smile and call nostalgic",
+      "kr": "이제는 그립다며 웃을 수 있는 그날의 사랑",
+      "ruby": "<ruby>懐<rt>なつ</rt></ruby>かしいと<ruby>笑<rt>わら</rt></ruby>えたあの日の<ruby>恋<rt>こい</rt></ruby>"
     }
   ]
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { LyricData, WordData } from '~/types/song'
+import type { LyricData } from '~/types/song'
 import type { LangCode } from '~/types/lang'
 
 const { lyrics, songData } = defineProps<{
@@ -31,9 +31,22 @@ const lyricsRefs = ref<HTMLElement[]>([])
 
 const containerRef = ref<HTMLElement | null>(null)
 
-const getWords = (lyric: LyricData) => {
-  if (!songLang.value) return []
-  return lyric[songLang.value] ?? []
+const getLyric = (lyric: LyricData) => {
+  if (!songLang.value) return ''
+  // 日文直接給平假名html
+  if (songLang.value === 'ja' && lyric.ruby)
+    return lyric.ruby.replace(
+      /<rt>/g,
+      '<rt class="text-[11px] text-[#A66B6B]">',
+    )
+  return lyric[songLang.value] ?? ''
+}
+
+// 代辦：加入語言功能後做
+const getTranslate = (lyric: LyricData) => {
+  if (!songLang.value) return ''
+
+  return lyric.zh ?? ''
 }
 
 // 傳進去tatoeba組件的單字
@@ -43,15 +56,15 @@ const tatoebaWord = ref('')
 const wasListening = ref(false)
 
 // 打開下方panel區塊
-const openPanel = async (word: WordData) => {
-  // 記住打開前的播放狀態
-  wasListening.value = store.isPlaying
+// const openPanel = async (word) => {
+//   // 記住打開前的播放狀態
+//   wasListening.value = store.isPlaying
 
-  isPanelOpen.value = true
-  store.pause()
+//   isPanelOpen.value = true
+//   store.pause()
 
-  tatoebaWord.value = word.surface
-}
+//   tatoebaWord.value = word.surface
+// }
 
 watch(isPanelOpen, (open) => {
   if (!open && wasListening.value) {
@@ -96,7 +109,7 @@ watch(currentLineIndex, (newLineIndex) => {
 <template>
   <div
     ref="containerRef"
-    class="hide-scroll relative h-[420px] space-y-3 overflow-y-scroll rounded-md border-[1px] border-gray-300 md:h-[640px]"
+    class="hide-scroll relative h-[420px] space-y-3 overflow-y-scroll rounded-md border-[1px] border-gray-300 md:h-[840px]"
   >
     <div
       class="sticky top-0 z-10 flex h-[24px] w-full items-center bg-[#e6ebf1] pl-3 md:h-[30px]"
@@ -116,55 +129,24 @@ watch(currentLineIndex, (newLineIndex) => {
       v-for="(lyric, index) in lyrics"
       :key="lyric.start"
       :ref="(el) => (lyricsRefs[index] = el as HTMLElement)"
-      class="relative flex items-center justify-between px-3 text-sm md:text-base"
-      :class="{ 'current-lyric': index === currentLineIndex }"
+      class="relative flex items-center justify-between px-3 py-1.5 text-sm md:py-2 md:text-base"
+      :class="{
+        'bg-red-300/20 shadow-[0_0_10px_5px_rgba(249,89,95,0.1)]':
+          index === currentLineIndex,
+      }"
     >
       <div class="flex flex-col">
-        <span>
-          <span
-            v-for="(word, wIndex) in getWords(lyric)"
-            :key="wIndex"
-            class="mr-1 inline-block"
-          >
-            <!-- 有 meaning 的詞 -->
-            <span
-              v-if="word.meaning"
-              class="group relative inline-block cursor-pointer"
-              @click="openPanel(word)"
-            >
-              <!-- 單字本體 -->
-              <span
-                class="rounded transition-colors group-hover:bg-red-100 group-hover:ring-1 group-hover:ring-red-400"
-              >
-                <ruby v-if="word.reading">
-                  {{ word.surface }}
-                  <rt
-                    class="text-[11px] text-gray-600 transition-opacity group-hover:opacity-20"
-                  ></rt>
-                </ruby>
-
-                <span v-else>
-                  {{ word.surface }}
-                </span>
-              </span>
-
-              <!-- tooltip -->
-              <span
-                class="pointer-events-none absolute top-0 left-1/2 z-10 -translate-x-1/2 -translate-y-full rounded bg-gray-800 px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 transition-opacity duration-150 group-hover:opacity-100"
-              >
-                {{ word.meaning }}
-              </span>
-            </span>
-
-            <!-- 沒 meaning 的普通字 -->
-            <span v-else>
-              {{ word.surface }}
-            </span>
-          </span>
+        <span
+          v-if="songLang === 'ja'"
+          class="text-md mr-1 inline-block"
+          v-html="getLyric(lyric)"
+        ></span>
+        <span v-else class="mr-1 inline-block">
+          {{ getLyric(lyric) }}
         </span>
 
         <span class="text-[11px] text-gray-700 md:text-[13px]">
-          {{ lyric.zh }}
+          {{ getTranslate(lyric) }}
         </span>
       </div>
 
@@ -194,33 +176,5 @@ watch(currentLineIndex, (newLineIndex) => {
 .hide-scroll {
   -ms-overflow-style: none;
   scrollbar-width: none;
-}
-.current-lyric {
-  position: relative;
-  background: white;
-  border-radius: 12px;
-  z-index: 0;
-}
-
-/* 極細波浪外框 */
-.current-lyric::before {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: 14px;
-  z-index: -1;
-
-  background: #ffd6d6; /* gray-200 */
-
-  /* 用 SVG 波浪線當 mask */
-  mask-image: url("data:image/svg+xml;utf8,\
-<svg xmlns='http://www.w3.org/2000/svg' width='24' height='6' viewBox='0 0 24 6'>\
-<path d='M0 3 Q 3 0 6 3 T 12 3 T 18 3 T 24 3' fill='none' stroke='black' stroke-width='2'/>\
-</svg>");
-  mask-size: 24px 6px;
-  mask-repeat: repeat;
-
-  padding: 1px;
-  box-sizing: border-box;
 }
 </style>

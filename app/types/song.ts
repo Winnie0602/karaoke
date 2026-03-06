@@ -5,26 +5,27 @@ export interface SongData {
   title: string
   artist: string
   language: LangCode
+  vocabularies: VocabularyData[]
   lyrics: LyricData[]
+}
+
+export interface VocabularyData {
+  vocabulary: string
+  zh: string
+  en: string
+  kr: string
 }
 
 export interface LyricData {
   start: number
   end: number
-  ja?: WordData[]
-  kr?: WordData[]
-  en?: WordData[]
-  tw?: WordData[]
-  hk?: WordData[]
+  ja?: string
+  kr?: string
+  en?: string
+  tw?: string
+  hk?: string
   zh: string
-  ori: string
-}
-
-export interface WordData {
-  surface: string
-  reading?: string
-  meaning?: string
-  origin?: string
+  ruby?: string
 }
 
 export interface SongsList {
