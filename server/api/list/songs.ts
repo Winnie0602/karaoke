@@ -1,9 +1,48 @@
+import { getQuery } from 'h3'
 import { connectToDatabase } from '~~/server/utils/mongodb'
+import type { SongsList } from '~/types/song'
 
-export default defineEventHandler(async () => {
+export default defineEventHandler(async (event) => {
   const { db } = await connectToDatabase()
+  const query = getQuery(event)
 
-  const songs = await db.collection('list').find({}).toArray()
+  const language = query.language as string
+  const artist = query.artist as string | undefined
 
-  return songs
+  let hasLyrics: boolean | undefined
+
+  if (query.hasLyrics === 'true') {
+    hasLyrics = true
+  } else if (query.hasLyrics === 'false') {
+    hasLyrics = false
+  }
+
+  const page = Number(query.page || 1)
+
+  const limit = 10
+  const skip = (page - 1) * limit // 要跳過幾筆 ex第一頁跳過0筆 第二頁跳過limit筆
+
+  // Partial --> 可選欄位
+  const filter: Partial<Pick<SongsList, 'language' | 'artist' | 'hasLyrics'>> =
+    {}
+
+  if (language !== 'all') filter.language = language as SongsList['language']
+  if (artist) filter.artist = artist
+  if (hasLyrics !== undefined) filter.hasLyrics = hasLyrics
+
+  const collection = db.collection<SongsList>('list')
+
+  const [songs, total] = await Promise.all([
+    collection.find(filter).skip(skip).limit(limit).toArray(),
+    collection.countDocuments(filter),
+  ])
+
+  const totalPages = Math.ceil(total / limit)
+
+  return {
+    songs,
+    total,
+    page,
+    totalPages,
+  }
 })

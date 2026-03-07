@@ -30,7 +30,7 @@ export interface LyricData {
 
 export interface SongsList {
   id: string
-  language: string
+  language: LangCode
   title: string
   artist: string
   hasLyrics: boolean

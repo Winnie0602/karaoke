@@ -1,14 +1,18 @@
 <script setup lang="ts">
-import type { SongsList } from '~/types/song'
+import Pagination from '~/components/global/Pagination.vue'
 
-const { data: songs } = await useFetch<SongsList[]>('/api/list/songs')
+const { data, refresh } = await useFetch('/api/list/songs', {
+  query: {
+    language: 'all',
+  },
+})
 
 // v-model
 const searchQuery = ref('')
 
 // 建立過濾後的歌曲清單
 const filteredSongs = computed(() => {
-  const allSongs = songs.value ?? []
+  const allSongs = data.value?.songs ?? []
   if (!searchQuery.value.trim()) return allSongs
 
   const query = searchQuery.value.toLowerCase().trim()
@@ -24,7 +28,7 @@ const filteredSongs = computed(() => {
 
 <template>
   <div class="w-full">
-    <IndexTopCarousel :songs="songs ?? []" />
+    <IndexTopCarousel :songs="data?.songs ?? []" />
 
     <div
       class="mx-auto my-4 w-full space-y-5 px-4 md:my-8 md:max-w-[1280px] md:space-y-8 md:px-8"
@@ -58,6 +62,13 @@ const filteredSongs = computed(() => {
       >
         找不到與「{{ searchQuery }}」相關的歌曲
       </div>
+
+      <Pagination
+        :total="50"
+        :page="2"
+        :total-pages="10"
+        class="flex w-full justify-center"
+      />
     </div>
   </div>
 </template>

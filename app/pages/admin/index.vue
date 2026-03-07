@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { SongsList } from '~/types/song'
-
 
 definePageMeta({
   layout: 'no-player', // 確保使用了你提供的這個 Layout
@@ -8,7 +6,7 @@ definePageMeta({
 
 const currentTab = ref<'songList' | 'addSong'>('songList')
 
-const { data: songs } = await useFetch<SongsList[]>('/api/list/songs')
+
 
 </script>
 
@@ -66,7 +64,7 @@ const { data: songs } = await useFetch<SongsList[]>('/api/list/songs')
       </aside>
 
       <main class="min-h-0 flex-1">
-        <AdminSongList v-if="currentTab === 'songList'" :songs="songs" />
+        <AdminSongList v-if="currentTab === 'songList'" />
         <AdminSongAdd v-if="currentTab === 'addSong'" />
       </main>
     </div>
