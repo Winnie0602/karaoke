@@ -1,15 +1,15 @@
 <script setup lang="ts">
+import type { SongsList } from '~/types/song'
+
+
 definePageMeta({
   layout: 'no-player', // 確保使用了你提供的這個 Layout
 })
 
 const currentTab = ref<'songList' | 'addSong'>('songList')
 
-const songs = ref([
-  { id: 1, title: 'アイドル', artist: 'YOASOBI' },
-  { id: 2, title: 'Lemon', artist: '米津玄師' },
-  { id: 3, title: '勇者', artist: 'YOASOBI' },
-])
+const { data: songs } = await useFetch<SongsList[]>('/api/list/songs')
+
 </script>
 
 <template>
@@ -66,7 +66,7 @@ const songs = ref([
       </aside>
 
       <main class="min-h-0 flex-1">
-        <AdminSongList v-if="currentTab === 'songList'" />
+        <AdminSongList v-if="currentTab === 'songList'" :songs="songs" />
         <AdminSongAdd v-if="currentTab === 'addSong'" />
       </main>
     </div>

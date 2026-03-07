@@ -8,6 +8,9 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     'pinia-plugin-persistedstate/nuxt',
   ],
+  runtimeConfig: {
+    mongoURI: process.env.MONGODB_URI,
+  },
   css: ['~/assets/css/main.css'],
   app: {
     head: {
