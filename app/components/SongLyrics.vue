@@ -151,7 +151,7 @@ watch(currentLineIndex, (newLineIndex) => {
       </div>
 
       <div
-        class="cursor-pointer text-[#E8D6D6] hover:text-[#A66B6B]"
+        class="cursor-pointer text-[#E8D6D6] md:hover:text-[#A66B6B]"
         :class="{ hidden: index === currentLineIndex }"
         @click="store.seekToRequest(lyric.start)"
       >
