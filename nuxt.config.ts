@@ -9,8 +9,7 @@ export default defineNuxtConfig({
     'pinia-plugin-persistedstate/nuxt',
   ],
   runtimeConfig: {
-    mongoURI:
-      'mongodb://mongo:20CwXIB98oj6DqVA57U34MrSiNZ1Wvhx@43.166.240.226:30734',
+    mongoURI: process.env.MONGODB_URI || '',
   },
   css: ['~/assets/css/main.css'],
   app: {
