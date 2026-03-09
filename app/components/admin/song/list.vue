@@ -26,10 +26,10 @@ const deleteSong = async (id: string) => {
 
 const isEditModalOpen = ref(false)
 
-const editingId = ref<number | null>()
+const editingId = ref<string | null>('')
 
-const handleEditModal = (action: 'open' | 'close', songId?: number) => {
-  if (action === 'open') {
+const handleEditModal = (action: 'open' | 'close', songId?: string) => {
+  if (action === 'open' && songId) {
     isEditModalOpen.value = true
     editingId.value = songId
   } else {
@@ -50,7 +50,9 @@ const updatePage = (newPage: number) => {
     <div
       class="flex items-center justify-between border-b border-gray-50 px-8 pt-5"
     >
-      <h2 class="text-xl font-bold text-gray-800">歌曲管理</h2>
+      <h2 class="text-lg font-medium text-gray-800 md:text-xl md:font-bold">
+        歌曲管理
+      </h2>
       <span
         class="rounded-full bg-pink-50 px-3 py-1 text-xs font-bold text-[#F9595F]"
       >
@@ -115,6 +117,12 @@ const updatePage = (newPage: number) => {
         </div>
       </div>
     </div>
+
+    <AdminSongEditModal
+      :open="isEditModalOpen"
+      :editing-id="editingId"
+      @close="handleEditModal('close')"
+    />
   </div>
 </template>
 

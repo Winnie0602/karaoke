@@ -1,13 +1,9 @@
 <script setup lang="ts">
-
 definePageMeta({
-  layout: 'no-player', // 確保使用了你提供的這個 Layout
+  layout: 'no-player',
 })
 
 const currentTab = ref<'songList' | 'addSong'>('songList')
-
-
-
 </script>
 
 <template>
@@ -16,7 +12,9 @@ const currentTab = ref<'songList' | 'addSong'>('songList')
       class="mx-auto flex w-full max-w-[1280px] flex-col gap-4 md:flex-row lg:gap-6"
     >
       <aside class="w-full flex-none md:w-1/5">
-        <div class="flex h-full flex-col rounded-3xl bg-white p-5 shadow-xl">
+        <div
+          class="flex h-full flex-col rounded-3xl bg-white md:p-5 md:shadow-xl"
+        >
           <div
             class="mb-6 hidden px-2 text-xs font-black tracking-[0.2em] text-[#F9595F] md:block"
           >
@@ -27,7 +25,7 @@ const currentTab = ref<'songList' | 'addSong'>('songList')
             <button
               :class="[
                 currentTab === 'songList'
-                  ? 'bg-[#F9595F] text-white shadow-md shadow-red-100'
+                  ? 'bg-[#F9595F] text-white md:shadow-md md:shadow-red-100'
                   : 'text-[#A66B6B] hover:bg-[#FFE5E5]',
               ]"
               class="flex flex-1 items-center justify-center gap-3 rounded-2xl py-3 font-bold transition-all md:justify-start md:px-5"
@@ -40,7 +38,7 @@ const currentTab = ref<'songList' | 'addSong'>('songList')
             <button
               :class="[
                 currentTab === 'addSong'
-                  ? 'bg-[#F9595F] text-white shadow-md shadow-red-100'
+                  ? 'bg-[#F9595F] text-white md:shadow-md md:shadow-red-100'
                   : 'text-[#A66B6B] hover:bg-[#FFE5E5]',
               ]"
               class="flex flex-1 items-center justify-center gap-3 rounded-2xl py-3 font-bold transition-all md:justify-start md:px-5"

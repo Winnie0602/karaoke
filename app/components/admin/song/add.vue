@@ -1,4 +1,8 @@
 <script setup lang="ts">
+
+import { nanoid } from 'nanoid'
+
+
 // 表單資料狀態
 const songForm = ref({
   title: '',
@@ -22,10 +26,22 @@ const handleSubmit = () => {
     .split('\n')
     .map((line) => line.trim())
     .filter((line) => line !== '')
-    .map((line) => ({
-      zh: line, // 暫時將整行存入 zh (或依需求調整)
-      start: 0, // 初始時間戳記
-    }))
+    .map(async (line) => {
+      const obj = {
+        id: nanoid(),
+        [songForm.value.language]: line, // 把每行存到該語言的欄位
+      }
+
+      // 如果是日文，加 ruby 欄位
+      // if (songForm.value.language === 'ja') {
+      //   obj.ruby = await kuroshiro.convert(line, {
+      //     to: 'ruby',
+      //     mode: 'furigana',
+      //   })
+      // }
+
+      return obj
+    })
 
   const payload = {
     ...songForm.value,
@@ -152,3 +168,4 @@ const handleSubmit = () => {
   scrollbar-width: none;
 }
 </style>
+
