@@ -15,12 +15,17 @@ interface oriSongData {
 }
 
 // param original - どこかで鐘(かね)が鳴(な)って
-// returns string - <ruby>鐘<rt>かね</rt></ruby>が<ruby>鳴<rt>な</rt></ruby>って的
+// returns string - <ruby>鐘<rt>かね</rt></ruby>が<ruby>鳴<rt>な</rt></ruby>って
 function generateRuby(original: string) {
   return original.replace(
     /([一-龯々]+)\(([^)]+)\)/g,
     '<ruby>$1<rt>$2</rt></ruby>',
   )
+}
+// param original - どこかで鐘(かね)が鳴(な)って
+// returns string - どこかで鐘が鳴って
+function generateJapanese(original: string) {
+  return original.replace(/\(([^)]+)\)/g, '')
 }
 
 export default defineEventHandler(async (event) => {
@@ -39,7 +44,7 @@ export default defineEventHandler(async (event) => {
     if (language === 'ja' && lyric.ja) {
       return {
         nanoid: lyric.nanoid,
-        ja: lyric.ja,
+        ja: generateJapanese(lyric.ja),
         ruby: generateRuby(lyric.ja),
       }
     } else {

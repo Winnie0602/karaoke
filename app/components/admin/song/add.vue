@@ -26,6 +26,7 @@ const handleLyrics = () => {
     return obj
   })
 }
+const { open } = useCheckConfirm()
 
 // 提交處理
 const handleSubmit = async () => {
@@ -45,8 +46,8 @@ const handleSubmit = async () => {
     method: 'POST',
     body: { payload },
   })
-  console.log('準備存入資料庫的資料：', payload)
-  alert('資料處理完成，請查看 Console')
+
+  await open('新增成功', '')
 }
 </script>
 

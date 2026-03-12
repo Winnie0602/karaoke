@@ -118,7 +118,7 @@ const updatePage = (newPage: number) => {
       </div>
     </div>
 
-    <AdminSongEditModal
+    <AdminSongEdit
       :open="isEditModalOpen"
       :editing-id="editingId"
       @close="handleEditModal('close')"

@@ -20,6 +20,7 @@ const emit = defineEmits<{
 
 function closeModal() {
   songData.value = null
+  editMode.value = ''
   emit('close')
 }
 
@@ -29,7 +30,17 @@ const getSongData = async () => {
   songData.value = await $fetch<SongData | null>(`/api/song/${editingId}`)
 }
 
+// 標題邏輯
 const editMode = ref<'' | 'info' | 'time' | 'translation'>('')
+
+const modeTitleMap = {
+  '': '編輯',
+  info: '編輯歌曲資訊',
+  time: '編輯歌詞時間軸',
+  translation: '編輯歌曲歌詞翻譯',
+}
+
+const currentTitle = computed(() => modeTitleMap[editMode.value])
 
 watch(
   () => editingId,
@@ -73,12 +84,23 @@ watch(
               <div
                 class="flex items-center justify-between border-b border-[#FFE5E5] pb-4"
               >
-                <DialogTitle
-                  as="h3"
-                  class="text-xl font-black text-[#7A3A3A] md:text-2xl"
-                >
-                  編輯歌曲資訊
-                </DialogTitle>
+                <div class="flex items-center gap-2">
+                  <button
+                    v-if="editMode !== ''"
+                    class="mr-2 text-[#A66B6B] hover:text-[#F9595F]"
+                    @click="editMode = ''"
+                  >
+                    <i class="fa-solid fa-chevron-left text-xl"></i>
+                  </button>
+
+                  <DialogTitle
+                    as="h3"
+                    class="text-xl font-black text-[#7A3A3A] md:text-2xl"
+                  >
+                    {{ currentTitle }}
+                  </DialogTitle>
+                </div>
+
                 <button
                   class="text-[#A66B6B] hover:text-[#F9595F]"
                   @click="closeModal"
@@ -88,7 +110,7 @@ watch(
               </div>
 
               <div
-                v-if="songData?.id"
+                v-if="songData?.id && editMode === ''"
                 class="flex flex-col items-center space-y-5 overflow-hidden py-5"
               >
                 <div class="mb-2">
@@ -122,6 +144,7 @@ watch(
                 </button>
                 <button
                   class="w-full max-w-[640px] rounded-xl bg-[#FFE5E5] py-3 font-black text-[#F9595F] active:scale-95"
+                  @click="editMode = 'time'"
                 >
                   編輯歌曲時間軸
                   <div class="mt-1 text-xs text-[#7A3A3A]">
@@ -161,6 +184,13 @@ watch(
                   </div>
                 </a>
               </div>
+
+              <AdminSongEditTime
+                v-if="editMode === 'time' && songData"
+                :video-id="songData.id"
+                :lyrics="songData.lyrics"
+                :language="songData.language"
+              />
             </DialogPanel>
           </TransitionChild>
         </div>
