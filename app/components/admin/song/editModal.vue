@@ -29,6 +29,8 @@ const getSongData = async () => {
   songData.value = await $fetch<SongData | null>(`/api/song/${editingId}`)
 }
 
+const editMode = ref<'' | 'info' | 'time' | 'translation'>('')
+
 watch(
   () => editingId,
   async () => {
@@ -85,111 +87,79 @@ watch(
                 </button>
               </div>
 
-              <div class="flex flex-1 flex-col overflow-hidden">
-                <div
-                  class="mx-auto mt-4 aspect-video max-h-[20vh] shrink-0 overflow-hidden rounded-2xl bg-black"
-                >
-                  <iframe
-                    v-if="songData?.id"
-                    class="h-full w-full"
-                    :src="`https://www.youtube.com/embed/${songData.id}`"
-                    frameborder="0"
-                    allow="autoplay; encrypted-media"
-                    allowfullscreen
-                  ></iframe>
-                </div>
-
-                <div class="mt-6 flex-1 overflow-y-auto pr-2">
-                  <section class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <div class="space-y-1">
-                      <label class="text-xs font-black text-[#A66B6B]">
-                        歌曲標題
-                      </label>
-                      <input
-                        type="text"
-                        class="w-full rounded-xl border-none bg-[#FFE5E5]/30 px-4 py-2 text-[#7A3A3A] focus:ring-2 focus:ring-[#F9595F]"
-                      />
-                    </div>
-                    <div class="space-y-1">
-                      <label class="text-xs font-black text-[#A66B6B]">
-                        歌手
-                      </label>
-                      <input
-                        type="text"
-                        class="w-full rounded-xl border-none bg-[#FFE5E5]/30 px-4 py-2 text-[#7A3A3A] focus:ring-2 focus:ring-[#F9595F]"
-                      />
-                    </div>
-                    <div class="space-y-1">
-                      <label class="text-xs font-black text-[#A66B6B]">
-                        影片 ID
-                      </label>
-                      <input
-                        type="text"
-                        class="w-full rounded-xl border-none bg-[#FFE5E5]/30 px-4 py-2 text-[#7A3A3A] focus:ring-2 focus:ring-[#F9595F]"
-                      />
-                    </div>
-                    <div class="space-y-1">
-                      <label class="text-xs font-black text-[#A66B6B]">
-                        語言 (ja/en/ko)
-                      </label>
-                      <input
-                        type="text"
-                        class="w-full rounded-xl border-none bg-[#FFE5E5]/30 px-4 py-2 text-[#7A3A3A] focus:ring-2 focus:ring-[#F9595F]"
-                      />
-                    </div>
-                  </section>
-
-                  <div v-if="songData" class="mt-10 space-y-3">
-                    <h4
-                      class="flex items-center gap-2 font-black text-[#7A3A3A]"
+              <div
+                v-if="songData?.id"
+                class="flex flex-col items-center space-y-5 overflow-hidden py-5"
+              >
+                <div class="mb-2">
+                  <div class="mb-2 w-full max-w-[640px] text-center">
+                    <h2
+                      class="text-2xl leading-tight font-black text-[#F9595F]"
                     >
-                      <i class="fa-solid fa-lines-leaning"></i>
-                      歌詞列表
-                    </h4>
-
-                    <div
-                      v-for="(lyric, index) in songData.lyrics"
-                      :key="index"
-                      class="overflow-hidden rounded-2xl border border-[#FFE5E5] bg-white"
+                      {{ songData.title || '未知曲名' }}
+                    </h2>
+                    <p
+                      class="mt-1 text-lg font-medium text-[#7A3A3A] opacity-80"
                     >
-                      <button
-                        class="flex w-full items-center justify-between bg-[#FFF9F9] px-4 py-3 text-left hover:bg-[#FFE5E5]/20"
-                      >
-                        <div class="flex items-center gap-3">
-                          <span
-                            class="rounded-full bg-[#FFE5E5] px-2 py-0.5 text-[10px] font-bold text-[#F9595F]"
-                          >
-                            {{ lyric.start }}s - {{ lyric.end }}s
-                          </span>
-                          <span
-                            class="truncate text-sm font-bold text-[#7A3A3A]"
-                          >
-                            {{ lyric.ja }}
-                          </span>
-                        </div>
-                        <i
-                          class="fa-solid fa-chevron-down text-[#A66B6B] transition-transform"
-                          :class="{ 'rotate-180': false }"
-                        ></i>
-                      </button>
-                    </div>
+                      {{ songData.artist || '未知歌手' }}
+                    </p>
                   </div>
+
+                  <img
+                    :src="`https://img.youtube.com/vi/${songData.id}/mqdefault.jpg`"
+                    alt="thumbnail"
+                    class="w-[240px] rounded-lg border-4 border-[#FFE5E5] object-cover shadow-sm"
+                  />
                 </div>
 
-                <div class="mt-6 flex gap-3 border-t border-[#FFE5E5] pt-6">
-                  <button
-                    class="flex-1 rounded-xl bg-[#F9595F] py-3 font-black text-white shadow-lg shadow-[#F9595F]/20 active:scale-95"
-                    @click="emit('confirm')"
-                  >
-                    儲存變更
-                  </button>
-                  <button
-                    class="flex-1 rounded-xl bg-[#FFE5E5] py-3 font-black text-[#F9595F] active:scale-95"
-                    @click="closeModal"
-                  >
-                    取消
-                  </button>
-                </div>
+                <button
+                  class="w-full max-w-[640px] rounded-xl bg-[#FFE5E5] py-3 font-black text-[#F9595F] active:scale-95"
+                >
+                  編輯歌曲資訊
+                  <div class="mt-1 text-xs text-[#7A3A3A]">
+                    編輯歌曲ID、標題、歌手、語言
+                  </div>
+                </button>
+                <button
+                  class="w-full max-w-[640px] rounded-xl bg-[#FFE5E5] py-3 font-black text-[#F9595F] active:scale-95"
+                >
+                  編輯歌曲時間軸
+                  <div class="mt-1 text-xs text-[#7A3A3A]">
+                    手動對齊歌曲時間
+                  </div>
+                </button>
+                <button
+                  class="w-full max-w-[640px] rounded-xl bg-[#FFE5E5] py-3 font-black text-[#F9595F] active:scale-95"
+                >
+                  編輯歌曲歌詞翻譯
+                  <div class="mt-1 text-xs text-[#7A3A3A]">
+                    編輯歌詞各國語言翻譯
+                  </div>
+                </button>
+                <button
+                  class="w-full max-w-[640px] rounded-xl bg-[#FFE5E5] py-3 font-black text-[#F9595F] active:scale-95"
+                >
+                  刪除該歌曲
+                  <div class="mt-1 text-xs text-[#7A3A3A]">
+                    從資料庫刪除該歌曲
+                  </div>
+                </button>
+                <a
+                  :href="`https://www.youtube.com/watch?v=${songData.id}`"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="flex w-full max-w-[640px] flex-col items-center rounded-xl bg-[#FFE5E5] py-3 font-black text-[#F9595F] active:scale-95"
+                >
+                  <div class="flex w-full items-center justify-center">
+                    前往YouTube
+                    <i
+                      class="fa-brands fa-youtube ml-2 text-lg text-[#F9595F]"
+                    ></i>
+                  </div>
+                  <div class="mt-1 text-xs text-[#7A3A3A]">
+                    將以新視窗打開外站
+                  </div>
+                </a>
               </div>
             </DialogPanel>
           </TransitionChild>

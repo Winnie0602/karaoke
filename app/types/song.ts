@@ -17,6 +17,7 @@ export interface VocabularyData {
 }
 
 export interface LyricData {
+  nanoid: string
   start: number
   end: number
   ja?: string

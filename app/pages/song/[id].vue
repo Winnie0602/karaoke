@@ -19,15 +19,18 @@ if (!currentSong.value && !pending.value) {
     message: '找不到這首歌曲，請檢查網址是否正確。',
   })
 }
+const page = ref(1)
 
-const { data: songList } = await useFetch<SongsList[]>('/api/list/songs')
-
-const songData = computed(() => {
-  const currentSongInfo = songList.value?.find((e) => e.id === videoId.value)
-  const rest = songList.value?.filter((e) => e.id !== videoId.value) ?? []
-  const randomSongs = [...rest].sort(() => Math.random() - 0.5).slice(0, 8)
-  return { currentSongInfo, randomSongs }
-})
+const { data: randomSongs } = await useFetch<{ songs: SongsList[] }>(
+  '/api/list/songs',
+  {
+    query: {
+      language: 'all',
+      page,
+      limit: 8,
+    },
+  },
+)
 
 watch(
   () => route.params.id,
@@ -36,11 +39,8 @@ watch(
 
     store.loadVideo(id, store.currentTime)
 
-    if (songData.value.currentSongInfo) {
-      store.setSongInfo(
-        songData.value.currentSongInfo?.title,
-        songData.value.currentSongInfo?.artist,
-      )
+    if (currentSong.value) {
+      store.setSongInfo(currentSong.value?.title, currentSong.value?.artist)
     }
   },
   { immediate: true },
@@ -80,10 +80,10 @@ watch(
           Recommended Songs
         </div>
 
-        <div class="space-y-2">
+        <div v-if="randomSongs?.songs" class="space-y-2">
           <ClientOnly>
             <VideoCard
-              v-for="song in songData.randomSongs"
+              v-for="song in randomSongs.songs"
               :key="song.id"
               :song="song"
             />

@@ -1,3 +1,9 @@
+<script setup lang="ts">
+onBeforeUnmount(async () => {
+  window.location.reload()
+})
+</script>
+
 <template>
   <div class="h-screen bg-[#A66B6B]/40">
     <Header />

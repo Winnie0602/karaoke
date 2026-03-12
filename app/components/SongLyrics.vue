@@ -6,7 +6,7 @@ const { lyrics, songData } = defineProps<{
   lyrics: LyricData[]
   songData: { title: string; artist: string }
 }>()
-
+console.log(lyrics)
 const store = usePlayerStore()
 
 // 底下例句panel
@@ -37,7 +37,7 @@ const getLyric = (lyric: LyricData) => {
   if (songLang.value === 'ja' && lyric.ruby)
     return lyric.ruby.replace(
       /<rt>/g,
-      '<rt class="text-[11px] text-[#A66B6B]">',
+      '<rt class="text-[12px] text-[#A66B6B]">',
     )
   return lyric[songLang.value] ?? ''
 }
@@ -138,7 +138,7 @@ watch(currentLineIndex, (newLineIndex) => {
       <div class="flex flex-col">
         <span
           v-if="songLang === 'ja'"
-          class="text-md mr-1 inline-block"
+          class="mr-1 inline-block"
           v-html="getLyric(lyric)"
         ></span>
         <span v-else class="mr-1 inline-block">

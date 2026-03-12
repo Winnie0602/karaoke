@@ -4,6 +4,8 @@ definePageMeta({
 })
 
 const currentTab = ref<'songList' | 'addSong'>('songList')
+
+
 </script>
 
 <template>

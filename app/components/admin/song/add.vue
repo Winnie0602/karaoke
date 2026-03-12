@@ -1,7 +1,5 @@
 <script setup lang="ts">
-
 import { nanoid } from 'nanoid'
-
 
 // 表單資料狀態
 const songForm = ref({
@@ -9,11 +7,28 @@ const songForm = ref({
   videoId: '',
   language: 'ja', // 預設日文
   artist: '',
-  rawLyrics: '', // 存放使用者貼入的原始文字
+  rawLyrics: '', // 存放使用者貼入的文字 (日文：どこかで鐘(かね)が鳴(な)って)
 })
 
+const handleLyrics = () => {
+  // 分行
+  const lines = songForm.value.rawLyrics
+    .split('\n')
+    .map((l) => l.trim())
+    .filter((l) => l !== '')
+
+  return lines.map((line) => {
+    const obj = {
+      nanoid: nanoid(),
+      [songForm.value.language]: line,
+    }
+
+    return obj
+  })
+}
+
 // 提交處理
-const handleSubmit = () => {
+const handleSubmit = async () => {
   // 1. 簡易必填檢查
   const { title, videoId, artist, rawLyrics } = songForm.value
   if (!title || !videoId || !artist || !rawLyrics) {
@@ -21,33 +36,15 @@ const handleSubmit = () => {
     return
   }
 
-  // 2. 處理歌詞：將字串按「換行」切割，並過濾掉空行
-  const processedLyrics = rawLyrics
-    .split('\n')
-    .map((line) => line.trim())
-    .filter((line) => line !== '')
-    .map(async (line) => {
-      const obj = {
-        id: nanoid(),
-        [songForm.value.language]: line, // 把每行存到該語言的欄位
-      }
-
-      // 如果是日文，加 ruby 欄位
-      // if (songForm.value.language === 'ja') {
-      //   obj.ruby = await kuroshiro.convert(line, {
-      //     to: 'ruby',
-      //     mode: 'furigana',
-      //   })
-      // }
-
-      return obj
-    })
-
   const payload = {
     ...songForm.value,
-    lyrics: processedLyrics,
+    lyrics: handleLyrics(),
   }
 
+  await $fetch('/api/song/add', {
+    method: 'POST',
+    body: { payload },
+  })
   console.log('準備存入資料庫的資料：', payload)
   alert('資料處理完成，請查看 Console')
 }
@@ -73,6 +70,19 @@ const handleSubmit = () => {
             <label
               class="ml-1 text-sm font-bold tracking-wider text-[#A66B6B] uppercase"
             >
+              YouTube Video ID *
+            </label>
+            <input
+              v-model="songForm.videoId"
+              type="text"
+              class="w-full rounded-xl bg-[#FFF9F9] px-4 py-3 text-gray-700 ring-2 ring-red-300/50 outline-none"
+              placeholder="請輸入YT影片ID"
+            />
+          </div>
+          <div class="space-y-2">
+            <label
+              class="ml-1 text-sm font-bold tracking-wider text-[#A66B6B] uppercase"
+            >
               Song Title *
             </label>
             <input
@@ -94,20 +104,6 @@ const handleSubmit = () => {
               type="text"
               class="w-full rounded-xl bg-[#FFF9F9] px-4 py-3 text-gray-700 ring-2 ring-red-300/50 outline-none"
               placeholder="輸入歌手名稱"
-            />
-          </div>
-
-          <div class="space-y-2">
-            <label
-              class="ml-1 text-sm font-bold tracking-wider text-[#A66B6B] uppercase"
-            >
-              YouTube Video ID *
-            </label>
-            <input
-              v-model="songForm.videoId"
-              type="text"
-              class="w-full rounded-xl bg-[#FFF9F9] px-4 py-3 text-gray-700 ring-2 ring-red-300/50 outline-none"
-              placeholder="請輸入YT影片ID"
             />
           </div>
 
@@ -141,7 +137,7 @@ const handleSubmit = () => {
             v-model="songForm.rawLyrics"
             rows="8"
             class="no-scrollbar w-full rounded-2xl bg-[#FFF9F9] p-4 text-sm leading-relaxed text-gray-700 ring-2 ring-red-300/50 outline-none"
-            placeholder="在此貼上整段歌詞..."
+            placeholder="在此貼上整段歌詞...&#10;日文平假名格式：どこかで鐘(かね)が鳴(な)って"
           ></textarea>
         </div>
 
@@ -168,4 +164,3 @@ const handleSubmit = () => {
   scrollbar-width: none;
 }
 </style>
-
