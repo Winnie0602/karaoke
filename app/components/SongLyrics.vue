@@ -22,6 +22,7 @@ const songLang = computed<LangCode | null>(() => {
   if (first.en) return 'en'
   if (first.hk) return 'hk'
   if (first.tw) return 'tw'
+  if (first.zh) return 'zh'
 
   return null
 })

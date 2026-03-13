@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type TypingJa from '~/components/test/card/TypingJa.vue'
+import type TypingComposition from '~/components/test/card/TypingComposition.vue'
 import type { SongData, LyricData } from '~/types/song'
 
 const { currentSong, testLyrics, isPlaying, selectedQuizType } = defineProps<{
@@ -22,7 +22,7 @@ const userAnswers = ref<{ cAnswer: string; uAnswer: string }[]>([])
 // 聆聽生命蘋果 共三次機會
 const life = ref<0 | 1 | 2 | 3>(3)
 
-const cardRefs = ref<InstanceType<typeof TypingJa>[]>([])
+const cardRefs = ref<InstanceType<typeof TypingComposition>[]>([])
 
 const playLyric = (eachLyric: LyricData) => {
   if (!isPlaying) {
@@ -80,6 +80,16 @@ watch(nowIndex, (index) => {
 
 <template>
   <div class="space-y-4 px-5 py-6 md:px-20 md:py-10">
+    <button
+      :disabled="isPlaying || life < 1"
+      @click="handlePlay(testLyrics[nowIndex], nowIndex)"
+    >
+      <i
+        class="fa-solid fa-play md:text-lg"
+        :class="isPlaying ? 'text-gray-400' : 'text-[#F9595F]'"
+      />
+    </button>
+
     <div
       v-for="(eachLyric, i) in testLyrics"
       :key="eachLyric.start"
@@ -103,8 +113,8 @@ watch(nowIndex, (index) => {
         />
       </button>
 
-      <TestCardTypingJa
-        v-if="currentSong.language === 'ja'"
+      <TestCardTypingComposition
+        v-if="['ja', 'zh', 'kr'].includes(currentSong.language)"
         ref="cardRefs"
         :each-lyric="eachLyric"
         :is-now-card="i === nowIndex"
@@ -115,8 +125,8 @@ watch(nowIndex, (index) => {
         @set-answer="(ans) => setAnswers(ans, i)"
       />
 
-      <TestCardTypingEn
-        v-if="currentSong.language === 'en'"
+      <TestCardTypingInput
+        v-if="['en'].includes(currentSong.language)"
         ref="cardRefs"
         :each-lyric="eachLyric"
         :is-now-card="i === nowIndex"

@@ -21,6 +21,7 @@ const {
   resultStates,
   handleInput,
   isLockedIndex,
+  isOriBlank,
   userInput,
   answer,
 } = useTypingMode({
@@ -58,6 +59,17 @@ const onCompositionStart = () => {
   composingText.value = ''
 }
 
+const isDeleting = ref(false)
+
+// 捕捉目前按下的鍵
+const onKeydown = (e: KeyboardEvent) => {
+  if (isFakeKeyboard.value) {
+    return
+  }
+
+  isDeleting.value = e.key === 'Backspace' || e.key === 'Delete'
+}
+
 // IME 處理(結束)
 const onCompositionEnd = (e: CompositionEvent) => {
   if (isFakeKeyboard.value) {
@@ -78,6 +90,16 @@ const onInput = (e: Event) => {
   }
   if (isComposing.value) return
   const target = e.target as HTMLInputElement
+
+  // 下一個字是空白的話幫使用者打空白
+  if (!isDeleting.value && isOriBlank(target.value.length)) {
+    target.value = target.value.concat(' ')
+  }
+
+  // 正在按刪除鍵且下一個字為空白，刪除空白
+  if (isDeleting.value && target.value[target.value.length - 1] === ' ') {
+    target.value = target.value.slice(0, -2)
+  }
 
   handleInput(target)
 }
@@ -173,6 +195,7 @@ watch(
         @compositionstart="onCompositionStart"
         @compositionend="onCompositionEnd"
         @compositionupdate="onCompositionUpdate"
+        @keydown="onKeydown"
       />
 
       <!-- 顯示格子／字的地方 -->
@@ -191,8 +214,10 @@ watch(
               'ring ring-[#F9595F]/80': i === userInput.length && isNowCard,
             }"
           >
+            <div v-if="isOriBlank(i)" class="w-4 md:w-8"></div>
+
             <span
-              v-if="i >= userInput.length"
+              v-else-if="i >= userInput.length"
               :class="
                 i === userInput.length && isComposing
                   ? 'text-[#F9595F]/80'
@@ -219,7 +244,9 @@ watch(
           </div>
 
           <!-- 底線 -->
+          <div v-if="isOriBlank(i)" class="w-4 md:w-8"></div>
           <div
+            v-else
             class="mt-1 h-1 w-full rounded-full transition-all duration-500 md:h-2.5"
             :class="[
               i === userInput.length && isNowCard

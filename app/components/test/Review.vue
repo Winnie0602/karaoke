@@ -75,9 +75,11 @@ const emit = defineEmits<{
                 <span
                   class="h-6 w-full border-b-[2px] text-center font-mono text-base leading-6 font-black whitespace-pre transition-all md:h-8 md:text-xl md:leading-8"
                   :class="
-                    userAnswers[index].uAnswer[i] !== char
-                      ? 'border-[#F9595F] text-[#F9595F]'
-                      : 'border-[#B58C8C]/20 text-[#7A3A3A]/30'
+                    userAnswers[index].uAnswer[i] === ' '
+                      ? 'border-none'
+                      : userAnswers[index].uAnswer[i] !== char
+                        ? 'border-[#F9595F] text-[#F9595F]'
+                        : 'border-[#B58C8C]/20 text-[#7A3A3A]/30'
                   "
                 >
                   {{ userAnswers[index].uAnswer[i] || ' ' }}

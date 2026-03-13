@@ -123,14 +123,16 @@ watch(
         }"
         @click="setTestIndex(index)"
       >
-        <div class="flex flex-col pr-12 md:pr-0">
+        <div class="mt-2 flex flex-col pr-12 md:pr-0">
           <div class="flex flex-wrap text-[#8F5F5F]">
             <span
               v-for="(word, wIndex) in lyric[currentSong.language]"
               :key="wIndex"
-              class="mr-1 inline-block md:font-medium"
+              class="md:font-medium"
+              :class="{ 'md:mr-1': currentSong.language !== 'en' }"
             >
-              {{ word }}
+              <div v-if="word === ' '" class="w-2"></div>
+              <span v-else>{{ word }}</span>
             </span>
           </div>
           <span class="mt-1 text-[12px] text-gray-500 md:text-[13px]">
@@ -143,14 +145,14 @@ watch(
         >
           <div
             v-if="selected.start === index"
-            class="rounded bg-[#F9595F] bg-transparent px-1.5 py-0.5 text-[9px] text-[10px] font-black tracking-tighter tracking-widest text-[#F9595F] uppercase md:p-0"
+            class="rounded bg-[#F9595F] bg-transparent px-1.5 py-0.5 text-[9px] text-[10px] font-black text-[#F9595F] uppercase md:p-0"
           >
             Start
           </div>
 
           <div
             v-if="selected.end === index"
-            class="rounded bg-[#B58C8C] bg-transparent px-1.5 py-0.5 text-[9px] text-[10px] font-black tracking-tighter tracking-widest text-[#B58C8C] uppercase md:p-0"
+            class="rounded bg-[#B58C8C] bg-transparent px-1.5 py-0.5 text-[9px] text-[10px] font-black text-[#B58C8C] uppercase md:p-0"
           >
             End
           </div>
