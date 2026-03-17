@@ -68,6 +68,7 @@ watch(
                 title: currentSong.title,
                 artist: currentSong.artist,
               }"
+              :song-lang="currentSong.language"
             />
           </ClientOnly>
         </div>

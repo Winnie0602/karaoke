@@ -1,23 +1,19 @@
 <script setup lang="ts">
 import type { SongsList } from '~/types/song'
-import type { Tab, LangCode } from '~/types/lang'
+import type { Tab } from '~/types/lang'
+import  { languageMapCode } from '~/types/lang'
+
 
 const showType = ref<'list' | 'grid'>('list')
 
-const languageMap: Record<Tab, LangCode> = {
-  日本語: 'ja',
-  臺語: 'tw',
-  English: 'en',
-  한국어: 'kr',
-  廣東話: 'hk',
-}
+
 const { songs } = defineProps<{ songs: SongsList[] }>()
 
-const tabs = Object.keys(languageMap) as Tab[]
+const tabs = Object.keys(languageMapCode) as Tab[]
 const nowTab = ref<Tab>('日本語')
 
 const tabSongs = computed(() => {
-  const lang = languageMap[nowTab.value]
+  const lang = languageMapCode[nowTab.value]
   return songs.filter((song) => song.language === lang)
 })
 </script>

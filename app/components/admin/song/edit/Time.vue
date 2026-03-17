@@ -5,6 +5,8 @@ const { show } = useToast()
 
 const router = useRouter()
 
+const emit = defineEmits(['goBack'])
+
 const { videoId, lyrics, language } = defineProps<{
   videoId: string
   lyrics: LyricData[]
@@ -58,7 +60,7 @@ const saveLyricsTime = async () => {
 
   show('更新完成', 2000)
 
-  router.push({ path: `/admin/song/edit/${videoId}` })
+  emit('goBack')
 }
 
 // 最後一個編輯過的歌詞id

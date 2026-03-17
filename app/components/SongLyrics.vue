@@ -2,30 +2,16 @@
 import type { LyricData } from '~/types/song'
 import type { LangCode } from '~/types/lang'
 
-const { lyrics, songData } = defineProps<{
+const { lyrics, songData, songLang } = defineProps<{
   lyrics: LyricData[]
   songData: { title: string; artist: string }
+  songLang: LangCode
 }>()
-console.log(lyrics)
+
 const store = usePlayerStore()
 
 // 底下例句panel
 const isPanelOpen = ref(false)
-
-//這首歌的語言
-const songLang = computed<LangCode | null>(() => {
-  const first = lyrics[0]
-  if (!first) return null
-
-  if (first.ja) return 'ja'
-  if (first.kr) return 'kr'
-  if (first.en) return 'en'
-  if (first.hk) return 'hk'
-  if (first.tw) return 'tw'
-  if (first.zh) return 'zh'
-
-  return null
-})
 
 // 每句歌詞dom陣列
 const lyricsRefs = ref<HTMLElement[]>([])
@@ -33,19 +19,19 @@ const lyricsRefs = ref<HTMLElement[]>([])
 const containerRef = ref<HTMLElement | null>(null)
 
 const getLyric = (lyric: LyricData) => {
-  if (!songLang.value) return ''
+  if (!songLang) return ''
   // 日文直接給平假名html
-  if (songLang.value === 'ja' && lyric.ruby)
+  if (songLang === 'ja' && lyric.ruby)
     return lyric.ruby.replace(
       /<rt>/g,
       '<rt class="text-[12px] text-[#A66B6B]">',
     )
-  return lyric[songLang.value] ?? ''
+  return lyric[songLang] ?? ''
 }
 
 // 代辦：加入語言功能後做
 const getTranslate = (lyric: LyricData) => {
-  if (!songLang.value) return ''
+  if (!songLang) return ''
 
   return lyric.zh ?? ''
 }
@@ -105,6 +91,7 @@ watch(currentLineIndex, (newLineIndex) => {
     behavior: 'smooth',
   })
 })
+
 </script>
 
 <template>

@@ -75,9 +75,7 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
   watch(
     () => store.storeMode,
     (mode) => {
-      console.log(player.value)
       if (!player.value) return
-      console.log(2)
 
       // 一般頁面
       if (mode === 'normal' && videoId.value) {

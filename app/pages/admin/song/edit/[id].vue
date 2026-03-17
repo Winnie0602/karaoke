@@ -53,6 +53,7 @@ const prevStep = () => {
         {{ currentTitle }}
       </h1>
     </div>
+    <!-- 所有列表 -->
     <div
       v-if="editMode === '' && songData"
       class="flex flex-col items-center space-y-4 md:space-y-5"
@@ -93,6 +94,7 @@ const prevStep = () => {
       </button>
       <button
         class="w-full max-w-[640px] rounded-xl bg-[#FFE5E5] py-3 font-medium text-[#F9595F] active:scale-95 md:font-black"
+        @click="editMode = 'translation'"
       >
         編輯歌曲歌詞翻譯
         <div class="mt-1 text-xs text-[#7A3A3A]">編輯歌詞各國語言翻譯</div>
@@ -119,11 +121,22 @@ const prevStep = () => {
       </a>
     </div>
 
+    <!-- 編輯時間戳記 -->
     <AdminSongEditTime
       v-if="editMode === 'time' && songData"
       :video-id="songData.id"
       :lyrics="songData.lyrics"
       :language="songData.language"
+      @go-back="editMode = ''"
+    />
+
+    <!-- 編輯歌詞翻譯 -->
+    <AdminSongEditTranslation
+      v-if="editMode === 'translation' && songData"
+      :video-id="songData.id"
+      :lyrics="songData.lyrics"
+      :language="songData.language"
+      @go-back="editMode = ''"
     />
   </div>
 </template>

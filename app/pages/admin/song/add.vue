@@ -61,13 +61,15 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-  <div class="flex h-[calc(100vh-56px)] w-full overflow-hidden p-4 lg:p-6">
+  <div
+    class="flex w-full flex-col p-2 md:h-[calc(100vh-56px)] md:flex-row md:overflow-hidden md:p-4 lg:p-6"
+  >
     <div
-      class="mx-auto flex w-full max-w-[1280px] flex-col gap-4 md:flex-row lg:gap-6"
+      class="mx-auto flex w-full max-w-[1280px] flex-col gap-3 md:flex-row md:gap-4 lg:gap-6"
     >
       <aside class="w-full flex-none md:w-1/5">
         <div
-          class="flex h-full flex-col rounded-3xl bg-white md:p-5 md:shadow-xl"
+          class="flex flex-col rounded-2xl bg-white p-2 shadow-sm md:h-full md:rounded-3xl md:p-5 md:shadow-xl"
         >
           <div
             class="mb-6 hidden px-2 text-xs font-black tracking-[0.2em] text-[#F9595F] md:block"
@@ -78,18 +80,18 @@ const handleSubmit = async () => {
           <nav class="flex flex-row gap-2 md:flex-col">
             <NuxtLink
               to="/admin/song/list"
-              class="flex flex-1 items-center justify-center gap-3 rounded-2xl py-3 font-bold text-[#A66B6B] transition-all hover:bg-[#FFE5E5] md:justify-start md:px-5"
+              class="flex flex-1 items-center justify-center gap-2 rounded-xl py-2 font-bold text-[#A66B6B] transition-all hover:bg-[#FFE5E5] md:justify-start md:rounded-2xl md:px-5 md:py-3"
             >
-              <i class="fa-solid fa-layer-group text-sm"></i>
-              <span class="text-sm md:text-base">歌曲列表</span>
+              <i class="fa-solid fa-layer-group text-xs md:text-sm"></i>
+              <span class="text-xs md:text-base">歌曲列表</span>
             </NuxtLink>
 
             <NuxtLink
               to="/admin/song/add"
-              class="flex flex-1 items-center justify-center gap-3 rounded-2xl bg-[#F9595F] py-3 font-bold text-white transition-all md:justify-start md:px-5 md:shadow-md md:shadow-red-100"
+              class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#F9595F] py-2 font-bold text-white transition-all md:justify-start md:rounded-2xl md:px-5 md:py-3 md:shadow-md md:shadow-red-100"
             >
-              <i class="fa-solid fa-plus-circle text-sm"></i>
-              <span class="text-sm md:text-base">新增歌曲</span>
+              <i class="fa-solid fa-plus-circle text-xs md:text-sm"></i>
+              <span class="text-xs md:text-base">新增歌曲</span>
             </NuxtLink>
           </nav>
 
@@ -105,100 +107,105 @@ const handleSubmit = async () => {
         </div>
       </aside>
 
-      <main class="min-h-0 flex-1">
-        <div class="flex h-full flex-col rounded-3xl bg-white shadow-xl">
+      <main class="min-h-0 flex-1 overflow-hidden">
+        <div
+          class="flex h-full flex-col rounded-2xl bg-white shadow-md md:rounded-3xl md:shadow-xl"
+        >
           <div
-            class="flex items-center justify-between border-b border-gray-50 px-8 py-5"
+            class="flex items-center justify-between border-b border-gray-50 px-5 py-3 md:px-8 md:py-5"
           >
-            <h2 class="text-xl font-bold text-gray-800">新增歌曲資料</h2>
+            <h2 class="text-lg font-bold text-gray-800 md:text-xl">
+              新增歌曲資料
+            </h2>
             <span
-              class="rounded-full bg-pink-50 px-3 py-1 text-sm font-bold text-[#F9595F]"
+              class="rounded-full bg-pink-50 px-2 py-0.5 text-[10px] font-bold text-[#F9595F] md:px-3 md:py-1 md:text-sm"
             >
               均為必填
             </span>
           </div>
 
-          <div class="no-scrollbar flex-1 overflow-y-auto p-6">
-            <div class="mx-auto max-w-3xl space-y-6">
-              <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
-                <div class="space-y-2">
+          <div class="no-scrollbar flex-1 overflow-y-auto p-4 md:p-6">
+            <div class="mx-auto max-w-3xl space-y-4 md:space-y-6">
+              <div class="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5">
+                <div class="space-y-1.5">
                   <label
-                    class="ml-1 text-sm font-bold tracking-wider text-[#A66B6B] uppercase"
+                    class="ml-1 text-[10px] font-bold tracking-wider text-[#A66B6B] uppercase md:text-sm"
                   >
                     YouTube Video ID *
                   </label>
                   <input
                     v-model="songForm.videoId"
                     type="text"
-                    class="w-full rounded-xl bg-[#FFF9F9] px-4 py-3 text-gray-700 ring-2 ring-red-300/50 outline-none"
-                    placeholder="請輸入YT影片ID"
+                    class="w-full rounded-xl bg-[#FFF9F9] px-4 py-2.5 text-sm text-gray-700 ring-2 ring-red-300/30 outline-none focus:ring-red-400 md:py-3 md:text-base"
+                    placeholder="例如: dQw4w9WgXcQ"
                   />
                 </div>
-                <div class="space-y-2">
+                <div class="space-y-1.5">
                   <label
-                    class="ml-1 text-sm font-bold tracking-wider text-[#A66B6B] uppercase"
+                    class="ml-1 text-[10px] font-bold tracking-wider text-[#A66B6B] uppercase md:text-sm"
                   >
                     Song Title *
                   </label>
                   <input
                     v-model="songForm.title"
                     type="text"
-                    class="w-full rounded-xl bg-[#FFF9F9] px-4 py-3 text-gray-700 ring-2 ring-red-300/50 outline-none"
+                    class="w-full rounded-xl bg-[#FFF9F9] px-4 py-2.5 text-sm text-gray-700 ring-2 ring-red-300/30 outline-none focus:ring-red-400 md:py-3 md:text-base"
                     placeholder="輸入歌曲名稱"
                   />
                 </div>
-
-                <div class="space-y-2">
+                <div class="space-y-1.5">
                   <label
-                    class="ml-1 text-sm font-bold tracking-wider text-[#A66B6B] uppercase"
+                    class="ml-1 text-[10px] font-bold tracking-wider text-[#A66B6B] uppercase md:text-sm"
                   >
                     Artist *
                   </label>
                   <input
                     v-model="songForm.artist"
                     type="text"
-                    class="w-full rounded-xl bg-[#FFF9F9] px-4 py-3 text-gray-700 ring-2 ring-red-300/50 outline-none"
+                    class="w-full rounded-xl bg-[#FFF9F9] px-4 py-2.5 text-sm text-gray-700 ring-2 ring-red-300/30 outline-none focus:ring-red-400 md:py-3 md:text-base"
                     placeholder="輸入歌手名稱"
                   />
                 </div>
-
-                <div class="space-y-2">
+                <div class="space-y-1.5">
                   <label
-                    class="ml-1 text-sm font-bold tracking-wider text-[#A66B6B] uppercase"
+                    class="ml-1 text-[10px] font-bold tracking-wider text-[#A66B6B] uppercase md:text-sm"
                   >
                     Language *
                   </label>
                   <select
                     v-model="songForm.language"
-                    class="w-full appearance-none rounded-xl bg-[#FFF9F9] px-4 py-3 text-gray-700 ring-2 ring-red-300/50 outline-none"
+                    class="w-full appearance-none rounded-xl bg-[#FFF9F9] px-4 py-2.5 text-sm text-gray-700 ring-2 ring-red-300/30 outline-none md:py-3 md:text-base"
                   >
                     <option value="ja">日本語 (JA)</option>
                     <option value="en">English (EN)</option>
                     <option value="zh">中文 (ZH)</option>
+                    <option value="kr">韓文 (KR)</option>
                   </select>
                 </div>
               </div>
 
-              <div class="space-y-2">
+              <div class="space-y-1.5">
                 <div class="ml-1 flex items-center justify-between">
                   <label
-                    class="text-sm font-bold tracking-wider text-[#A66B6B] uppercase"
+                    class="text-[10px] font-bold tracking-wider text-[#A66B6B] uppercase md:text-sm"
                   >
                     Lyrics Content *
                   </label>
-                  <span class="text-sm text-gray-500">需使用Enter手動斷行</span>
+                  <span class="text-[10px] text-gray-400 md:text-sm">
+                    需手動斷行
+                  </span>
                 </div>
                 <textarea
                   v-model="songForm.rawLyrics"
-                  rows="8"
-                  class="no-scrollbar w-full rounded-2xl bg-[#FFF9F9] p-4 text-sm leading-relaxed text-gray-700 ring-2 ring-red-300/50 outline-none"
-                  placeholder="在此貼上整段歌詞...&#10;日文平假名格式：どこかで鐘(かね)が鳴(な)って"
+                  rows="6"
+                  class="no-scrollbar w-full rounded-2xl bg-[#FFF9F9] p-4 text-xs leading-relaxed text-gray-700 ring-2 ring-red-300/30 outline-none md:text-sm"
+                  placeholder="在此貼上整段歌詞..."
                 ></textarea>
               </div>
 
               <div class="pt-2">
                 <button
-                  class="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#F9595F] py-4 font-bold text-white shadow-lg shadow-red-100 transition-all hover:brightness-110 active:scale-[0.98]"
+                  class="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#F9595F] py-3.5 font-bold text-white shadow-lg shadow-red-100 transition-all hover:brightness-110 active:scale-[0.98] md:py-4"
                   @click="handleSubmit"
                 >
                   <i class="fa-solid fa-cloud-arrow-up"></i>
