@@ -17,11 +17,11 @@ const { data, refresh } = await useFetch('/api/list/songs', {
 })
 
 const deleteSong = async (id: string) => {
-  const check = await open('確認刪除?', '將會從資料庫刪除該歌曲資料。')
+  const check = await open('確認刪除?', '將會從資料庫刪除該歌曲資料。', 'ask')
 
   if (!check) return
 
-  console.log('deleted')
+  // 打api
 }
 
 const isEditModalOpen = ref(false)

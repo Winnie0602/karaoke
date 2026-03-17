@@ -5,7 +5,7 @@ const isOpen = ref(false)
 <template>
   <div class="w-full font-medium tracking-wide">
     <nav
-      class="relative] flex h-14 items-center border-b border-gray-200 bg-white px-4"
+      class="relative] flex h-12 items-center border-b border-gray-200 bg-white px-4 md:h-14"
     >
       <!-- Logo -->
       <NuxtLink

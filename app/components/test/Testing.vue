@@ -37,8 +37,10 @@ const playLyric = (eachLyric: LyricData) => {
   }
 }
 
-const handlePlay = (lyric: LyricData, i: number) => {
-  playLyric(lyric)
+const handlePlay = (lyric: LyricData | undefined, i: number) => {
+  if (lyric) {
+    playLyric(lyric)
+  }
 
   nextTick(() => {
     cardRefs.value[i]?.focusInput()
@@ -80,28 +82,19 @@ watch(nowIndex, (index) => {
 
 <template>
   <div class="space-y-4 px-5 py-6 md:px-20 md:py-10">
-    <button
-      :disabled="isPlaying || life < 1"
-      @click="handlePlay(testLyrics[nowIndex], nowIndex)"
-    >
-      <i
-        class="fa-solid fa-play md:text-lg"
-        :class="isPlaying ? 'text-gray-400' : 'text-[#F9595F]'"
-      />
-    </button>
-
     <div
       v-for="(eachLyric, i) in testLyrics"
       :key="eachLyric.start"
-      class="flex items-center space-y-3 md:space-y-5"
+      class="group relative flex items-center"
     >
       <button
-        class="relative mr-3 h-8 w-8 items-center justify-center rounded-full transition-all"
+        class="absolute left-0 z-30 -translate-x-1/2 items-center justify-center rounded-full transition-all"
         :class="[
-          i === nowIndex ? 'hidden md:flex' : 'hidden',
+          i === nowIndex ? 'flex' : 'hidden',
+          'h-7 w-7 md:h-10 md:w-10',
           isPlaying
-            ? 'cursor-not-allowed bg-[#FFE5E5]/50 opacity-60'
-            : 'bg-[#FFE5E5] shadow-sm hover:scale-105',
+            ? 'cursor-not-allowed border-2 border-white bg-[#E5E5E5]'
+            : 'border-2 border-transparent bg-[#FFE5E5]',
           life < 1 && !isPlaying && 'pointer-events-none invisible',
         ]"
         :disabled="isPlaying || life < 1"

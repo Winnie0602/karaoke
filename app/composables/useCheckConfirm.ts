@@ -2,16 +2,18 @@ export function useCheckConfirm() {
   const isModalOpen = useState<boolean>('confirm-open', () => false)
   const title = useState<string>('confirm-title', () => '')
   const content = useState<string>('confirm-content', () => '')
+  const type = useState<'ask' | 'noAsk'>('confirm-type', () => 'ask')
 
   const resolver = useState<((boo: boolean) => void) | null>(
     'confirm-resolver',
     () => null,
   )
 
-  const open = (t: string, c: string) => {
+  const open = (t: string, c: string, tp: 'ask' | 'noAsk') => {
     title.value = t
     content.value = c
     isModalOpen.value = true
+    type.value = tp
 
     return new Promise<boolean>((resolve) => {
       resolver.value = resolve
@@ -30,5 +32,5 @@ export function useCheckConfirm() {
     resolver.value = null
   }
 
-  return { isModalOpen, title, content, open, confirm, cancel }
+  return { isModalOpen, title, content, type, open, confirm, cancel }
 }

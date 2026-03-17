@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { nanoid } from 'nanoid'
 
+const emit = defineEmits(['goBack'])
+
 // 表單資料狀態
 const songForm = ref({
   title: '',
@@ -33,7 +35,8 @@ const handleSubmit = async () => {
   // 1. 簡易必填檢查
   const { title, videoId, artist, rawLyrics } = songForm.value
   if (!title || !videoId || !artist || !rawLyrics) {
-    alert('所有欄位皆為必填！')
+    await open('所有欄位皆為必填', '', 'noAsk')
+
     return
   }
 
@@ -47,7 +50,9 @@ const handleSubmit = async () => {
     body: { payload },
   })
 
-  await open('新增成功', '')
+  await open('新增成功', '', 'noAsk')
+
+  emit('goBack')
 }
 </script>
 

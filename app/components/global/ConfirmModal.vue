@@ -7,24 +7,29 @@ import {
   DialogTitle,
 } from '@headlessui/vue'
 
-const { open } = defineProps<{
+const { open, title, content, type } = defineProps<{
   open: boolean
   title: string
   content: string
+  type: 'ask' | 'noAsk'
 }>()
 
 const emit = defineEmits<{
   (e: 'close' | 'confirm'): void
 }>()
 
-function closeModal() {
-  emit('close')
+const modalAction = () => {
+  if (type === 'ask') {
+    emit('confirm')
+  } else if (type === 'noAsk') {
+    emit('close')
+  }
 }
 </script>
 
 <template>
   <TransitionRoot appear :show="open" as="template">
-    <Dialog as="div" class="relative z-50" @close="closeModal">
+    <Dialog as="div" class="relative z-50" @close="emit('close')">
       <TransitionChild
         as="template"
         enter="duration-300 ease-out"
@@ -70,15 +75,16 @@ function closeModal() {
                 <button
                   type="button"
                   class="inline-flex w-full justify-center rounded-xl border border-transparent bg-[#F9595F] px-6 py-3 text-base font-black text-white shadow-lg shadow-[#F9595F]/30 transition-all hover:bg-[#ff6b71] focus:outline-none active:scale-95"
-                  @click="emit('confirm')"
+                  @click="modalAction()"
                 >
                   確認
                 </button>
 
                 <button
+                  v-if="type === 'ask'"
                   type="button"
                   class="inline-flex w-full justify-center rounded-xl border border-transparent bg-[#FFE5E5] px-6 py-3 text-base font-black text-[#F9595F] transition-all hover:bg-[#ffd9d9] focus:outline-none active:scale-95"
-                  @click="emit('close')"
+                  @click="modalAction()"
                 >
                   取消
                 </button>

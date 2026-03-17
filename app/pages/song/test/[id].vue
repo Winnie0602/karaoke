@@ -104,8 +104,9 @@ const prevStep = async () => {
       const check = await open(
         '確認返回?',
         '返回上一步將會遺失目前輸入的內容。',
+        'ask',
       )
-      console.log(check)
+
       if (!check) return
     }
     step.value--

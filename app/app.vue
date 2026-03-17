@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { isModalOpen, title, content, confirm, cancel } = useCheckConfirm()
+const { isModalOpen, title, content, type, confirm, cancel } = useCheckConfirm()
 </script>
 
 <template>
@@ -14,6 +14,7 @@ const { isModalOpen, title, content, confirm, cancel } = useCheckConfirm()
       :open="isModalOpen"
       :title="title"
       :content="content"
+      :type="type"
       @confirm="confirm"
       @close="cancel"
     />

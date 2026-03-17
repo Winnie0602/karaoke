@@ -4,8 +4,6 @@ definePageMeta({
 })
 
 const currentTab = ref<'songList' | 'addSong'>('songList')
-
-
 </script>
 
 <template>
@@ -65,7 +63,10 @@ const currentTab = ref<'songList' | 'addSong'>('songList')
 
       <main class="min-h-0 flex-1">
         <AdminSongList v-if="currentTab === 'songList'" />
-        <AdminSongAdd v-if="currentTab === 'addSong'" />
+        <AdminSongAdd
+          v-if="currentTab === 'addSong'"
+          @go-back="currentTab = 'songList'"
+        />
       </main>
     </div>
   </div>
