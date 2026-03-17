@@ -38,7 +38,7 @@ const prevStep = () => {
 </script>
 
 <template>
-  <div class="h-full">
+  <div class="h-full px-4 pb-5">
     <div
       class="relative mt-4 flex items-center justify-center px-4 py-4 md:px-8 md:py-6"
     >
@@ -49,20 +49,22 @@ const prevStep = () => {
         <i class="fa-solid fa-chevron-left md:text-lg"></i>
       </button>
 
-      <h1 class="text-lg font-black tracking-wider text-[#7A3A3A] md:text-2xl">
+      <h1 class="text-lg font-medium tracking-wider text-[#7A3A3A] md:text-2xl">
         {{ currentTitle }}
       </h1>
     </div>
     <div
       v-if="editMode === '' && songData"
-      class="flex flex-col items-center space-y-5"
+      class="flex flex-col items-center space-y-4 md:space-y-5"
     >
       <div class="mb-2">
         <div class="mb-2 w-full max-w-[640px] text-center">
-          <h2 class="text-2xl leading-tight font-black text-[#F9595F]">
+          <h2
+            class="text-xl leading-tight font-medium text-[#F9595F] md:text-2xl"
+          >
             {{ songData?.title || '未知曲名' }}
           </h2>
-          <p class="mt-1 text-lg font-medium text-[#7A3A3A] opacity-80">
+          <p class="mt-1 text-[#7A3A3A] opacity-80 md:text-lg md:font-medium">
             {{ songData?.artist || '未知歌手' }}
           </p>
         </div>
@@ -75,7 +77,7 @@ const prevStep = () => {
       </div>
 
       <button
-        class="w-full max-w-[640px] rounded-xl bg-[#FFE5E5] py-3 font-black text-[#F9595F] active:scale-95"
+        class="w-full max-w-[640px] rounded-xl bg-[#FFE5E5] py-3 font-medium text-[#F9595F] active:scale-95 md:font-black"
       >
         編輯歌曲資訊
         <div class="mt-1 text-xs text-[#7A3A3A]">
@@ -83,20 +85,20 @@ const prevStep = () => {
         </div>
       </button>
       <button
-        class="w-full max-w-[640px] rounded-xl bg-[#FFE5E5] py-3 font-black text-[#F9595F] active:scale-95"
+        class="w-full max-w-[640px] rounded-xl bg-[#FFE5E5] py-3 font-medium text-[#F9595F] active:scale-95 md:font-black"
         @click="editMode = 'time'"
       >
         編輯歌曲時間軸
         <div class="mt-1 text-xs text-[#7A3A3A]">手動對齊歌曲時間</div>
       </button>
       <button
-        class="w-full max-w-[640px] rounded-xl bg-[#FFE5E5] py-3 font-black text-[#F9595F] active:scale-95"
+        class="w-full max-w-[640px] rounded-xl bg-[#FFE5E5] py-3 font-medium text-[#F9595F] active:scale-95 md:font-black"
       >
         編輯歌曲歌詞翻譯
         <div class="mt-1 text-xs text-[#7A3A3A]">編輯歌詞各國語言翻譯</div>
       </button>
       <button
-        class="w-full max-w-[640px] rounded-xl bg-[#FFE5E5] py-3 font-black text-[#F9595F] active:scale-95"
+        class="w-full max-w-[640px] rounded-xl bg-[#FFE5E5] py-3 font-medium text-[#F9595F] active:scale-95 md:font-black"
       >
         刪除該歌曲
         <div class="mt-1 text-xs text-[#7A3A3A]">從資料庫刪除該歌曲</div>
@@ -105,9 +107,11 @@ const prevStep = () => {
         :href="`https://www.youtube.com/watch?v=${songData?.id}`"
         target="_blank"
         rel="noopener noreferrer"
-        class="flex w-full max-w-[640px] flex-col items-center rounded-xl bg-[#FFE5E5] py-3 font-black text-[#F9595F] active:scale-95"
+        class="flex w-full max-w-[640px] flex-col items-center rounded-xl bg-[#FFE5E5] py-3 text-[#F9595F] active:scale-95"
       >
-        <div class="flex w-full items-center justify-center">
+        <div
+          class="flex w-full items-center justify-center font-medium md:font-black"
+        >
           前往YouTube
           <i class="fa-brands fa-youtube ml-2 text-lg text-[#F9595F]"></i>
         </div>

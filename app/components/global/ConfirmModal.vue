@@ -18,9 +18,9 @@ const emit = defineEmits<{
   (e: 'close' | 'confirm'): void
 }>()
 
-const modalAction = () => {
+const modalAction = (action: 'confirm' | 'close') => {
   if (type === 'ask') {
-    emit('confirm')
+    emit(action)
   } else if (type === 'noAsk') {
     emit('close')
   }
@@ -75,7 +75,7 @@ const modalAction = () => {
                 <button
                   type="button"
                   class="inline-flex w-full justify-center rounded-xl border border-transparent bg-[#F9595F] px-6 py-3 text-base font-black text-white shadow-lg shadow-[#F9595F]/30 transition-all hover:bg-[#ff6b71] focus:outline-none active:scale-95"
-                  @click="modalAction()"
+                  @click="modalAction('confirm')"
                 >
                   確認
                 </button>
@@ -84,7 +84,7 @@ const modalAction = () => {
                   v-if="type === 'ask'"
                   type="button"
                   class="inline-flex w-full justify-center rounded-xl border border-transparent bg-[#FFE5E5] px-6 py-3 text-base font-black text-[#F9595F] transition-all hover:bg-[#ffd9d9] focus:outline-none active:scale-95"
-                  @click="modalAction()"
+                  @click="modalAction('close')"
                 >
                   取消
                 </button>

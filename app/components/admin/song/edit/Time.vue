@@ -1,24 +1,23 @@
 <script setup lang="ts">
 import type { LyricData } from '~/types/song'
 import type { LangCode } from '~/types/lang'
+const { show } = useToast()
 
-const props = defineProps<{
+const router = useRouter()
+
+const { videoId, lyrics, language } = defineProps<{
   videoId: string
   lyrics: LyricData[]
   language: LangCode
 }>()
 
-const { createPlayer, destroy, currentTime } = useYoutubePlayerLocal(
-  props.videoId,
-)
-
-const { open } = useCheckConfirm()
-
-const isSpaceMode = ref(false)
+const { createPlayer, destroy, currentTime } = useYoutubePlayerLocal(videoId)
 
 const lyricsTimeArr = ref<{ nanoid: string; start?: number; end?: number }[]>(
   [],
 )
+
+const currentStep = ref<'start' | 'end'>('start')
 
 const setTime = (nanoid: string, type: 'start' | 'end') => {
   const time = parseFloat(currentTime.value.toFixed(2))
@@ -35,8 +34,6 @@ const setTime = (nanoid: string, type: 'start' | 'end') => {
       [type]: time,
     })
   }
-
-  console.log(lyricsTimeArr.value)
 }
 
 const getLyricTime = (nanoid: string, type: 'start' | 'end') => {
@@ -45,73 +42,83 @@ const getLyricTime = (nanoid: string, type: 'start' | 'end') => {
 }
 
 const saveLyricsTime = async () => {
-  console.log(lyricsTimeArr.value)
-  // 全部歌詞都要填時間才能送出
-  // if (lyricsTimeArr.value.length !== props.lyrics.length) {
-  //   return
-  // }
+  if (lyricsTimeArr.value.length === 0) {
+    show('沒有要更新的資料', 2000)
 
-  // // 歌詞如果只有start或end
-  // const isCompleted = lyricsTimeArr.value.every(
-  //   (lyric) => lyric.start !== undefined && lyric.end !== undefined,
-  // )
+    return
+  }
 
   await $fetch('/api/song/update-time', {
     method: 'POST',
     body: {
-      videoId: props.videoId,
+      videoId: videoId,
       lyrics: lyricsTimeArr.value,
     },
   })
+
+  show('更新完成', 2000)
+
+  router.push({ path: `/admin/song/edit/${videoId}` })
 }
 
-// 空白鍵標記時間戳記
-const setSpaceMode = async () => {
-  const check = await open('ss', 'sss', 'noAsk')
-  console.log(check)
-  // isSpaceMode.value = !isSpaceMode.value
-}
+// 最後一個編輯過的歌詞id
+const editLastLyricId = ref(lyrics[0]?.nanoid)
 
+// 現正在編輯的歌詞index
 const currentLyricIndex = computed(() => {
-  if (!isSpaceMode.value) return -1
-  return Math.floor(recordStep.value / 2)
+  return lyrics.findIndex((l) => l.nanoid === editLastLyricId.value)
 })
 
-watch(isSpaceMode, () => {
-  if (isSpaceMode.value) {
-    lyricsTimeArr.value.length = 0
-  }
+// 音樂播放到的index
+const playingLyricIndex = computed(() => {
+  const time = currentTime.value
+
+  return lyrics.findIndex((lyric) => {
+    const start = getLyricTime(lyric.nanoid, 'start') ?? lyric.start
+    const end = getLyricTime(lyric.nanoid, 'end') ?? lyric.end
+
+    if (start === undefined || end === undefined) return false
+
+    return time >= start && time <= end
+  })
 })
-const recordStep = ref(0)
 
-const handleSpaceRecord = () => {
-  if (!isSpaceMode.value) return
+const handleEdit = (nanoid: string) => {
+  editLastLyricId.value = nanoid
+  currentStep.value = 'start'
 
-  const lyricIndex = Math.floor(recordStep.value / 2)
-  const type = recordStep.value % 2 === 0 ? 'start' : 'end'
+  const index = lyrics.findIndex((l) => l.nanoid === nanoid)
 
-  const lyric = props.lyrics[lyricIndex]
+  // 砍掉這句之後的所有時間
+  lyricsTimeArr.value = lyricsTimeArr.value.filter((l) => {
+    const i = lyrics.findIndex((x) => x.nanoid === l.nanoid)
+    return i < index
+  })
+}
+
+const circle = () => {
+  const index = currentLyricIndex.value
+  const lyric = lyrics[index]
+
   if (!lyric) return
 
-  setTime(lyric.nanoid, type)
+  if (currentStep.value === 'start') {
+    setTime(lyric.nanoid, 'start')
+    currentStep.value = 'end'
+  } else {
+    setTime(lyric.nanoid, 'end')
+    currentStep.value = 'start'
 
-  recordStep.value++
-}
-
-const handleKeydown = (e: KeyboardEvent) => {
-  if (e.code === 'Space' && isSpaceMode.value) {
-    e.preventDefault()
-    handleSpaceRecord()
+    //  設定完 end > 換下一句
+    editLastLyricId.value = lyrics[index + 1]?.nanoid
   }
 }
 
 onMounted(() => {
   createPlayer('admin-player')
-  window.addEventListener('keydown', handleKeydown)
 })
 
 onBeforeUnmount(() => {
-  window.removeEventListener('keydown', handleKeydown)
   destroy()
 })
 </script>
@@ -126,19 +133,11 @@ onBeforeUnmount(() => {
         ></div>
       </ClientOnly>
 
-      <div class="my-2 flex w-full items-center justify-between">
-        <div
-          class="inline rounded-full bg-red-300 px-4 py-2 text-sm font-black shadow-md md:text-base"
-        >
-          <i class="fa-solid fa-stopwatch mr-2"></i>
-          {{ currentTime.toFixed(2) }}s
-        </div>
-        <div
-          class="cursor-pointer rounded-md border-[2px] border-[#A66B6B] bg-white px-4 py-2 text-sm font-black text-[#A66B6B]"
-          @click="setSpaceMode"
-        >
-          使用空白鍵紀錄歌詞時間: {{ isSpaceMode ? 'ON' : 'OFF' }}
-        </div>
+      <div
+        class="my-2 flex items-center justify-center rounded-xl bg-red-300 px-4 py-2 text-sm font-black shadow-md md:text-base"
+      >
+        <i class="fa-solid fa-stopwatch mr-2"></i>
+        {{ currentTime.toFixed(2) }}s
       </div>
     </div>
 
@@ -147,47 +146,47 @@ onBeforeUnmount(() => {
         <div
           v-for="(lyric, index) in lyrics"
           :key="lyric.nanoid"
-          class="group flex w-full items-center justify-center gap-3 rounded-md py-3 md:gap-6"
-          :class="{
-            'bg-gray-200': isSpaceMode && index === currentLyricIndex,
-            'bg-gray-400':
-              currentTime >= lyric.start && currentTime <= lyric.end,
-          }"
+          class="group flex w-full items-center justify-center gap-3 rounded-xl px-2 py-3 transition-all duration-300 md:gap-6 md:px-0"
+          :class="[
+            // 編輯中
+            index === currentLyricIndex
+              ? 'bg-[#7A3A3A]/10 ring-2 ring-[#7A3A3A] ring-inset'
+              : '',
+          ]"
         >
           <button
-            v-if="isSpaceMode"
-            class="flex h-12 shrink-0 items-center justify-center rounded-xl border-[3px] border-[#FFE5E5] bg-white px-2 text-sm text-[#F9595F] transition-all hover:bg-[#FFE5E5]"
-            @click="setTime(lyric.nanoid, 'start')"
+            v-if="index !== currentLyricIndex"
+            class="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#FFE5E5] text-[11px] text-[#F9595F] transition-all hover:bg-[#F9595F] hover:text-white active:scale-90 md:h-12 md:w-12 md:text-sm"
+            @click="handleEdit(lyric.nanoid)"
           >
-            From Here
+            編輯
           </button>
 
-          <button
-            v-if="!isSpaceMode"
-            class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#FFE5E5] text-sm text-[#F9595F] transition-all hover:bg-[#F9595F] hover:text-white active:scale-90"
-            @click="setTime(lyric.nanoid, 'start')"
-          >
-            開始
-          </button>
+          <i v-else class="fa-solid fa-pencil text-lg text-[#F9595F]"></i>
 
-          <button
-            v-if="!isSpaceMode"
-            class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#FFE5E5] text-sm text-[#A66B6B] transition-all hover:bg-[#7A3A3A] hover:text-white active:scale-90"
-            @click="setTime(lyric.nanoid, 'end')"
-          >
-            結束
-          </button>
-
-          <div class="max-w-[450px] flex-1 text-center">
+          <div class="max-w-[450px] flex-1 text-center transition-colors">
             <div
-              class="mb-1 text-sm font-bold tracking-widest text-[#A66B6B] uppercase opacity-70"
+              class="mb-1 text-[10px] font-bold tracking-widest uppercase md:text-xs"
+              :class="
+                index === playingLyricIndex
+                  ? 'text-red-500'
+                  : 'text-[#A66B6B] opacity-70'
+              "
             >
               {{ getLyricTime(lyric.nanoid, 'start') || lyric.start || '' }}
               -
               {{ getLyricTime(lyric.nanoid, 'end') || lyric.end || '' }}
             </div>
             <div
-              class="border-b-2 border-[#FFE5E5] pb-3 text-sm font-black text-[#7A3A3A] md:text-xl"
+              class="border-b-2 pb-3 text-sm font-black transition-all md:text-xl"
+              :class="[
+                index === playingLyricIndex
+                  ? 'scale-105 text-red-500'
+                  : 'text-[#7A3A3A]',
+                index === currentLyricIndex
+                  ? 'border-[#7A3A3A]'
+                  : 'border-[#FFE5E5]',
+              ]"
             >
               {{ lyric[language] }}
             </div>
@@ -204,6 +203,19 @@ onBeforeUnmount(() => {
           儲存
         </button>
       </div>
+    </div>
+
+    <!-- 固定設定時間按鈕 -->
+    <div class="flex flex-col items-center space-y-4 md:space-y-6">
+      <button
+        class="fixed right-6 bottom-10 z-50 flex h-16 w-16 flex-col items-center justify-center rounded-full bg-white transition-all hover:scale-110 active:scale-90 md:right-10 md:bottom-12 md:h-20 md:w-20"
+        @click="circle()"
+      >
+        <i class="fa-solid fa-stopwatch text-xl text-[#F9595F] md:text-2xl"></i>
+        <span class="mt-0.5 text-[10px] font-black text-[#F9595F] md:text-xs">
+          戳記
+        </span>
+      </button>
     </div>
   </div>
 </template>
