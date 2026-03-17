@@ -5,7 +5,7 @@ onBeforeUnmount(async () => {
 </script>
 
 <template>
-  <div class="h-screen bg-[#A66B6B]/40">
+  <div class="min-h-screen bg-[#A66B6B]/40">
     <Header />
 
     <div class="mx-auto w-full">
