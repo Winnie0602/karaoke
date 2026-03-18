@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import type { SongsList } from '~/types/song'
 import type { Tab } from '~/types/lang'
-import  { languageMapCode } from '~/types/lang'
-
+import { languageMapCode } from '~/types/lang'
 
 const showType = ref<'list' | 'grid'>('list')
-
 
 const { songs } = defineProps<{ songs: SongsList[] }>()
 
@@ -110,11 +108,11 @@ const tabSongs = computed(() => {
           class="group flex items-center justify-between rounded-xl border border-[#F9595F]/20 bg-white px-2 py-3 shadow-sm transition hover:bg-[#FFF3F3] md:px-4"
         >
           <!-- Left -->
-          <div class="flex items-center space-x-4">
+          <div class="flex items-center space-x-2 md:space-x-4">
             <!-- Thumbnail -->
             <NuxtLink
               :to="`/song/${song.id}`"
-              class="relative h-[56px] w-[56px] overflow-hidden rounded-lg"
+              class="relative h-[56px] w-[56px] flex-none overflow-hidden rounded-lg"
             >
               <img
                 :src="`https://img.youtube.com/vi/${song.id}/mqdefault.jpg`"
@@ -139,7 +137,9 @@ const tabSongs = computed(() => {
               :to="`/song/${song.id}`"
               class="flex cursor-pointer flex-col"
             >
-              <span class="text-sm font-medium text-[#5A3E3E] md:text-lg">
+              <span
+                class="line-clamp-1 text-sm font-medium text-[#5A3E3E] md:text-lg"
+              >
                 {{ song.title }}
               </span>
               <span class="mt-1 text-xs text-[#A66B6B] md:text-sm">
@@ -151,7 +151,6 @@ const tabSongs = computed(() => {
           <!-- Right -->
           <div class="flex items-center space-x-1.5">
             <NuxtLink
-              v-if="song.hasLyrics"
               :to="`/song/test/${song.id}`"
               class="flex h-[28px] items-center justify-center rounded-full border border-[#F9595F]/10 bg-[#FFE5E5] px-1.5 text-[10px] font-bold text-[#F9595F] shadow-sm transition hover:bg-[#F9595F] hover:text-white md:px-2.5"
             >
@@ -212,7 +211,6 @@ const tabSongs = computed(() => {
 
             <div class="mt-3 flex items-center border-t border-gray-50 pt-3">
               <NuxtLink
-                v-if="song.hasLyrics"
                 :to="`/song/test/${song.id}`"
                 class="flex h-6 items-center justify-center rounded-full border border-[#F9595F]/10 bg-[#FFE5E5] px-1.5 text-[10px] font-bold text-[#F9595F] shadow-sm transition hover:bg-[#F9595F] hover:text-white md:px-2.5"
               >

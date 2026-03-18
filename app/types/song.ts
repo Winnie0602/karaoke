@@ -5,6 +5,7 @@ export interface SongData {
   title: string
   artist: string
   language: LangCode
+  translation_langs: LangCode[]
   vocabularies: VocabularyData[]
   lyrics: LyricData[]
 }
@@ -14,6 +15,7 @@ export interface VocabularyData {
   zh: string
   en: string
   kr: string
+  jp: string
 }
 
 export interface LyricData {
@@ -34,5 +36,5 @@ export interface SongsList {
   language: LangCode
   title: string
   artist: string
-  hasLyrics: boolean
+  translation_langs: LangCode[]
 }

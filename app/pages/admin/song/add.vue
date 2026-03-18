@@ -7,6 +7,8 @@ definePageMeta({
 
 const emit = defineEmits(['goBack'])
 
+const router = useRouter()
+
 // 表單資料狀態
 const songForm = ref({
   title: '',
@@ -56,7 +58,7 @@ const handleSubmit = async () => {
 
   await open('新增成功', '', 'noAsk')
 
-  emit('goBack')
+  router.push({ path: '/admin/song/list' })
 }
 </script>
 
@@ -180,6 +182,8 @@ const handleSubmit = async () => {
                     <option value="en">English (EN)</option>
                     <option value="zh">中文 (ZH)</option>
                     <option value="kr">韓文 (KR)</option>
+                    <option value="tw">台語 (TW)</option>
+                    <option value="hk">廣東話 (HK)</option>
                   </select>
                 </div>
               </div>

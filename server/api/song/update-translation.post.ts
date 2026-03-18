@@ -32,12 +32,12 @@ export default defineEventHandler(async (event) => {
 
     langs.forEach((lang) => {
       const rawText = langsLyrics[lang] || ''
-      console.log({ rawText })
+
       const splitLines = rawText
         .split('\n')
         .map((l) => l.trim())
         .filter((l) => l)
-      console.log({ splitLines })
+
       if (splitLines[index] !== undefined) {
         newLine[lang] = splitLines[index]
       }
@@ -46,11 +46,16 @@ export default defineEventHandler(async (event) => {
     return newLine
   })
 
-  console.log({ updatedLyrics })
-
   await db
     .collection('songs')
-    .updateOne({ id: videoId }, { $set: { lyrics: updatedLyrics } })
+    .updateOne(
+      { id: videoId },
+      { $set: { lyrics: updatedLyrics, translation_langs: langs } },
+    )
+
+  await db
+    .collection('list')
+    .updateOne({ id: videoId }, { $set: { translation_langs: langs } })
 
   return { success: true }
 })

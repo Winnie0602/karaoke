@@ -13,17 +13,27 @@ const {
   videoId,
   lyrics,
   language: originalLanguage,
+  translationLangs,
 } = defineProps<{
   videoId: string
   lyrics: LyricData[]
   language: LangCode
+  translationLangs: LangCode[] // 已有的翻譯
 }>()
+
+// ***編輯功能
+// 每個語言的編輯狀態
+const isLangsEditing = ref<Partial<Record<LangCode, boolean>>>({})
+
+const toggleEdit = (code: LangCode) => {
+  isLangsEditing.value[code] = !isLangsEditing.value[code]
+}
 
 // 儲存各個語言的 rawLyrics 字串內容
 const langForms = ref<Partial<Record<LangCode, string>>>({})
 
 // 目前已開啟編輯的語言列表 (預設不包含原始語言)
-const activeLangs = ref<LangCode[]>([])
+const activeLangs = ref<LangCode[]>(translationLangs)
 
 // 計算還剩下哪些語言可以新增
 const availableLangs = computed(() => {
@@ -39,12 +49,31 @@ const addLanguage = (code: LangCode) => {
   if (!activeLangs.value.includes(code)) {
     activeLangs.value.push(code)
     langForms.value[code] = ''
+    isLangsEditing.value[code] = true
   }
 }
 
 // 移除語言
-const removeLanguage = (code: LangCode) => {
+// 移除語言
+const removeLanguage = async (code: LangCode) => {
+  if (langForms.value[code]?.trim()) {
+    const confirm = await open('請注意無法復原', '將刪除該語言歌詞', 'ask')
+    if (!confirm) return
+  }
+
   activeLangs.value = activeLangs.value.filter((c) => c !== code)
+
+  // 移除編輯狀態
+  if (isLangsEditing.value[code] !== undefined) {
+    const { [code]: _, ...restEditing } = isLangsEditing.value
+    isLangsEditing.value = restEditing
+  }
+
+  // 移除表單歌詞內容
+  if (langForms.value[code] !== undefined) {
+    const { [code]: _, ...restForms } = langForms.value
+    langForms.value = restForms
+  }
 }
 
 const handleSave = async () => {
@@ -101,6 +130,13 @@ const handleCopy = async () => {
     console.error('copy failed', e)
   }
 }
+
+onMounted(() => {
+  // 填入歌詞原本內容到form
+  activeLangs.value.forEach((code) => {
+    langForms.value[code] = lyrics.map((l) => l[code] || '').join('\n')
+  })
+})
 </script>
 
 <template>
@@ -171,7 +207,7 @@ const handleCopy = async () => {
             >
               {{ languageMapCodeLabel[code] }} translation
             </label>
-            <div class="text-xs">
+            <div v-if="isLangsEditing[code]" class="text-xs">
               ( 目前行數:
               {{
                 langForms[code]?.split('\n').filter((l) => l.trim()).length || 0
@@ -180,28 +216,41 @@ const handleCopy = async () => {
             </div>
           </div>
 
-          <button
-            class="font-medium text-red-400 hover:text-red-600"
-            @click="removeLanguage(code)"
-          >
-            <i class="fa-solid fa-trash-can"></i>
-          </button>
+          <div class="flex space-x-2">
+            <!-- 編輯 -->
+            <button
+              class="text-lg font-medium text-red-400 hover:text-red-600"
+              @click="toggleEdit(code)"
+            >
+              <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+
+            <!-- 刪除 -->
+            <button
+              class="text-lg font-medium text-red-400 hover:text-red-600"
+              @click="removeLanguage(code)"
+            >
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </div>
         </div>
 
+        <div
+          v-if="!isLangsEditing[code]"
+          class="no-scrollbar h-[200px] w-full overflow-scroll rounded-2xl bg-gray-200 p-3 text-sm text-gray-700 ring-2 ring-red-300/30 md:p-5 md:text-base"
+        >
+          <div v-for="lyric in lyrics" :key="lyric.nanoid">
+            {{ lyric[code] }}
+          </div>
+        </div>
         <textarea
+          v-else
           v-model="langForms[code]"
           rows="8"
           class="no-scrollbar w-full rounded-2xl bg-[#FFF9F9] p-3 text-sm leading-relaxed text-gray-700 ring-2 ring-red-300/30 transition-all outline-none focus:ring-red-400 md:p-5 md:text-base"
           :placeholder="`在此貼上整段翻譯...&#10;行數與原歌詞 (${lyrics.length} 行)需一致`"
         ></textarea>
       </div>
-    </div>
-
-    <div
-      v-if="activeLangs.length === 0"
-      class="flex flex-col items-center py-20 text-gray-400"
-    >
-      <p class="text-sm font-medium">點擊上方按鈕新增翻譯語言</p>
     </div>
 
     <div v-if="activeLangs.length !== 0" class="pt-2">

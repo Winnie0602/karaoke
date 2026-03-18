@@ -11,9 +11,11 @@ const router = useRouter()
 
 const videoId = computed(() => route.params.id as string)
 
-const { data: songData, pending } = await useFetch<SongData | null>(
-  `/api/song/${videoId.value}`,
-)
+const {
+  data: songData,
+  pending,
+  refresh,
+} = await useFetch<SongData | null>(`/api/song/${videoId.value}`)
 
 const editMode = ref<'' | 'info' | 'time' | 'translation'>('')
 
@@ -35,12 +37,18 @@ const prevStep = () => {
 
   editMode.value = ''
 }
+
+watch(editMode, () => {
+  if (editMode.value === '') {
+    refresh()
+  }
+})
 </script>
 
 <template>
   <div class="h-full px-4 pb-5">
     <div
-      class="relative mt-4 flex items-center justify-center px-4 py-4 md:px-8 md:py-6"
+      class="mt-4 flex items-center justify-center px-4 py-4 md:px-8 md:py-6"
     >
       <button
         class="absolute left-4 flex h-8 w-8 items-center justify-center rounded-full bg-[#FFE5E5] text-[#F9595F] transition-all active:scale-90 md:left-8 md:h-10 md:w-10"
@@ -56,9 +64,9 @@ const prevStep = () => {
     <!-- 所有列表 -->
     <div
       v-if="editMode === '' && songData"
-      class="flex flex-col items-center space-y-4 md:space-y-5"
+      class="flex flex-col items-center justify-center space-y-4 md:space-y-5"
     >
-      <div class="mb-2">
+      <div class="mb-2 flex flex-col items-center">
         <div class="mb-2 w-full max-w-[640px] text-center">
           <h2
             class="text-xl leading-tight font-medium text-[#F9595F] md:text-2xl"
@@ -136,6 +144,7 @@ const prevStep = () => {
       :video-id="songData.id"
       :lyrics="songData.lyrics"
       :language="songData.language"
+      :translation-langs="songData.translation_langs || []"
       @go-back="editMode = ''"
     />
   </div>

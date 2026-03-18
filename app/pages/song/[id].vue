@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { SongData, SongsList } from '~/types/song'
+import { languageMapCodeLabel } from '~/types/lang'
+import type { LangCode } from '~/types/lang'
 
 const route = useRoute()
 
@@ -19,7 +21,20 @@ if (!currentSong.value && !pending.value) {
     message: '找不到這首歌曲，請檢查網址是否正確。',
   })
 }
+
 const page = ref(1)
+
+// 要顯示的翻譯語言
+const showTranslations = ref<LangCode[]>([])
+
+// 處理要顯示的翻譯語言
+const handleTranslations = (lang: LangCode) => {
+  if (showTranslations.value.includes(lang)) {
+    showTranslations.value = showTranslations.value.filter((l) => l !== lang)
+  } else {
+    showTranslations.value.push(lang)
+  }
+}
 
 const { data: randomSongs } = await useFetch<{ songs: SongsList[] }>(
   '/api/list/songs',
@@ -45,6 +60,15 @@ watch(
   },
   { immediate: true },
 )
+
+watch(
+  currentSong,
+  (song) => {
+    if (!song) return
+    showTranslations.value = song.translation_langs
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
@@ -60,16 +84,53 @@ watch(
           目前沒有歌詞
         </div>
 
-        <div v-else class="space-y-5">
+        <div v-else class="space-y-4">
           <ClientOnly>
-            <SongLyrics
-              :lyrics="currentSong.lyrics"
-              :song-data="{
-                title: currentSong.title,
-                artist: currentSong.artist,
-              }"
-              :song-lang="currentSong.language"
-            />
+            <div
+              class="flex flex-wrap items-center justify-between gap-2 border-b border-[#FFE5E5] pb-3"
+            >
+              <div class="flex items-center gap-1.5 text-[#A66B6B]">
+                <i class="fa-solid fa-language text-lg text-[#F9595F]"></i>
+                <span>歌詞語言</span>
+              </div>
+
+              <div class="flex flex-wrap gap-1.5">
+                <div
+                  class="flex items-center gap-2 rounded-full bg-[#FFE5E5]/50 px-4 py-1.5 text-xs text-[#F9595F] md:text-sm"
+                >
+                  <i class="fa-solid fa-circle-check text-sm opacity-70"></i>
+                  {{ languageMapCodeLabel[currentSong.language] }} (原文)
+                </div>
+
+                <button
+                  v-for="lang in currentSong.translation_langs"
+                  :key="lang"
+                  class="rounded-full border-[1px] px-4 py-1.5 text-xs transition-all duration-300 active:scale-95 md:text-sm"
+                  :class="[
+                    showTranslations.includes(lang)
+                      ? 'bg-[#F9595F] text-white shadow-md shadow-[#F9595F]/20'
+                      : 'border-[#FFE5E5] bg-white text-[#A66B6B] hover:border-[#F9595F]/30 hover:bg-[#FFF9F9]',
+                  ]"
+                  @click="handleTranslations(lang)"
+                >
+                  {{ languageMapCodeLabel[lang] }}
+                </button>
+              </div>
+            </div>
+
+            <div
+              class="animate-in fade-in slide-in-from-bottom-2 mt-4 duration-500"
+            >
+              <SongLyrics
+                :lyrics="currentSong.lyrics"
+                :song-data="{
+                  title: currentSong.title,
+                  artist: currentSong.artist,
+                }"
+                :song-lang="currentSong.language"
+                :show-translations="showTranslations"
+              />
+            </div>
           </ClientOnly>
         </div>
       </div>

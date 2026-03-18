@@ -11,6 +11,8 @@ interface oriSongData {
     en?: string
     kr?: string
     zh?: string
+    tw?: string
+    hk?: string
   }[]
 }
 
@@ -59,6 +61,12 @@ export default defineEventHandler(async (event) => {
           break
         case 'kr':
           value = lyric.kr
+          break
+        case 'tw':
+          value = lyric.tw
+          break
+        case 'hk':
+          value = lyric.hk
           break
         default:
           value = undefined
