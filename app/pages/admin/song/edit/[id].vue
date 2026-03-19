@@ -17,11 +17,12 @@ const {
   refresh,
 } = await useFetch<SongData | null>(`/api/song/${videoId.value}`)
 
-const editMode = ref<'' | 'info' | 'time' | 'translation'>('')
+const editMode = ref<'' | 'info' | 'word' | 'time' | 'translation'>('')
 
 const modeTitleMap = {
   '': '編輯',
   info: '編輯歌曲資訊',
+  word: '編輯歌曲單字',
   time: '編輯歌詞時間軸',
   translation: '編輯歌曲歌詞翻譯',
 }
@@ -95,6 +96,13 @@ watch(editMode, () => {
       </button>
       <button
         class="w-full max-w-[640px] rounded-xl bg-[#FFE5E5] py-3 font-medium text-[#F9595F] active:scale-95 md:font-black"
+        @click="editMode = 'word'"
+      >
+        編輯歌曲單字
+        <div class="mt-1 text-xs text-[#7A3A3A]">新增及管理歌曲單字</div>
+      </button>
+      <button
+        class="w-full max-w-[640px] rounded-xl bg-[#FFE5E5] py-3 font-medium text-[#F9595F] active:scale-95 md:font-black"
         @click="editMode = 'time'"
       >
         編輯歌曲時間軸
@@ -128,6 +136,15 @@ watch(editMode, () => {
         <div class="mt-1 text-xs text-[#7A3A3A]">將以新視窗打開外站</div>
       </a>
     </div>
+
+    <!-- 歌曲單字 -->
+    <AdminSongEditWord
+      v-if="editMode === 'word' && songData"
+      :video-id="songData.id"
+      :lyrics="songData.lyrics"
+      :language="songData.language"
+      @go-back="editMode = ''"
+    />
 
     <!-- 編輯時間戳記 -->
     <AdminSongEditTime

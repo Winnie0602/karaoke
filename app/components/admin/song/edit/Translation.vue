@@ -54,7 +54,6 @@ const addLanguage = (code: LangCode) => {
 }
 
 // 移除語言
-// 移除語言
 const removeLanguage = async (code: LangCode) => {
   if (langForms.value[code]?.trim()) {
     const confirm = await open('請注意無法復原', '將刪除該語言歌詞', 'ask')

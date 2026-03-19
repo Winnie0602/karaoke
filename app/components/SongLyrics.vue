@@ -11,8 +11,7 @@ const { lyrics, songData, songLang } = defineProps<{
 
 const store = usePlayerStore()
 
-// 底下例句panel
-const isPanelOpen = ref(false)
+
 
 // 每句歌詞dom陣列
 const lyricsRefs = ref<HTMLElement[]>([])
@@ -30,35 +29,12 @@ const getLyric = (lyric: LyricData) => {
   return lyric[songLang] ?? ''
 }
 
-// 代辦：加入語言功能後做
 const getTranslate = (lyric: LyricData, lang: LangCode) => {
   if (!songLang) return ''
 
   return lyric[lang] ?? ''
 }
 
-// 傳進去tatoeba組件的單字
-const tatoebaWord = ref('')
-
-// 打開panel前的音樂播放狀態
-const wasListening = ref(false)
-
-// 打開下方panel區塊
-// const openPanel = async (word) => {
-//   // 記住打開前的播放狀態
-//   wasListening.value = store.isPlaying
-
-//   isPanelOpen.value = true
-//   store.pause()
-
-//   tatoebaWord.value = word.surface
-// }
-
-watch(isPanelOpen, (open) => {
-  if (!open && wasListening.value) {
-    store.play()
-  }
-})
 
 // 現在在第幾句歌詞
 const currentLineIndex = computed(() => {
@@ -160,12 +136,6 @@ watch(currentLineIndex, (newLineIndex) => {
       </div>
     </div>
 
-    <BottomPanel
-      :open="isPanelOpen"
-      :word="tatoebaWord"
-      :song-lang="songLang"
-      @close="isPanelOpen = false"
-    />
   </div>
 </template>
 

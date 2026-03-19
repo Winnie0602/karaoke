@@ -105,7 +105,7 @@ watch(
                 <button
                   v-for="lang in currentSong.translation_langs"
                   :key="lang"
-                  class="rounded-full border-[1px] px-4 py-1.5 text-xs transition-all duration-300 active:scale-95 md:text-sm"
+                  class="rounded-full border-[1px] px-4 py-1.5 text-xs md:text-sm"
                   :class="[
                     showTranslations.includes(lang)
                       ? 'bg-[#F9595F] text-white shadow-md shadow-[#F9595F]/20'
@@ -118,9 +118,7 @@ watch(
               </div>
             </div>
 
-            <div
-              class="animate-in fade-in slide-in-from-bottom-2 mt-4 duration-500"
-            >
+            <div class="mt-4 space-y-3">
               <SongLyrics
                 :lyrics="currentSong.lyrics"
                 :song-data="{
@@ -130,6 +128,9 @@ watch(
                 :song-lang="currentSong.language"
                 :show-translations="showTranslations"
               />
+
+              <!-- 單字 -->
+              <SongWords :song="currentSong" />
             </div>
           </ClientOnly>
         </div>
@@ -164,3 +165,4 @@ watch(
     </div>
   </div>
 </template>
+

@@ -35,5 +35,9 @@ export default defineEventHandler(async (event) => {
 
   await collection.bulkWrite(operations)
 
+  await db
+    .collection('list')
+    .updateOne({ id: videoId }, { $set: { has_timestamp: true } })
+
   return { success: true }
 })
