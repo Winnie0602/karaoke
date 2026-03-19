@@ -4,7 +4,7 @@ const client = new textToSpeech.TextToSpeechClient()
 
 export default defineEventHandler(async (event) => {
   const { text, lang } = await readBody(event)
-  console.log({ lang })
+
   const [response] = await client.synthesizeSpeech({
     input: { text },
     voice: {

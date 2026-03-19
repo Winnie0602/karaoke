@@ -37,16 +37,15 @@ watch(isPanelOpen, (open) => {
     class="w-full rounded-3xl border border-[#FFE5E5] bg-white p-4 shadow-sm md:p-6"
   >
     <div
-      class="mb-6 flex items-center justify-between border-b border-[#FFF9F9] pb-4"
+      class="mb-6 flex items-center justify-between border-b border-[#FFF9F9] pb-2 md:pb-4"
     >
-      <div class="flex items-center gap-3">
-        <div class="h-6 w-1.5 rounded-full bg-[#F9595F]"></div>
+      <div class="items-center gap-3">
         <h3
-          class="text-lg font-black tracking-widest text-[#7A3A3A] md:text-xl"
+          class="flex flex-col text-lg font-black tracking-widest text-[#7A3A3A] md:flex-row md:text-xl"
         >
           單字庫 & 例句
           <span
-            class="ml-2 text-xs font-medium text-[#A66B6B] uppercase opacity-60"
+            class="text-xs font-medium text-[#A66B6B] uppercase opacity-60 md:ml-2"
           >
             Vocabulary & Sentences
           </span>
@@ -56,11 +55,14 @@ watch(isPanelOpen, (open) => {
       <span
         class="rounded-lg bg-[#FFE5E5] px-2 py-1 text-[10px] font-bold text-[#F9595F]"
       >
-        共 {{ song.words.length }} 個
+        共 {{ song.words?.length || 0 }} 個
       </span>
     </div>
 
-    <div v-if="song.words.length > 0" class="flex flex-wrap gap-3">
+    <div
+      v-if="song.words && song?.words.length > 0"
+      class="flex flex-wrap gap-3"
+    >
       <button
         v-for="(w, index) in song.words"
         :key="index"
@@ -76,6 +78,8 @@ watch(isPanelOpen, (open) => {
         </div>
       </button>
     </div>
+
+    <div v-else class="pb-2">nooo</div>
 
     <BottomPanel
       :open="isPanelOpen"
