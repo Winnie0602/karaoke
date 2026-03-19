@@ -2,7 +2,6 @@
 import type { DisplayAPIResult } from '~/types/tatoeba'
 import type { LangCode } from '~/types/lang'
 import { LANG_CONFIG_MAP } from '~/types/lang'
-import { speak } from '~/utils/speak'
 
 const { open, word, songLang } = defineProps<{
   open: boolean
@@ -20,27 +19,21 @@ const tatoebaSentenses = ref<DisplayAPIResult[]>()
 // 朗讀狀態控制
 const speakingIndex = ref<number | null>(null)
 
-const currentLangConfig = computed(() => {
-  // 預設為日文，若有對應則回傳對應配置
-  if (songLang && LANG_CONFIG_MAP[songLang]) {
-    return LANG_CONFIG_MAP[songLang]
-  }
-  return LANG_CONFIG_MAP.ja
-})
+// 歌曲語言的config
+const currentLangConfig = ref(LANG_CONFIG_MAP[songLang || 'en'])
 
-const handleSpeak = (text: string, index: number) => {
-  if (speakingIndex.value !== null) return // 正在播放中 禁止再次點擊
-
-  speakingIndex.value = index
-  speak(
-    text,
-    () => {
-      speakingIndex.value = null // 播放結束 重置狀態
+const handleSpeak = async (text: string) => {
+  const res = await $fetch('/api/tts', {
+    method: 'POST',
+    body: {
+      text,
+      lang: currentLangConfig.value,
     },
-    currentLangConfig.value.speech,
-  )
+  })
+
+  const audio = new Audio(`data:audio/mp3;base64,${res.audioContent}`)
+  audio.play()
 }
-// -----------------------
 
 watch(
   () => open,
@@ -54,7 +47,7 @@ watch(
         '/api/tatoeba',
         {
           params: {
-            from: currentLangConfig.value.api,
+            from: currentLangConfig.value.tatoeba,
             to: 'cmn',
             query: word,
           },
@@ -79,21 +72,28 @@ watch(
   <transition name="slide-up">
     <div v-if="open" class="fixed right-0 bottom-0 left-0 z-50 mx-auto w-full">
       <div
-        class="bg-[#C63E42]/90 shadow-[0_-8px_30px_rgba(0,0,0,0.15)] backdrop-blur-md"
+        class="bg-[#7A3A3A]/70 shadow-[0_-8px_30px_rgba(0,0,0,0.15)] backdrop-blur-md"
       >
         <div class="flex justify-center py-2">
           <div class="h-1.5 w-10 rounded-full bg-white/20" />
         </div>
 
-        <div class="flex items-center justify-between px-5 pb-3">
+        <div
+          class="mt-1 flex items-center justify-center px-5 md:justify-between md:pb-3"
+        >
           <div
-            class="text-xs font-bold tracking-[0.2em] text-white/50 uppercase"
+            class="flex flex-col justify-center text-sm tracking-[0.2em] text-white/50 uppercase md:flex-row md:items-end md:space-x-3 md:text-xl"
           >
-            Example Sentences
+            <div
+              class="flex justify-center rounded-xl bg-gray-300/20 px-3 py-1 font-bold"
+            >
+              「 {{ word }} 」
+            </div>
+            <div class="font-medium">Example Sentences</div>
           </div>
 
           <button
-            class="p-1 text-white/40 hover:text-white"
+            class="hidden p-1 text-white/40 hover:text-white md:block"
             @click="emit('close')"
           >
             ✕
@@ -101,7 +101,7 @@ watch(
         </div>
 
         <div
-          class="drawer-scroll max-h-[45vh] overflow-y-auto px-6 pb-8 md:max-h-[35vh] md:px-10"
+          class="drawer-scroll max-h-[55vh] overflow-y-auto px-3 pb-8 md:max-h-[35vh] md:px-10"
         >
           <div v-if="!tatoebaLoading" class="space-y-3">
             <div
@@ -118,10 +118,10 @@ watch(
               <div
                 v-for="(sentense, i) in tatoebaSentenses"
                 :key="i"
-                class="relative mt-3 flex items-start gap-4 rounded-2xl border border-white/10 bg-white/5 p-4 transition-all hover:bg-white/10"
+                class="mt-3 flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-3 transition-all hover:bg-white/10 md:gap-4 md:p-4"
               >
                 <button
-                  class="mt-1 flex h-10 w-10 flex-none items-center justify-center rounded-full transition-all"
+                  class="flex h-9 w-9 flex-none items-center justify-center rounded-full transition-all md:mt-1 md:h-10 md:w-10"
                   :class="[
                     speakingIndex === i
                       ? 'scale-95 bg-white text-[#C63E42] opacity-100'
@@ -131,10 +131,10 @@ watch(
                       : '',
                   ]"
                   :disabled="speakingIndex !== null"
-                  @click="handleSpeak(sentense.text, i)"
+                  @click="handleSpeak(sentense.text)"
                 >
                   <i
-                    class="fa-solid"
+                    class="fa-solid text-xs md:text-base"
                     :class="
                       speakingIndex === i
                         ? 'fa-spinner fa-spin'
@@ -143,7 +143,7 @@ watch(
                   ></i>
                 </button>
 
-                <div class="flex-1 space-y-1">
+                <div class="w-full flex-1 space-y-1">
                   <div
                     v-if="songLang === 'ja'"
                     class="text-base leading-relaxed font-medium text-white md:text-lg"

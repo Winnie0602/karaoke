@@ -143,6 +143,7 @@ watch(editMode, () => {
       :video-id="songData.id"
       :lyrics="songData.lyrics"
       :language="songData.language"
+      :words="songData.words || []"
       @go-back="editMode = ''"
     />
 

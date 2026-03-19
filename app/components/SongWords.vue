@@ -15,7 +15,7 @@ const tatoebaWord = ref('')
 const wasListening = ref(false)
 
 // 打開下方panel區塊
-const openPanel = async (word) => {
+const openPanel = async (word: string) => {
   // 記住打開前的播放狀態
   wasListening.value = store.isPlaying
 
@@ -44,11 +44,11 @@ watch(isPanelOpen, (open) => {
         <h3
           class="text-lg font-black tracking-widest text-[#7A3A3A] md:text-xl"
         >
-          單字庫
+          單字庫 & 例句
           <span
             class="ml-2 text-xs font-medium text-[#A66B6B] uppercase opacity-60"
           >
-            Vocabulary
+            Vocabulary & Sentences
           </span>
         </h3>
       </div>
@@ -56,22 +56,22 @@ watch(isPanelOpen, (open) => {
       <span
         class="rounded-lg bg-[#FFE5E5] px-2 py-1 text-[10px] font-bold text-[#F9595F]"
       >
-        共 1 個
+        共 {{ song.words.length }} 個
       </span>
     </div>
 
-    <div class="flex flex-wrap gap-3">
+    <div v-if="song.words.length > 0" class="flex flex-wrap gap-3">
       <button
-        v-for="word in ['実は', '言って', '못된 ', '없어', '멀리', '盲目的']"
-        :key="word"
+        v-for="(w, index) in song.words"
+        :key="index"
         class="group flex items-center overflow-hidden rounded-xl border border-[#FFE5E5] bg-[#FFF9F9] px-4 py-2 transition-all hover:border-[#F9595F]/50 hover:bg-white hover:shadow-md active:scale-95"
-        @click="openPanel(word)"
+        @click="openPanel(w.word)"
       >
         <div class="flex items-center">
           <span
             class="text-sm font-bold text-[#7A3A3A] group-hover:text-[#F9595F] md:text-base"
           >
-            {{ word }}
+            {{ w.word }}
           </span>
         </div>
       </button>
@@ -80,7 +80,7 @@ watch(isPanelOpen, (open) => {
     <BottomPanel
       :open="isPanelOpen"
       :word="tatoebaWord"
-      :song-lang="'ja'"
+      :song-lang="song.language"
       @close="isPanelOpen = false"
     />
   </div>

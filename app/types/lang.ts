@@ -16,15 +16,19 @@ export const languageMapCodeLabel: Record<LangCode, Tab> = Object.fromEntries(
   Object.entries(languageMapCode).map(([key, value]) => [value, key]),
 ) as Record<LangCode, Tab>
 
-// Tatoeba API & Web Speech API 對照表
+// Tatoeba API & TTS API 對照表
 export const LANG_CONFIG_MAP: Record<
   LangCode,
-  { api: string; speech: string }
+  {
+    tatoeba: string
+    ttsCode: string
+    ttsName: string
+  }
 > = {
-  kr: { api: 'kor', speech: 'ko-KR' },
-  ja: { api: 'jpn', speech: 'ja-JP' },
-  en: { api: 'eng', speech: 'en-US' },
-  tw: { api: 'cmn', speech: 'zh-TW' },
-  zh: { api: 'cmn', speech: 'zh-TW' },
-  hk: { api: 'yue', speech: 'zh-HK' },
+  kr: { tatoeba: 'kor', ttsCode: 'ko-KR', ttsName: 'ko-KR-Wavenet-A' },
+  ja: { tatoeba: 'jpn', ttsCode: 'ja-JP', ttsName: 'ja-JP-Wavenet-A' },
+  en: { tatoeba: 'eng', ttsCode: 'en-US', ttsName: 'en-US-Wavenet-D' },
+  tw: { tatoeba: 'cmn', ttsCode: 'zh-TW', ttsName: 'cmn-TW-Wavenet-A' },
+  zh: { tatoeba: 'cmn', ttsCode: 'zh-TW', ttsName: 'cmn-TW-Wavenet-A' },
+  hk: { tatoeba: 'cmn', ttsCode: 'zh-TW', ttsName: 'cmn-TW-Wavenet-A' },
 }

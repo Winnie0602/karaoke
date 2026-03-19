@@ -23,36 +23,35 @@ export default defineEventHandler(async (event) => {
     },
   )
 
-const seen = new Set<string>()
+  const seen = new Set<string>()
 
-const result = ori.results
-  .filter((data) => {
-    if (data.text.length < 5) return false
-    if (!data.text.includes(query.query)) return false
+  const result = ori.results
+    .filter((data) => {
+      if (data.text.length < 8) return false
+      if (!data.text.includes(query.query)) return false
 
-    return true
-  })
+      return true
+    })
 
-  // 去重
-  .filter((data) => {
-    if (seen.has(data.text)) return false
-    seen.add(data.text)
-    return true
-  })
+    // 去重
+    .filter((data) => {
+      if (seen.has(data.text)) return false
+      seen.add(data.text)
+      return true
+    })
 
-  .map((data) => {
-    const transcription = data.transcriptions.find((e) => e.html)
-    const pre_translation = data.translations.find((e) => e.length !== 0)
-    const translation = pre_translation?.find((e) => e.text)
+    .map((data) => {
+      const transcription = data.transcriptions.find((e) => e.html)
+      const pre_translation = data.translations.find((e) => e.length !== 0)
+      const translation = pre_translation?.find((e) => e.text)
 
-    return {
-      text: data.text,
-      html: transcription?.html ?? '',
-      translations: translation?.text ?? '',
-      lang: 'jpn',
-    }
-  })
-
+      return {
+        text: data.text,
+        html: transcription?.html ?? '',
+        translations: translation?.text ?? '',
+        lang: query.to,
+      }
+    })
 
   return result
 })

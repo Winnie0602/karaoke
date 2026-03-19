@@ -6,18 +6,14 @@ export interface SongData {
   artist: string
   language: LangCode
   translation_langs: LangCode[]
-  vocabularies: VocabularyData[]
+  words: WordData[]
   lyrics: LyricData[]
 }
 
-export interface VocabularyData {
-  vocabulary: string
-  zh: string
-  en: string
-  kr: string
-  jp: string
+export interface WordData {
+  nanoids?: string[]
+  word: string
 }
-
 export interface LyricData {
   nanoid: string
   start: number
