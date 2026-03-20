@@ -1,6 +1,8 @@
 import textToSpeech from '@google-cloud/text-to-speech'
 
-const client = new textToSpeech.TextToSpeechClient()
+const client = new textToSpeech.TextToSpeechClient({
+  credentials: JSON.parse(process.env.GOOGLE_CREDENTIALS as string),
+})
 
 export default defineEventHandler(async (event) => {
   const { text, lang } = await readBody(event)
