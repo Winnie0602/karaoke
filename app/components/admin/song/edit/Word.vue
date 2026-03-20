@@ -18,8 +18,7 @@ const { videoId, lyrics, language, words } = defineProps<{
 // 單字及出現的句子 的陣列
 const wordArr = ref<{ nanoids?: string[]; word: string }[]>(words)
 
-// tatoeba api回傳句子陣列
-const tatoebaSentenses = ref<DisplayAPIResult[]>()
+
 
 const blockMode = ref<'lyric' | 'tatoeba'>('lyric')
 
@@ -32,6 +31,14 @@ const isSelectLyric = (nanoid: string) => {
     ?.nanoids?.includes(nanoid)
 }
 
+const selectWordHandler = (word: string) => {
+  if (selectedWord.value === word) {
+    selectedWord.value = ''
+  } else {
+    selectedWord.value = word
+  }
+}
+
 // input輸入匡
 const inputText = ref('')
 
@@ -40,7 +47,7 @@ const handleEnter = (event: KeyboardEvent) => {
   const target = event.target as HTMLInputElement
   const inputValue = target.value
 
-  if (wordArr.value.length >= 15) {
+  if (wordArr.value.length >= 20) {
     show('最多20個單字', 2000)
 
     return
@@ -71,6 +78,10 @@ const deleteTag = () => {
 }
 
 const selectLyric = (nanoid: string) => {
+  if (selectedWord.value === '') {
+    show('請先選擇一個單字', 2000)
+    return
+  }
   const targetWord = wordArr.value.find((w) => w.word === selectedWord.value)
 
   if (!targetWord) return
@@ -114,54 +125,23 @@ const saveWords = async () => {
 // 歌曲語言的config
 const currentLangConfig = ref(LANG_CONFIG_MAP[language || 'en'])
 
-const tatoebaCache = new Map<string, DisplayAPIResult[]>()
+// tatoeba api回傳句子陣列
+const tatoebaSentenses = ref<DisplayAPIResult[]>()
 
-const tatoebaLoading = ref(false)
-
-// 拿單字範例api
-const getTatoebaResult = async () => {
-  const key = selectedWord.value
-
-  // 有 cache 直接回傳
-  if (tatoebaCache.has(key)) {
-    return tatoebaCache.get(key)!
-  }
-
-  tatoebaLoading.value = true
-
-  try {
-    const res = await $fetch<DisplayAPIResult[]>('/api/tatoeba', {
-      params: {
-        from: currentLangConfig.value.tatoeba,
-        to: 'cmn',
-        query: key,
-      },
-    })
-
-    //  存 cache
-    tatoebaCache.set(key, res)
-
-    return res
-  } finally {
-    tatoebaLoading.value = false
-  }
-}
+const { get: getTatoebaResult, loading: tatoebaLoading } = useTatoeba(
+  currentLangConfig.value.tatoeba,
+)
 
 const showTatoeba = async () => {
   blockMode.value = 'tatoeba'
 
-  tatoebaSentenses.value = await getTatoebaResult()
+  tatoebaSentenses.value = await getTatoebaResult(selectedWord.value)
 }
 
 watch(selectedWord, async () => {
   if (selectedWord.value !== '' && blockMode.value === 'tatoeba') {
-    tatoebaSentenses.value = await getTatoebaResult()
+    tatoebaSentenses.value = await getTatoebaResult(selectedWord.value)
   }
-})
-
-onMounted(() => {
-  if (wordArr.value.length !== 0 && wordArr.value[0]?.word)
-    selectedWord.value = wordArr.value[0]?.word
 })
 </script>
 
@@ -202,7 +182,7 @@ onMounted(() => {
             ? 'border-red-300/50 bg-red-300/50 shadow-md'
             : 'bg-[#FFF9F9] hover:border-[#F9595F]/50 hover:bg-white hover:shadow-md'
         "
-        @click="selectedWord = w.word"
+        @click="selectWordHandler(w.word)"
       >
         <div class="flex items-center">
           <span
@@ -271,6 +251,7 @@ onMounted(() => {
       <div v-if="blockMode === 'lyric'" class="flex flex-col items-center">
         <div
           v-for="(lyric, index) in lyrics"
+          v-show="lyric[language]?.includes(selectedWord)"
           :key="lyric.nanoid"
           class="flex w-full flex-col items-center justify-center gap-2 border-b border-white/20 px-4 py-6 transition-all hover:bg-[#F9595F]/5 md:flex-row md:gap-6 md:px-0 md:py-8"
         >

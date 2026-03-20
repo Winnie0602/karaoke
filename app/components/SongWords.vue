@@ -1,28 +1,42 @@
 <script setup lang="ts">
-import type { SongData, SongsList } from '~/types/song'
+import type { SongData } from '~/types/song'
+import type { DisplayAPIResult } from '~/types/tatoeba'
+import { LANG_CONFIG_MAP } from '~/types/lang'
 
 const { song } = defineProps<{ song: SongData }>()
 
 const store = usePlayerStore()
 
-// 底下例句panel
+// 底下例句panel打開狀態
 const isPanelOpen = ref(false)
-
-// 傳進去tatoeba組件的單字
-const tatoebaWord = ref('')
 
 // 打開panel前的音樂播放狀態
 const wasListening = ref(false)
 
+// ********* Tatoeba ************
+// 歌曲語言的config
+const currentLangConfig = ref(LANG_CONFIG_MAP[song.language || 'en'])
+
+// tatoeba api回傳句子陣列
+const tatoebaSentenses = ref<DisplayAPIResult[]>()
+
+const { get: getTatoebaResult, loading: tatoebaLoading } = useTatoeba(
+  currentLangConfig.value.tatoeba,
+)
+
+const selectedWord = ref('')
+
 // 打開下方panel區塊
 const openPanel = async (word: string) => {
+  selectedWord.value = word
+
   // 記住打開前的播放狀態
   wasListening.value = store.isPlaying
 
   isPanelOpen.value = true
   store.pause()
 
-  tatoebaWord.value = word
+  tatoebaSentenses.value = await getTatoebaResult(selectedWord.value)
 }
 
 watch(isPanelOpen, (open) => {
@@ -37,11 +51,11 @@ watch(isPanelOpen, (open) => {
     class="w-full rounded-3xl border border-[#FFE5E5] bg-white p-4 shadow-sm md:p-6"
   >
     <div
-      class="mb-6 flex items-center justify-between border-b border-[#FFF9F9] pb-2 md:pb-4"
+      class="mb-6 flex items-center justify-between border-b border-[#FFF9F9] pb-1 md:pb-4"
     >
       <div class="items-center gap-3">
         <h3
-          class="flex flex-col text-lg font-black tracking-widest text-[#7A3A3A] md:flex-row md:text-xl"
+          class="flex flex-col text-lg font-black tracking-widest text-[#7A3A3A] md:flex-row md:items-center md:text-xl"
         >
           單字庫 & 例句
           <span
@@ -66,7 +80,7 @@ watch(isPanelOpen, (open) => {
       <button
         v-for="(w, index) in song.words"
         :key="index"
-        class="group flex items-center overflow-hidden rounded-xl border border-[#FFE5E5] bg-[#FFF9F9] px-4 py-2 transition-all hover:border-[#F9595F]/50 hover:bg-white hover:shadow-md active:scale-95"
+        class="group flex items-center overflow-hidden rounded-xl border border-[#FFE5E5] bg-[#FFF9F9] px-3 py-1.5 transition-all hover:border-[#F9595F]/50 hover:bg-white hover:shadow-md active:scale-95 md:px-4 md:py-2"
         @click="openPanel(w.word)"
       >
         <div class="flex items-center">
@@ -83,8 +97,10 @@ watch(isPanelOpen, (open) => {
 
     <BottomPanel
       :open="isPanelOpen"
-      :word="tatoebaWord"
-      :song-lang="song.language"
+      :word="selectedWord"
+      :sentense="tatoebaSentenses"
+      :loading="tatoebaLoading"
+      :lang="song.language"
       @close="isPanelOpen = false"
     />
   </div>

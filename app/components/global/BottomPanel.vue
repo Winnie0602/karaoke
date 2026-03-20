@@ -3,61 +3,33 @@ import type { DisplayAPIResult } from '~/types/tatoeba'
 import type { LangCode } from '~/types/lang'
 import { LANG_CONFIG_MAP } from '~/types/lang'
 
-const { open, word, songLang } = defineProps<{
+const { open, word, sentense, loading, lang } = defineProps<{
   open: boolean
   word: string
-  songLang: LangCode | null
+  sentense: DisplayAPIResult[] | undefined
+  loading: boolean
+  lang: LangCode
 }>()
 
 const emit = defineEmits<{
   (e: 'close'): void
 }>()
 
-const tatoebaLoading = ref(false)
-const tatoebaSentenses = ref<DisplayAPIResult[]>()
-
 // 朗讀狀態控制
 const speakingIndex = ref<number | null>(null)
-
-// 歌曲語言的config
-const currentLangConfig = ref(LANG_CONFIG_MAP[songLang || 'en'])
 
 const handleSpeak = async (text: string) => {
   const res = await $fetch('/api/tts', {
     method: 'POST',
     body: {
       text,
-      lang: currentLangConfig.value,
+      lang: LANG_CONFIG_MAP[lang],
     },
   })
 
   const audio = new Audio(`data:audio/mp3;base64,${res.audioContent}`)
   audio.play()
 }
-
-watch(
-  () => open,
-  async (newVal) => {
-    if (!newVal) return
-
-    tatoebaSentenses.value = []
-    tatoebaLoading.value = true
-    try {
-      tatoebaSentenses.value = await $fetch<DisplayAPIResult[]>(
-        '/api/tatoeba',
-        {
-          params: {
-            from: currentLangConfig.value.tatoeba,
-            to: 'cmn',
-            query: word,
-          },
-        },
-      )
-    } finally {
-      tatoebaLoading.value = false
-    }
-  },
-)
 </script>
 
 <template>
@@ -103,9 +75,9 @@ watch(
         <div
           class="drawer-scroll max-h-[55vh] overflow-y-auto px-3 pb-8 md:max-h-[35vh] md:px-10"
         >
-          <div v-if="!tatoebaLoading" class="space-y-3">
+          <div v-if="!loading" class="space-y-3">
             <div
-              v-if="tatoebaSentenses?.length === 0"
+              v-if="sentense?.length === 0"
               class="flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-4 py-10 text-center"
             >
               <div class="text-sm text-white/60 md:text-base">
@@ -116,7 +88,7 @@ watch(
 
             <div v-else>
               <div
-                v-for="(sentense, i) in tatoebaSentenses"
+                v-for="(s, i) in sentense"
                 :key="i"
                 class="mt-3 flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-3 transition-all hover:bg-white/10 md:gap-4 md:p-4"
               >
@@ -131,7 +103,7 @@ watch(
                       : '',
                   ]"
                   :disabled="speakingIndex !== null"
-                  @click="handleSpeak(sentense.text)"
+                  @click="handleSpeak(s.text)"
                 >
                   <i
                     class="fa-solid text-xs md:text-base"
@@ -145,20 +117,20 @@ watch(
 
                 <div class="w-full flex-1 space-y-1">
                   <div
-                    v-if="songLang === 'ja'"
+                    v-if="lang === 'ja'"
                     class="text-base leading-relaxed font-medium text-white md:text-lg"
-                    v-html="sentense.html"
+                    v-html="s.html"
                   />
 
                   <div
                     v-else
                     class="text-base leading-relaxed font-medium text-white md:text-lg"
                   >
-                    {{ sentense.text }}
+                    {{ s.text }}
                   </div>
 
                   <div class="text-sm leading-snug text-white/60">
-                    {{ sentense.translations }}
+                    {{ s.translations }}
                   </div>
                 </div>
               </div>
