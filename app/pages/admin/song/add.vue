@@ -51,14 +51,18 @@ const handleSubmit = async () => {
     lyrics: handleLyrics(),
   }
 
-  await $fetch('/api/song/add', {
+  const response = await $fetch('/api/song/add', {
     method: 'POST',
     body: { payload },
   })
 
-  await open('新增成功', '', 'noAsk')
+  if (response.success) {
+    await open('新增成功', '', 'noAsk')
 
-  router.push({ path: '/admin/song/list' })
+    router.push({ path: '/admin/song/list' })
+  } else {
+    await open('新增失敗', '', 'noAsk')
+  }
 }
 </script>
 

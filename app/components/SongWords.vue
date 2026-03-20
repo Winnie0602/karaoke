@@ -106,7 +106,12 @@ watch(isPanelOpen, (open) => {
       </button>
     </div>
 
-    <div v-else class="pb-2">nooo</div>
+    <div
+      v-else
+      class="my-2 ml-3 flex w-full text-sm text-red-600 md:justify-center md:text-base"
+    >
+      這首歌目前沒有相關單字
+    </div>
 
     <BottomPanel
       :open="isPanelOpen"

@@ -151,6 +151,7 @@ const tabSongs = computed(() => {
           <!-- Right -->
           <div class="flex items-center space-x-1.5">
             <NuxtLink
+              v-if="song.has_timestamp"
               :to="`/song/test/${song.id}`"
               class="flex h-[28px] items-center justify-center rounded-full border border-[#F9595F]/10 bg-[#FFE5E5] px-1.5 text-[10px] font-bold text-[#F9595F] shadow-sm transition hover:bg-[#F9595F] hover:text-white md:px-2.5"
             >
@@ -211,6 +212,7 @@ const tabSongs = computed(() => {
 
             <div class="mt-3 flex items-center border-t border-gray-50 pt-3">
               <NuxtLink
+                v-if="song.has_timestamp"
                 :to="`/song/test/${song.id}`"
                 class="flex h-6 items-center justify-center rounded-full border border-[#F9595F]/10 bg-[#FFE5E5] px-1.5 text-[10px] font-bold text-[#F9595F] shadow-sm transition hover:bg-[#F9595F] hover:text-white md:px-2.5"
               >

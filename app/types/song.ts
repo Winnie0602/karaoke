@@ -33,4 +33,5 @@ export interface SongsList {
   title: string
   artist: string
   translation_langs: LangCode[]
+  has_timestamp: boolean
 }

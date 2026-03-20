@@ -2,14 +2,21 @@
 import type { LyricData } from '~/types/song'
 import type { LangCode } from '~/types/lang'
 
-const { lyrics, songData, currentLineIndex, songLang, showTranslations } =
-  defineProps<{
-    lyrics: LyricData[]
-    songData: { title: string; artist: string }
-    currentLineIndex: number
-    songLang: LangCode
-    showTranslations: LangCode[]
-  }>()
+const {
+  lyrics,
+  songData,
+  currentLineIndex,
+  songLang,
+  showTranslations,
+  hasTimeStamp,
+} = defineProps<{
+  lyrics: LyricData[]
+  songData: { title: string; artist: string }
+  currentLineIndex: number
+  songLang: LangCode
+  showTranslations: LangCode[] | undefined
+  hasTimeStamp: boolean
+}>()
 
 const store = usePlayerStore()
 
@@ -103,13 +110,20 @@ watch(
         <span
           class="ml-2 line-clamp-1 text-[10px] font-bold tracking-tight text-[#A66B6B]/60 uppercase md:text-xs"
         >
-          Now Playing: {{ songData.artist }}
+          {{ songData.artist }} - {{ songData.title }}
         </span>
       </div>
       <i class="fa-solid fa-ellipsis text-xs text-[#A66B6B]/40"></i>
     </div>
 
-    <div class="py-6 md:py-10">
+    <div
+      v-if="!hasTimeStamp"
+      class="mt-2 ml-3 flex w-full text-sm text-red-600 md:justify-center md:text-base"
+    >
+      這首歌目前沒有時間戳記
+    </div>
+
+    <div class="py-6 md:py-8">
       <div
         v-for="(lyric, index) in lyrics"
         :key="lyric.start"
@@ -126,7 +140,7 @@ watch(
           </div>
 
           <div
-            v-if="showTranslations.length > 0"
+            v-if="showTranslations && showTranslations.length > 0"
             class="flex flex-col space-y-1.5"
           >
             <p
@@ -145,6 +159,7 @@ watch(
         </div>
 
         <button
+          v-if="hasTimeStamp"
           class="ml-4 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#FFE5E5] text-[#F9595F] opacity-0 transition-all group-hover:opacity-100 hover:scale-110 md:h-10 md:w-10"
           :class="{ hidden: index === currentLineIndex }"
           @click="clickLyric(lyric.start, index)"

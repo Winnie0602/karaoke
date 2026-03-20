@@ -30,7 +30,7 @@ const filteredSongs = computed(() => {
 
 <template>
   <div class="w-full">
-    <IndexTopCarousel v-if="fullPath !== '/'" :songs="data?.songs ?? []" />
+    <IndexTopCarousel v-if="fullPath === '/'" :songs="data?.songs ?? []" />
 
     <div
       class="mx-auto my-4 w-full space-y-5 px-4 md:my-8 md:max-w-[1280px] md:space-y-8 md:px-8"

@@ -14,6 +14,8 @@ export default defineEventHandler(async (event) => {
   const limit = Number(query.limit || 30)
   const skip = (page - 1) * limit // 要跳過幾筆 ex第一頁跳過0筆 第二頁跳過limit筆
 
+  const sortOrder = query.sort === 'asc' ? 1 : -1
+
   // Partial --> 可選欄位
   const filter: Partial<Pick<SongsList, 'language' | 'artist'>> = {}
 
@@ -23,7 +25,12 @@ export default defineEventHandler(async (event) => {
   const collection = db.collection<SongsList>('list')
 
   const [songs, total] = await Promise.all([
-    collection.find(filter).skip(skip).limit(limit).toArray(),
+    collection
+      .find(filter)
+      .sort({ _id: sortOrder })
+      .skip(skip)
+      .limit(limit)
+      .toArray(),
     collection.countDocuments(filter),
   ])
 

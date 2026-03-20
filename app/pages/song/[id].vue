@@ -22,6 +22,9 @@ if (!currentSong.value && !pending.value) {
   })
 }
 
+// 該歌曲有沒有時間戳記
+const hasTimeStamp = ref(currentSong.value?.lyrics[0]?.start !== undefined)
+
 const page = ref(1)
 
 // 要顯示的翻譯語言
@@ -37,6 +40,8 @@ const handleTranslations = (lang: LangCode) => {
 }
 // ＊＊＊＊＊＊＊＊計算目前的歌詞
 const findLyricIndexByTime = (time: number, lyrics: LyricData[]): number => {
+  if (!hasTimeStamp.value) return -1
+
   let low = 0
   let high = lyrics.length - 1
 
@@ -58,12 +63,17 @@ const findLyricIndexByTime = (time: number, lyrics: LyricData[]): number => {
 }
 
 const currentLineIndex = computed(() => {
-  if (!currentSong.value?.lyrics) return -1
+  if (!currentSong.value?.lyrics || !hasTimeStamp.value) return -1
   return findLyricIndexByTime(store.currentTime, currentSong.value.lyrics)
 })
 
 const currentNanoid = computed(() => {
-  if (currentLineIndex.value === -1 || !currentSong.value?.lyrics) return ''
+  if (
+    currentLineIndex.value === -1 ||
+    !currentSong.value?.lyrics ||
+    !hasTimeStamp.value
+  )
+    return ''
   return currentSong.value.lyrics[currentLineIndex.value]?.nanoid
 })
 
@@ -133,7 +143,7 @@ watch(
                   :key="lang"
                   class="rounded-full border-[1px] px-4 py-1.5 text-xs md:text-sm"
                   :class="[
-                    showTranslations.includes(lang)
+                    showTranslations?.includes(lang)
                       ? 'bg-[#F9595F] text-white shadow-md shadow-[#F9595F]/20'
                       : 'border-[#FFE5E5] bg-white text-[#A66B6B] hover:border-[#F9595F]/30 hover:bg-[#FFF9F9]',
                   ]"
@@ -152,8 +162,9 @@ watch(
                   artist: currentSong.artist,
                 }"
                 :current-line-index="currentLineIndex"
-                :song-lang="currentSong.language"
+                :song-lang="currentSong.language || ['']"
                 :show-translations="showTranslations"
+                :has-time-stamp="hasTimeStamp"
               />
 
               <!-- 單字 -->

@@ -18,8 +18,6 @@ const { videoId, lyrics, language, words } = defineProps<{
 // 單字及出現的句子 的陣列
 const wordArr = ref<{ nanoids?: string[]; word: string }[]>(words)
 
-
-
 const blockMode = ref<'lyric' | 'tatoeba'>('lyric')
 
 // 目前選取的單字

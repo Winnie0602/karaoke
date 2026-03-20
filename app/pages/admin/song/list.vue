@@ -16,6 +16,7 @@ const { data, refresh } = await useFetch('/api/list/songs', {
   query: {
     language: selectLang,
     page,
+    sort: 'desc',
   },
 })
 
@@ -24,7 +25,18 @@ const deleteSong = async (id: string) => {
 
   if (!check) return
 
-  // 打api
+  const response = await $fetch('/api/song/delete', {
+    method: 'POST',
+    body: { videoId: id },
+  })
+
+  if (response.success) {
+    await open('刪除成功', '該歌曲已從資料庫移除。', 'noAsk')
+
+    refresh()
+  } else {
+    await open('刪除失敗', '', 'noAsk')
+  }
 }
 
 const updatePage = (newPage: number) => {
@@ -32,8 +44,6 @@ const updatePage = (newPage: number) => {
 
   refresh()
 }
-
-const currentTab = ref<'songList' | 'addSong'>('songList')
 </script>
 
 <template>
