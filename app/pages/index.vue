@@ -3,8 +3,6 @@ import Pagination from '~/components/global/Pagination.vue'
 
 const { fullPath } = useRoute()
 
-console.log(route)
-
 const { data, refresh } = await useFetch('/api/list/songs', {
   query: {
     language: 'all',
