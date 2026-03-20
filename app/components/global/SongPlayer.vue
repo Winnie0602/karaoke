@@ -61,7 +61,7 @@ onMounted(() => {
       <ClientOnly>
         <div
           :class="[
-            { hidden: !showVideo },
+            { 'hidden opacity-0': !showVideo },
             'flex-none transition-all duration-300',
           ]"
         >
@@ -79,10 +79,10 @@ onMounted(() => {
 
       <!-- 底部播放器 -->
       <div
-        class="fixed bottom-0 h-[65px] w-full bg-[#ffe5e5] px-2 md:h-[75px]"
+        class="fixed bottom-0 h-[68px] w-full bg-[#ffe5e5] px-2 md:h-[75px]"
         :class="{ hidden: !showPlayer }"
       >
-        <div class="flex h-full w-full items-center justify-center py-2">
+        <div class="flex h-full w-full items-center justify-center py-1">
           <div
             class="flex h-full w-full max-w-[1024px] items-center justify-between rounded-xl bg-gradient-to-b from-white to-[#fff0f0] px-2 shadow-lg md:px-3"
           >
