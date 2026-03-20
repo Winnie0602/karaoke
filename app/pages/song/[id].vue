@@ -56,16 +56,9 @@ watch(
 
     if (currentSong.value) {
       store.setSongInfo(currentSong.value?.title, currentSong.value?.artist)
-    }
-  },
-  { immediate: true },
-)
 
-watch(
-  currentSong,
-  (song) => {
-    if (!song) return
-    showTranslations.value = song.translation_langs
+      showTranslations.value = currentSong.value.translation_langs
+    }
   },
   { immediate: true },
 )
@@ -165,4 +158,3 @@ watch(
     </div>
   </div>
 </template>
-

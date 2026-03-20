@@ -18,17 +18,46 @@ const emit = defineEmits<{
 // 朗讀狀態控制
 const speakingIndex = ref<number | null>(null)
 
-const handleSpeak = async (text: string) => {
-  const res = await $fetch('/api/tts', {
-    method: 'POST',
-    body: {
-      text,
-      lang: LANG_CONFIG_MAP[lang],
-    },
-  })
+// 朗讀中？
+const isPlaying = ref(false)
 
-  const audio = new Audio(`data:audio/mp3;base64,${res.audioContent}`)
-  audio.play()
+// 是否不能點
+const cooldown = ref(false)
+
+const handleSpeak = async (text: string, index: number) => {
+  if (isPlaying.value || cooldown.value) return
+
+  isPlaying.value = true
+  speakingIndex.value = index
+
+  try {
+    const res = await $fetch('/api/tts', {
+      method: 'POST',
+      body: {
+        text,
+        lang: LANG_CONFIG_MAP[lang],
+      },
+    })
+
+    const audio = new Audio(`data:audio/mp3;base64,${res.audioContent}`)
+
+    audio.onended = () => {
+      isPlaying.value = false
+      speakingIndex.value = null
+
+      cooldown.value = true
+
+      // 設定兩秒後才能繼續聽語音
+      setTimeout(() => {
+        cooldown.value = false
+      }, 2000)
+    }
+
+    audio.play()
+  } catch (e) {
+    isPlaying.value = false
+    speakingIndex.value = null
+  }
 }
 </script>
 
@@ -98,21 +127,15 @@ const handleSpeak = async (text: string) => {
                     speakingIndex === i
                       ? 'scale-95 bg-white text-[#C63E42] opacity-100'
                       : 'bg-white/10 text-white/80 hover:scale-110 hover:bg-white/20 active:scale-95',
-                    speakingIndex !== null && speakingIndex !== i
+
+                    (isPlaying || cooldown) && speakingIndex !== i
                       ? 'cursor-not-allowed opacity-30'
                       : '',
                   ]"
-                  :disabled="speakingIndex !== null"
-                  @click="handleSpeak(s.text)"
+                  :disabled="isPlaying || cooldown"
+                  @click="handleSpeak(s.text, i)"
                 >
-                  <i
-                    class="fa-solid text-xs md:text-base"
-                    :class="
-                      speakingIndex === i
-                        ? 'fa-spinner fa-spin'
-                        : 'fa-volume-high'
-                    "
-                  ></i>
+                  <i class="fa-solid fa-volume-high text-xs md:text-base"></i>
                 </button>
 
                 <div class="w-full flex-1 space-y-1">
