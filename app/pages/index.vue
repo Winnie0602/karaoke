@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import Pagination from '~/components/global/Pagination.vue'
 
+const { fullPath } = useRoute()
+
+console.log(route)
+
 const { data, refresh } = await useFetch('/api/list/songs', {
   query: {
     language: 'all',
@@ -28,7 +32,7 @@ const filteredSongs = computed(() => {
 
 <template>
   <div class="w-full">
-    <IndexTopCarousel :songs="data?.songs ?? []" />
+    <IndexTopCarousel v-if="fullPath !== '/'" :songs="data?.songs ?? []" />
 
     <div
       class="mx-auto my-4 w-full space-y-5 px-4 md:my-8 md:max-w-[1280px] md:space-y-8 md:px-8"
