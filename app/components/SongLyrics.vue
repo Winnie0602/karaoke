@@ -2,12 +2,14 @@
 import type { LyricData } from '~/types/song'
 import type { LangCode } from '~/types/lang'
 
-const { lyrics, songData, songLang } = defineProps<{
-  lyrics: LyricData[]
-  songData: { title: string; artist: string }
-  songLang: LangCode
-  showTranslations: LangCode[]
-}>()
+const { lyrics, songData, currentNanoid, songLang, showTranslations } =
+  defineProps<{
+    lyrics: LyricData[]
+    songData: { title: string; artist: string }
+    currentNanoid: string
+    songLang: LangCode
+    showTranslations: LangCode[]
+  }>()
 
 const store = usePlayerStore()
 
@@ -41,9 +43,7 @@ const currentLineIndex = computed(() => {
     return tempIndex.value
   }
 
-  return lyrics.findIndex(
-    (l) => store.currentTime >= l.start && store.currentTime < l.end,
-  )
+  return lyrics.findIndex((l) => l.nanoid === currentNanoid)
 })
 
 const clickLyric = (start: number, index: number) => {

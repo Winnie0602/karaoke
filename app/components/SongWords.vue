@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import type { SongData } from '~/types/song'
+import type { SongData, WordData } from '~/types/song'
 import type { DisplayAPIResult } from '~/types/tatoeba'
 import { LANG_CONFIG_MAP } from '~/types/lang'
 
-const { song } = defineProps<{ song: SongData }>()
+const { song, currentNanoid } = defineProps<{
+  song: SongData
+  currentNanoid: string
+}>()
 
 const store = usePlayerStore()
 
@@ -26,9 +29,10 @@ const { get: getTatoebaResult, loading: tatoebaLoading } = useTatoeba(
 
 const selectedWord = ref('')
 
-const isNowWord = computed((word:WordData) => {
-  return 
-})
+const isNowWord = (word: WordData) => {
+  if (!word.nanoids || word.nanoids.length < 0) return false
+  return word.nanoids.includes(currentNanoid)
+}
 
 // 打開下方panel區塊
 const openPanel = async (word: string) => {
@@ -84,7 +88,12 @@ watch(isPanelOpen, (open) => {
       <button
         v-for="(w, index) in song.words"
         :key="index"
-        class="group flex items-center overflow-hidden rounded-xl border border-[#FFE5E5] bg-[#FFF9F9] px-3 py-1.5 transition-all hover:border-[#F9595F]/50 hover:bg-white hover:shadow-md active:scale-95 md:px-4 md:py-2"
+        class="group flex items-center overflow-hidden rounded-xl border px-3 py-1.5 transition-all md:px-4 md:py-2"
+        :class="
+          isNowWord(w)
+            ? 'scale-95 border-red-300 bg-red-300 text-white'
+            : 'border-[#FFE5E5] bg-[#FFF9F9] hover:border-[#F9595F]/50 hover:bg-white hover:shadow-md'
+        "
         @click="openPanel(w.word)"
       >
         <div class="flex items-center">

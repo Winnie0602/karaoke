@@ -36,6 +36,16 @@ const handleTranslations = (lang: LangCode) => {
   }
 }
 
+// 現正播放的歌詞的nanoid
+const currentNanoid = computed(() => {
+  if (!currentSong.value?.lyrics) return ''
+
+  const nowLyric = currentSong.value?.lyrics.find(
+    (l) => store.currentTime >= l.start && store.currentTime < l.end,
+  )
+  return nowLyric?.nanoid
+})
+
 const { data: randomSongs } = await useFetch<{ songs: SongsList[] }>(
   '/api/list/songs',
   {
@@ -118,12 +128,16 @@ watch(
                   title: currentSong.title,
                   artist: currentSong.artist,
                 }"
+                :current-nanoid="currentNanoid ?? ''"
                 :song-lang="currentSong.language"
                 :show-translations="showTranslations"
               />
 
               <!-- 單字 -->
-              <SongWords :song="currentSong" />
+              <SongWords
+                :song="currentSong"
+                :current-nanoid="currentNanoid ?? ''"
+              />
             </div>
           </ClientOnly>
         </div>
