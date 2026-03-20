@@ -37,9 +37,7 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
 
       const time = player.value?.getCurrentTime() ?? 0
 
-      if (store.storeMode === 'test') {
-        store.setTime(time)
-      } else {
+      if (Math.abs(time - store.currentTime) > 0.1) {
         store.setTime(time)
       }
 

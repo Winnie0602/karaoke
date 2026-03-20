@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SongData, SongsList } from '~/types/song'
+import type { SongData, SongsList, LyricData } from '~/types/song'
 import { languageMapCodeLabel } from '~/types/lang'
 import type { LangCode } from '~/types/lang'
 
@@ -35,16 +35,39 @@ const handleTranslations = (lang: LangCode) => {
     showTranslations.value.push(lang)
   }
 }
+// ＊＊＊＊＊＊＊＊計算目前的歌詞
+const findLyricIndexByTime = (time: number, lyrics: LyricData[]): number => {
+  let low = 0
+  let high = lyrics.length - 1
 
-// 現正播放的歌詞的nanoid
-const currentNanoid = computed(() => {
-  if (!currentSong.value?.lyrics) return ''
+  while (low <= high) {
+    const mid = (low + high) >>> 1 // 使用位運算取中間值，效能極佳
+    const lyric = lyrics[mid]
 
-  const nowLyric = currentSong.value?.lyrics.find(
-    (l) => store.currentTime >= l.start && store.currentTime < l.end,
-  )
-  return nowLyric?.nanoid
+    if (lyric?.start === undefined || lyric?.end === undefined) return -1
+
+    if (time >= lyric.start && time < lyric.end) {
+      return mid
+    } else if (time < lyric.start) {
+      high = mid - 1
+    } else {
+      low = mid + 1
+    }
+  }
+  return -1
+}
+
+const currentLineIndex = computed(() => {
+  if (!currentSong.value?.lyrics) return -1
+  return findLyricIndexByTime(store.currentTime, currentSong.value.lyrics)
 })
+
+const currentNanoid = computed(() => {
+  if (currentLineIndex.value === -1 || !currentSong.value?.lyrics) return ''
+  return currentSong.value.lyrics[currentLineIndex.value]?.nanoid
+})
+
+// ＊＊＊＊＊＊＊
 
 const { data: randomSongs } = await useFetch<{ songs: SongsList[] }>(
   '/api/list/songs',
@@ -128,7 +151,7 @@ watch(
                   title: currentSong.title,
                   artist: currentSong.artist,
                 }"
-                :current-nanoid="currentNanoid ?? ''"
+                :current-line-index="currentLineIndex"
                 :song-lang="currentSong.language"
                 :show-translations="showTranslations"
               />

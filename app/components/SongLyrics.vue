@@ -2,11 +2,11 @@
 import type { LyricData } from '~/types/song'
 import type { LangCode } from '~/types/lang'
 
-const { lyrics, songData, currentNanoid, songLang, showTranslations } =
+const { lyrics, songData, currentLineIndex, songLang, showTranslations } =
   defineProps<{
     lyrics: LyricData[]
     songData: { title: string; artist: string }
-    currentNanoid: string
+    currentLineIndex: number
     songLang: LangCode
     showTranslations: LangCode[]
   }>()
@@ -37,13 +37,10 @@ const getTranslate = (lyric: LyricData, lang: LangCode) => {
 // 若有，優先使用（暫時顯示用的假值）
 const tempIndex = ref<number | null>(null)
 
-// 現在在第幾句歌詞
-const currentLineIndex = computed(() => {
-  if (tempIndex.value !== null) {
-    return tempIndex.value
-  }
-
-  return lyrics.findIndex((l) => l.nanoid === currentNanoid)
+//使 用真資料還是假資料
+const activeIndex = computed(() => {
+  // 如果有手動點擊的假值，優先用temp
+  return tempIndex.value !== null ? tempIndex.value : currentLineIndex
 })
 
 const clickLyric = (start: number, index: number) => {
@@ -55,29 +52,26 @@ const clickLyric = (start: number, index: number) => {
 
 let lastLineIndex = -1
 
-watch(currentLineIndex, (newLineIndex) => {
-  if (newLineIndex === -1) return
-  if (newLineIndex === lastLineIndex) return
+watch(
+  activeIndex,
+  (newVal) => {
+    if (newVal === -1 || newVal === lastLineIndex) return
+    lastLineIndex = newVal
 
-  lastLineIndex = newLineIndex
+    const el = lyricsRefs.value[newVal]
+    const container = containerRef.value
+    if (!el || !container) return
 
-  const el = lyricsRefs.value[newLineIndex]
-  const container = containerRef.value
-  if (!el || !container) return
+    const targetScrollTop =
+      el.offsetTop - container.clientHeight / 2 + el.clientHeight / 2
 
-  const containerRect = container.getBoundingClientRect()
-  const elRect = el.getBoundingClientRect()
-
-  const elCenterInContainer =
-    elRect.top - containerRect.top + container.scrollTop + elRect.height / 2
-
-  const targetScrollTop = elCenterInContainer - container.clientHeight / 2
-
-  container.scrollTo({
-    top: targetScrollTop,
-    behavior: 'auto',
-  })
-})
+    container.scrollTo({
+      top: targetScrollTop,
+      behavior: 'smooth',
+    })
+  },
+  { flush: 'post' },
+) // 確保 DOM 更新後再執行
 
 watch(
   () => store.currentTime,
