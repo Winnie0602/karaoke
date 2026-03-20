@@ -26,6 +26,10 @@ const { get: getTatoebaResult, loading: tatoebaLoading } = useTatoeba(
 
 const selectedWord = ref('')
 
+const isNowWord = computed((word:WordData) => {
+  return 
+})
+
 // 打開下方panel區塊
 const openPanel = async (word: string) => {
   selectedWord.value = word
