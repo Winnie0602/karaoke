@@ -1,13 +1,30 @@
 <script setup lang="ts">
-const isOpen = ref(false)
+import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
+
+// 定義語言選項
+const languages = [
+  { name: '中文', code: 'zh', flag: '🇹🇼' },
+  { name: 'English', code: 'en', flag: '🇺🇸' },
+  { name: '한국어', code: 'kr', flag: '🇰🇷' },
+  { name: '日本語', code: 'ja', flag: '🇯🇵' },
+]
+
+const showComingSoon = ref(false)
+
+const currentLang = ref(languages[0]) // 預設中文
+
+watch(showComingSoon, () => {
+  setTimeout(() => {
+    showComingSoon.value = false
+  }, 2000)
+})
 </script>
 
 <template>
   <div class="w-full font-medium tracking-wide">
     <nav
-      class="relative] flex h-12 items-center border-b border-gray-200 bg-white px-4 md:h-14"
+      class="relative flex h-12 items-center border-b border-gray-200 bg-white px-3 md:h-14 md:px-5"
     >
-      <!-- Logo -->
       <NuxtLink
         class="text-lg font-semibold tracking-wide text-gray-900"
         to="/"
@@ -16,47 +33,72 @@ const isOpen = ref(false)
         <span class="ml-1 text-[#F9595F]">♪</span>
       </NuxtLink>
 
-      <!-- 漢堡 / X -->
-      <button
-        class="relative ml-auto h-6 w-6 md:hidden"
-        aria-label="Toggle menu"
-        @click="isOpen = !isOpen"
-      >
-        <span
-          class="absolute top-1/2 left-0 h-0.5 w-6 bg-gray-800 transition-all duration-300"
-          :class="isOpen ? 'rotate-45' : '-translate-y-2'"
-        />
-        <span
-          class="absolute top-1/2 left-0 h-0.5 w-6 bg-gray-800 transition-all duration-300"
-          :class="isOpen ? 'opacity-0' : 'opacity-100'"
-        />
-        <span
-          class="absolute top-1/2 left-0 h-0.5 w-6 bg-gray-800 transition-all duration-300"
-          :class="isOpen ? '-rotate-45' : 'translate-y-2'"
-        />
-      </button>
+      <div class="ml-auto flex items-center gap-2">
+        <Menu as="div" class="relative inline-block text-left">
+          <div>
+            <MenuButton
+              class="flex items-center gap-1 rounded-md py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none md:px-3"
+            >
+              <i class="fa-solid fa-globe md:text-xl"></i>
+              <span class="text-sm md:text-base">Language</span>
+            </MenuButton>
+          </div>
 
-      <!-- 桌機選單 -->
-      <div class="ml-auto hidden gap-6 md:flex">
-        <NuxtLink
-          to="/"
-          class="relative rounded px-2 py-1 text-gray-700 transition hover:bg-[#F9595F]/10 hover:text-[#F9595F]"
-        >
-          Home
+          <transition
+            enter-active-class="transition duration-100 ease-out"
+            enter-from-class="transform scale-95 opacity-0"
+            enter-to-class="transform scale-100 opacity-100"
+            leave-active-class="transition duration-75 ease-in"
+            leave-from-class="transform scale-100 opacity-100"
+            leave-to-class="transform scale-95 opacity-0"
+          >
+            <MenuItems
+              class="absolute right-0 z-50 mt-2 w-36 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none"
+            >
+              <div class="px-1 py-1">
+                <MenuItem
+                  v-for="lang in languages"
+                  :key="lang.code"
+                  v-slot="{ active }"
+                >
+                  <button
+                    :class="[
+                      currentLang?.code === lang.code
+                        ? 'bg-[#F9595F]/60 text-white'
+                        : active
+                          ? 'bg-gray-300 text-gray-900'
+                          : 'text-gray-900',
+                      'group flex w-full items-center rounded-md px-3 py-2 text-sm transition-colors',
+                    ]"
+                    @click="currentLang = lang"
+                  >
+                    <span class="mr-2 text-base">{{ lang.flag }}</span>
+                    {{ lang.name }}
+                  </button>
+                </MenuItem>
+              </div>
+            </MenuItems>
+          </transition>
+        </Menu>
+
+        <!-- 登入按鈕 -->
+        <div class="group profile-container relative flex items-center">
+          <button
+            class="rounded-full px-2.5 py-1 transition-colors hover:bg-gray-200"
+            @click="showComingSoon = !showComingSoon"
+          >
+            <i class="fa-regular fa-user text-gray-700 md:text-lg"></i>
+          </button>
+
           <span
-            class="absolute -bottom-1 left-0 h-[2px] w-0 bg-[#F9595F] transition-all group-hover:w-full"
-          />
-        </NuxtLink>
-        <a
-          href="#"
-          class="relative rounded px-2 py-1 text-gray-700 transition hover:bg-[#F9595F]/10 hover:text-[#F9595F]"
-        >
-          About
-        </a>
+            class="pointer-events-none absolute top-1.5 -right-1.5 flex-col items-center justify-center rounded-md bg-[#F9595F]/80 px-1.5 py-1 text-[9px] font-medium text-white shadow-sm ring-1 ring-white"
+            :class="[showComingSoon ? 'flex' : 'hidden', 'md:group-hover:flex']"
+          >
+            <span class="text-[7px] leading-none">COMING</span>
+            <span class="mt-[2px] text-[7px] leading-none">SOON</span>
+          </span>
+        </div>
       </div>
     </nav>
-
-    <!-- Mobile menu -->
-    <MobileNavbar :open="isOpen" @close="isOpen = false" />
   </div>
 </template>

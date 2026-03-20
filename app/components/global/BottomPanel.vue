@@ -59,6 +59,13 @@ const handleSpeak = async (text: string, index: number) => {
     speakingIndex.value = null
   }
 }
+
+// 關閉前先復原所有狀態
+const handleClose = () => {
+  cooldown.value = false
+  isPlaying.value = false
+  emit('close')
+}
 </script>
 
 <template>
@@ -66,7 +73,7 @@ const handleSpeak = async (text: string, index: number) => {
     <div
       v-if="open"
       class="fixed inset-0 z-40 bg-black/30"
-      @click="emit('close')"
+      @click="handleClose"
     />
   </transition>
 
@@ -95,7 +102,7 @@ const handleSpeak = async (text: string, index: number) => {
 
           <button
             class="hidden p-1 text-white/40 hover:text-white md:block"
-            @click="emit('close')"
+            @click="handleClose"
           >
             ✕
           </button>
