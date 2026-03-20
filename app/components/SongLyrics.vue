@@ -11,8 +11,6 @@ const { lyrics, songData, songLang } = defineProps<{
 
 const store = usePlayerStore()
 
-
-
 // 每句歌詞dom陣列
 const lyricsRefs = ref<HTMLElement[]>([])
 
@@ -34,7 +32,6 @@ const getTranslate = (lyric: LyricData, lang: LangCode) => {
 
   return lyric[lang] ?? ''
 }
-
 
 // 現在在第幾句歌詞
 const currentLineIndex = computed(() => {
@@ -65,7 +62,7 @@ watch(currentLineIndex, (newLineIndex) => {
 
   container.scrollTo({
     top: targetScrollTop,
-    behavior: 'smooth',
+    behavior: 'auto',
   })
 })
 </script>
@@ -135,7 +132,6 @@ watch(currentLineIndex, (newLineIndex) => {
         </button>
       </div>
     </div>
-
   </div>
 </template>
 
