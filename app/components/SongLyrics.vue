@@ -32,13 +32,26 @@ const getTranslate = (lyric: LyricData, lang: LangCode) => {
 
   return lyric[lang] ?? ''
 }
+// 若有，優先使用（暫時顯示用的假值）
+const tempIndex = ref<number | null>(null)
 
 // 現在在第幾句歌詞
 const currentLineIndex = computed(() => {
+  if (tempIndex.value !== null) {
+    return tempIndex.value
+  }
+
   return lyrics.findIndex(
     (l) => store.currentTime >= l.start && store.currentTime < l.end,
   )
 })
+
+const clickLyric = (start: number, index: number) => {
+  // 點擊歌詞後currentLineIndex先使用假值
+  tempIndex.value = index
+
+  store.seekToRequest(start)
+}
 
 let lastLineIndex = -1
 
@@ -65,6 +78,20 @@ watch(currentLineIndex, (newLineIndex) => {
     behavior: 'auto',
   })
 })
+
+watch(
+  () => store.currentTime,
+  (time) => {
+    if (tempIndex.value === null) return
+
+    const lyric = lyrics[tempIndex.value]
+
+    // 時間追上後，把tempIndex假值復原
+    if (lyric && time >= lyric.start) {
+      tempIndex.value = null
+    }
+  },
+)
 </script>
 
 <template>
@@ -126,7 +153,7 @@ watch(currentLineIndex, (newLineIndex) => {
         <button
           class="ml-4 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#FFE5E5] text-[#F9595F] opacity-0 transition-all group-hover:opacity-100 hover:scale-110 md:h-10 md:w-10"
           :class="{ hidden: index === currentLineIndex }"
-          @click="store.seekToRequest(lyric.start)"
+          @click="clickLyric(lyric.start, index)"
         >
           <i class="fa-solid fa-play text-xs md:text-sm"></i>
         </button>
