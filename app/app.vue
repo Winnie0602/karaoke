@@ -5,7 +5,7 @@ const { isModalOpen, title, content, type, confirm, cancel } = useCheckConfirm()
 <template>
   <div>
     <NuxtLayout>
-      <NuxtPage />
+      <NuxtPage :key="$route.fullPath" />
     </NuxtLayout>
 
     <Toast />
