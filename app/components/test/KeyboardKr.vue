@@ -36,8 +36,8 @@ const vowels = [
         >
           <button
             v-for="char in group"
-            :key="char"
             v-show="char"
+            :key="char"
             class="flex h-12 w-12 items-center justify-center rounded-xl border-b-2 border-stone-200 bg-white text-xl font-bold text-[#7A3A3A] shadow-sm transition-all hover:bg-[#FFE5E5] active:scale-90"
             @click="emit('input', char)"
           >
