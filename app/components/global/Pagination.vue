@@ -10,7 +10,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="flex flex-wrap items-center space-x-2">
+  <div class="flex w-full flex-wrap items-center justify-center space-x-2">
     <div
       v-for="i in totalPages"
       :key="i"

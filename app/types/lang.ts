@@ -3,9 +3,9 @@ export type Tab = '한국어' | '日本語' | '臺語' | 'English' | '廣東話'
 export type LangCode = 'kr' | 'ja' | 'tw' | 'en' | 'hk' | 'zh'
 
 export const languageMapCode: Record<Tab, LangCode> = {
+  English: 'en',
   日本語: 'ja',
   臺語: 'tw',
-  English: 'en',
   한국어: 'kr',
   廣東話: 'hk',
   中文: 'zh',

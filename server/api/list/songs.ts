@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
 
   const page = Number(query.page || 1)
 
-  const limit = Number(query.limit || 30)
+  const limit = Number(query.limit || 10)
   const skip = (page - 1) * limit // 要跳過幾筆 ex第一頁跳過0筆 第二頁跳過limit筆
 
   const sortOrder = query.sort === 'asc' ? 1 : -1

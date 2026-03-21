@@ -39,6 +39,25 @@ const prevStep = () => {
   editMode.value = ''
 }
 
+const deleteSong = async (id: string) => {
+  const check = await open('確認刪除?', '將會從資料庫刪除該歌曲資料。', 'ask')
+
+  if (!check) return
+
+  const response = await $fetch('/api/song/delete', {
+    method: 'POST',
+    body: { videoId: id },
+  })
+
+  if (response.success) {
+    await open('刪除成功', '該歌曲已從資料庫移除。', 'noAsk')
+
+    refresh()
+  } else {
+    await open('刪除失敗', '', 'noAsk')
+  }
+}
+
 watch(editMode, () => {
   if (editMode.value === '') {
     refresh()
@@ -117,6 +136,7 @@ watch(editMode, () => {
       </button>
       <button
         class="w-full max-w-[640px] rounded-xl bg-[#FFE5E5] py-3 font-medium text-[#F9595F] active:scale-95 md:font-black"
+        @click="deleteSong(videoId)"
       >
         刪除該歌曲
         <div class="mt-1 text-xs text-[#7A3A3A]">從資料庫刪除該歌曲</div>

@@ -155,6 +155,12 @@ watch(selectedWord, async () => {
         @keyup.enter="handleEnter"
       />
 
+      <button
+        class="ml-2 rounded-md border-red-300 bg-red-300 px-2.5 py-2.5 text-white"
+      >
+        送出
+      </button>
+
       <div class="ml-1 text-sm md:ml-3 md:text-sm">
         {{ wordArr.length }} / 20
       </div>

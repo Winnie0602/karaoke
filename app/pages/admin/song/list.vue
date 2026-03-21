@@ -12,7 +12,9 @@ const page = ref(1)
 
 const selectLang = ref<LangCode | 'all'>('all')
 
-const { data, refresh } = await useFetch('/api/list/songs', {
+// const searchQuery = ref('')
+
+const { data, refresh, pending } = await useFetch('/api/list/songs', {
   query: {
     language: selectLang,
     page,
@@ -37,12 +39,6 @@ const deleteSong = async (id: string) => {
   } else {
     await open('刪除失敗', '', 'noAsk')
   }
-}
-
-const updatePage = (newPage: number) => {
-  page.value = newPage
-
-  refresh()
 }
 </script>
 
@@ -104,20 +100,40 @@ const updatePage = (newPage: number) => {
             <span
               class="rounded-full bg-pink-50 px-3 py-1 text-xs font-bold text-[#F9595F]"
             >
-              {{ data?.songs?.length || 0 }} Items
+              {{ data?.total || 0 }} Items
             </span>
           </div>
 
           <div class="no-scrollbar flex-1 overflow-y-auto px-3 md:px-6">
-            <div class="flex justify-center px-4 pt-3">
+            <div class="flex flex-col items-center justify-center px-4 pt-3">
+              <!-- <div
+                class="mb-2 flex h-[35px] w-full items-center gap-3 rounded-full md:h-[50px]"
+              >
+                <i
+                  class="fa-solid fa-magnifying-glass text-lg text-[#F9595F]"
+                ></i>
+                <input
+                  v-model="searchQuery"
+                  type="text"
+                  placeholder="Search ..."
+                  class="h-full w-full rounded-xl border-4 border-[#FFE5E5] bg-white px-4 text-sm text-gray-700 transition-colors outline-none placeholder:text-gray-400 focus:border-[#F9595F]/30 md:text-base"
+                />
+                <button
+                  v-if="searchQuery"
+                  class="text-gray-400 hover:text-[#F9595F]"
+                  @click="searchQuery = ''"
+                >
+                  <i class="fa-solid fa-circle-xmark"></i>
+                </button>
+              </div> -->
               <Pagination
                 :total="data?.total || 0"
                 :page="page"
                 :total-pages="data?.totalPages || 0"
-                @update-page="({ newPage }) => updatePage(newPage)"
+                @update-page="({ newPage }) => (page = newPage)"
               />
             </div>
-            <div v-if="data?.songs" class="grid md:gap-3">
+            <div v-if="!pending && data?.songs" class="grid md:gap-3">
               <div
                 v-for="song in data.songs"
                 :key="song.id"
@@ -163,6 +179,17 @@ const updatePage = (newPage: number) => {
                   </button>
                 </div>
               </div>
+            </div>
+            <div
+              v-else
+              class="flex flex-col items-center justify-center gap-3 py-20"
+            >
+              <div
+                class="h-8 w-8 animate-spin rounded-full border-4 border-gray-100 border-t-[#F9595F]"
+              ></div>
+              <span class="text-sm font-medium tracking-widest text-gray-400">
+                LOADING ...
+              </span>
             </div>
           </div>
         </div>

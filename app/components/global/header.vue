@@ -37,7 +37,7 @@ watch(showComingSoon, () => {
         <Menu as="div" class="relative inline-block text-left">
           <div>
             <MenuButton
-              class="flex items-center gap-1 rounded-md py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none md:px-3"
+              class="flex items-center gap-1 rounded-md px-1.5 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none md:px-3"
             >
               <i class="fa-solid fa-globe md:text-xl"></i>
               <span class="text-sm md:text-base">Language</span>
