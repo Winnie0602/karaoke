@@ -5,16 +5,16 @@ const steps = [1, 2, 3, 4] as const
 
 const stepConfig = {
   1: {
-    title: '選取歌詞',
+    titleKey: 'test_step.selectLyrics',
   },
   2: {
-    title: '選擇題目型態',
+    titleKey: 'test_step.selectQuizType',
   },
   3: {
-    title: '開始測驗',
+    titleKey: 'test_step.startTest',
   },
   4: {
-    title: '複習',
+    titleKey: 'test_step.review',
   },
 } as const
 </script>
@@ -42,7 +42,7 @@ const stepConfig = {
             class="font-medium transition-colors duration-150"
             :class="s === step ? 'text-[#7A3A3A]' : 'text-[#B58C8C]'"
           >
-            {{ stepConfig[s].title }}
+            {{ $t(stepConfig[s].titleKey) }}
           </span>
         </div>
         <span v-if="index !== 3" class="mx-2 text-[#E4BABA] select-none">
@@ -77,7 +77,7 @@ const stepConfig = {
               v-if="s === step"
               class="text-xs font-bold whitespace-nowrap text-[#7A3A3A] transition-opacity duration-300"
             >
-              {{ stepConfig[s].title }}
+              {{ $t(stepConfig[s].titleKey) }}
             </span>
           </div>
         </div>

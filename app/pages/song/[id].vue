@@ -127,7 +127,7 @@ watch(
             >
               <div class="flex items-center gap-1.5 text-[#A66B6B]">
                 <i class="fa-solid fa-language text-lg text-[#F9595F]"></i>
-                <span>歌詞語言</span>
+                <span>{{ $t('lyrics_language') }}</span>
               </div>
 
               <div class="flex flex-wrap gap-1.5">
@@ -135,7 +135,9 @@ watch(
                   class="flex items-center gap-2 rounded-full bg-[#FFE5E5]/50 px-4 py-1.5 text-xs text-[#F9595F] md:text-sm"
                 >
                   <i class="fa-solid fa-circle-check text-sm opacity-70"></i>
-                  {{ languageMapCodeLabel[currentSong.language] }} (原文)
+                  {{ languageMapCodeLabel[currentSong.language] }} ({{
+                    $t('original')
+                  }})
                 </div>
 
                 <button
@@ -181,7 +183,7 @@ watch(
         <div
           class="mb-4 border-b-4 border-[#A66B6B] text-xl font-medium text-[#A66B6B] md:text-2xl"
         >
-          Recommended Songs
+          {{ $t('recommended_songs') }}
         </div>
 
         <div v-if="randomSongs?.songs" class="space-y-2">
@@ -201,7 +203,9 @@ watch(
         class="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#F9595F] py-3 font-bold text-white shadow-lg shadow-red-100 transition-all hover:brightness-110 active:scale-[0.98] md:w-[240px] md:py-4"
       >
         <i class="fa-solid fa-pen-to-square mr-2"></i>
-        <span class="text-sm tracking-widest md:text-base">Take Exam</span>
+        <span class="text-sm tracking-widest md:text-base">
+          {{ $t('take_exam') }}
+        </span>
       </NuxtLink>
     </div>
   </div>

@@ -40,8 +40,6 @@ export const speak = (
 
     const selectedVoice = voices.find((voice) => voice.name === voiceName)
 
-    console.log({ selectedVoice })
-
     if (selectedVoice) {
       utterThis.voice = selectedVoice
     } else {

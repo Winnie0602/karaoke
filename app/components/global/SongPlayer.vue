@@ -14,11 +14,14 @@ const showVideo = computed(
   () =>
     store.storeMode === 'normal' &&
     route.path.startsWith('/song/') &&
-    !route.path.startsWith('/admin'),
+    !route.path.startsWith('/admin') &&
+    !route.path.includes('test'),
 )
 
 const showPlayer = computed(
-  () => store.storeMode === 'normal' || store.storeMode === 'admin',
+  () =>
+    (store.storeMode === 'normal' && !route.path.includes('test')) ||
+    store.storeMode === 'admin',
 )
 
 const { createPlayer, play, pause, seekTo } = useYoutubePlayer(
@@ -61,7 +64,7 @@ onMounted(() => {
       <ClientOnly>
         <div
           :class="[
-            { 'hidden opacity-0': !showVideo },
+            { 'pointer-events-none hidden opacity-0': !showVideo },
             'flex-none transition-all duration-300',
           ]"
         >

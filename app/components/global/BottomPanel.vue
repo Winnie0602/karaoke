@@ -3,6 +3,8 @@ import type { DisplayAPIResult } from '~/types/tatoeba'
 import type { LangCode } from '~/types/lang'
 import { LANG_CONFIG_MAP } from '~/types/lang'
 
+
+
 const { open, word, sentense, loading, lang } = defineProps<{
   open: boolean
   word: string
@@ -101,7 +103,7 @@ const handleClose = () => {
               >
                 「 {{ word }} 」
               </div>
-              <div class="font-medium">Example Sentences</div>
+              <div class="font-medium">{{ $t('example_sentenses') }}</div>
             </div>
 
             <button

@@ -87,15 +87,15 @@ watch(selectedQuizType, () => {
               Selected Range
             </span>
             <p class="mt-1 text-xs leading-relaxed text-[#A66B6B]">
-              已選取第
+              {{ $t('selected_range_prefix') }}
               <span class="font-bold text-[#F9595F]">
                 {{ selected.start + 1 }}
               </span>
-              至
+              {{ $t('selected_range_middle') }}
               <span class="font-bold text-[#F9595F]">
                 {{ selected.end + 1 }}
               </span>
-              句歌詞
+              {{ $t('selected_range_suffix') }}
             </p>
           </div>
         </div>
@@ -105,7 +105,9 @@ watch(selectedQuizType, () => {
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
                 <div class="h-1.5 w-1.5 rounded-full bg-[#F9595F]"></div>
-                <span class="text-sm font-bold text-[#7A3A3A]">播放速度</span>
+                <span class="text-sm font-bold text-[#7A3A3A]">
+                  {{ $t('play_speed') }}
+                </span>
               </div>
               <span
                 class="text-2xl font-black tracking-tighter text-[#F9595F] italic"
@@ -148,7 +150,9 @@ watch(selectedQuizType, () => {
           <div class="space-y-4">
             <div class="flex items-center gap-2">
               <div class="h-1.5 w-1.5 rounded-full bg-[#F9595F]"></div>
-              <span class="text-sm font-bold text-[#7A3A3A]">題目型態</span>
+              <span class="text-sm font-bold text-[#7A3A3A]">
+                {{ $t('test_type') }}
+              </span>
             </div>
             <div class="grid grid-cols-3 gap-2">
               <button
@@ -178,7 +182,7 @@ watch(selectedQuizType, () => {
               <div
                 class="mb-3 flex items-center text-[14px] font-bold text-[#A66B6B] md:mb-6"
               >
-                <span class="mr-2">重新聆聽機會</span>
+                <span class="mr-2">{{ $t('re_listen_time') }}</span>
                 <div class="flex items-end space-x-1.5">
                   <i
                     v-for="i in 3"

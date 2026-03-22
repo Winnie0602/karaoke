@@ -1,7 +1,13 @@
+// UI顯示用
 export type Tab = '한국어' | '日本語' | '臺語' | 'English' | '廣東話' | '中文'
 
+// DB欄位
 export type LangCode = 'kr' | 'ja' | 'tw' | 'en' | 'hk' | 'zh'
 
+// i18n
+export type I18nLocale = 'ko' | 'ja' | 'en' | 'zh'
+
+// ui轉db code
 export const languageMapCode: Record<Tab, LangCode> = {
   English: 'en',
   日本語: 'ja',
@@ -12,11 +18,12 @@ export const languageMapCode: Record<Tab, LangCode> = {
 }
 
 // 反轉
+// db code轉ui
 export const languageMapCodeLabel: Record<LangCode, Tab> = Object.fromEntries(
   Object.entries(languageMapCode).map(([key, value]) => [value, key]),
 ) as Record<LangCode, Tab>
 
-// Tatoeba API & TTS API 對照表
+// db code 轉 Tatoeba API & TTS API 對照表
 export const LANG_CONFIG_MAP: Record<
   LangCode,
   {
@@ -31,4 +38,20 @@ export const LANG_CONFIG_MAP: Record<
   tw: { tatoeba: 'cmn', ttsCode: 'zh-TW', ttsName: 'cmn-TW-Wavenet-A' },
   zh: { tatoeba: 'cmn', ttsCode: 'zh-TW', ttsName: 'cmn-TW-Wavenet-A' },
   hk: { tatoeba: 'cmn', ttsCode: 'zh-TW', ttsName: 'cmn-TW-Wavenet-A' },
+}
+
+export const DB_TO_I18N: Record<LangCode, I18nLocale> = {
+  kr: 'ko',
+  ja: 'ja',
+  en: 'en',
+  zh: 'zh',
+  tw: 'zh',
+  hk: 'zh',
+}
+
+export const I18N_TO_DB: Record<I18nLocale, LangCode> = {
+  ko: 'kr',
+  ja: 'ja',
+  en: 'en',
+  zh: 'zh',
 }

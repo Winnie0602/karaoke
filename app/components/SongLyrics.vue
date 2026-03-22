@@ -120,7 +120,7 @@ watch(
       v-if="!hasTimeStamp"
       class="mt-2 ml-3 flex w-full text-sm text-red-600 md:justify-center md:text-base"
     >
-      這首歌目前沒有時間戳記
+      {{ $t('no_timestamp') }}
     </div>
 
     <div class="py-6 md:py-8">

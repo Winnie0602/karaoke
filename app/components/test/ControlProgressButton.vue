@@ -21,7 +21,7 @@ const emit = defineEmits<{
         class="h-8 flex-1 rounded-xl border border-[#B58C8C]/30 bg-white text-[13px] font-bold text-[#A66B6B] shadow-sm transition-all active:scale-95 disabled:opacity-30 md:h-10"
         @click="emit('prev')"
       >
-        上一步
+        {{ $t('prev') }}
       </button>
 
       <!-- 下一步 -->
@@ -35,7 +35,7 @@ const emit = defineEmits<{
         "
         @click="emit('next')"
       >
-        {{ nextLabel ?? '下一步' }}
+        {{ nextLabel }}
       </button>
     </div>
   </div>

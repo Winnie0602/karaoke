@@ -16,7 +16,7 @@ const nowTab = ref<Tab>('日本語')
       <div
         class="mb-2 text-3xl font-semibold tracking-wide text-[#A66B6B] md:mb-0 md:text-[36px]"
       >
-        Language Grammer
+        {{ $t('youtube_videos') }}
       </div>
 
       <!-- Language Tabs -->

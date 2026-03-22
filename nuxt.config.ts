@@ -7,6 +7,7 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     '@pinia/nuxt',
     'pinia-plugin-persistedstate/nuxt',
+    '@nuxtjs/i18n',
   ],
   runtimeConfig: {
     mongoURI: process.env.MONGODB_URI || '',
@@ -23,5 +24,40 @@ export default defineNuxtConfig({
         },
       ],
     },
+  },
+  i18n: {
+    strategy: 'no_prefix',
+    locales: [
+      // code 專案識別, language 瀏覽器識別, name UI識別
+      {
+        code: 'en',
+        language: 'en-US',
+        name: 'English',
+        file: 'en.json',
+        flag: '🇺🇸',
+      },
+      {
+        code: 'zh',
+        language: 'zh-TW',
+        name: '中文',
+        file: 'zh.json',
+        flag: '🇹🇼',
+      },
+      {
+        code: 'ja',
+        language: 'ja-JP',
+        name: '日本語',
+        file: 'ja.json',
+        flag: '🇯🇵',
+      },
+      {
+        code: 'ko',
+        language: 'ko-KR',
+        name: '한국어',
+        file: 'ko.json',
+        flag: '🇰🇷',
+      },
+    ],
+    defaultLocale: 'en',
   },
 })

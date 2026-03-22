@@ -1,17 +1,9 @@
 <script setup lang="ts">
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
 
-// 定義語言選項
-const languages = [
-  { name: '中文', code: 'zh', flag: '🇹🇼' },
-  { name: 'English', code: 'en', flag: '🇺🇸' },
-  { name: '한국어', code: 'kr', flag: '🇰🇷' },
-  { name: '日本語', code: 'ja', flag: '🇯🇵' },
-]
+const { locales, locale, setLocale } = useI18n()
 
 const showComingSoon = ref(false)
-
-const currentLang = ref(languages[0]) // 預設中文
 
 watch(showComingSoon, () => {
   setTimeout(() => {
@@ -29,7 +21,7 @@ watch(showComingSoon, () => {
         class="text-lg font-semibold tracking-wide text-gray-900"
         to="/"
       >
-        カラオケ 〜
+        {{ $t('karaoke_site') }} 〜
         <span class="ml-1 text-[#F9595F]">♪</span>
       </NuxtLink>
 
@@ -57,20 +49,20 @@ watch(showComingSoon, () => {
             >
               <div class="px-1 py-1">
                 <MenuItem
-                  v-for="lang in languages"
+                  v-for="lang in locales"
                   :key="lang.code"
                   v-slot="{ active }"
                 >
                   <button
                     :class="[
-                      currentLang?.code === lang.code
+                      locale === lang.code
                         ? 'bg-[#F9595F]/60 text-white'
                         : active
                           ? 'bg-gray-300 text-gray-900'
                           : 'text-gray-900',
                       'group flex w-full items-center rounded-md px-3 py-2 text-sm transition-colors',
                     ]"
-                    @click="currentLang = lang"
+                    @click="setLocale(lang.code)"
                   >
                     <span class="mr-2 text-base">{{ lang.flag }}</span>
                     {{ lang.name }}

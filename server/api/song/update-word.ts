@@ -5,8 +5,6 @@ export default defineEventHandler(async (event) => {
 
   const { videoId, words } = body
 
-  console.log({ videoId, words })
-
   const { db } = await connectToDatabase()
 
   await db.collection('songs').updateOne({ id: videoId }, { $set: { words } })

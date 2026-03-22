@@ -33,7 +33,7 @@ watch(nowTab, () => {
         <div
           class="mb-2 text-3xl font-semibold tracking-wide text-[#A66B6B] md:mb-0 md:text-[36px]"
         >
-          Song List
+          {{ $t('song_list') }}
         </div>
 
         <div class="flex items-end space-x-1 text-[13px] md:text-base">
@@ -109,7 +109,7 @@ watch(nowTab, () => {
             class="h-8 w-8 animate-spin rounded-full border-4 border-gray-100 border-t-[#F9595F]"
           ></div>
           <span class="text-sm font-medium tracking-widest text-gray-400">
-            LOADING ...
+            {{ $t('loading') }} ...
           </span>
         </div>
 

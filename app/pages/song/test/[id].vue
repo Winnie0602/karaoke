@@ -11,10 +11,6 @@ const router = useRouter()
 
 const videoId = computed(() => route.params.id as string)
 
-store.setMode('test')
-store.setTestVideoId(videoId.value)
-store.setPlaybackRate(1)
-
 // 該歌詞
 const { data: currentSong, pending } = await useFetch<SongData | null>(
   `/api/song/${videoId.value}`,
@@ -93,9 +89,9 @@ const nextStep = () => {
 }
 
 const nextLabel = computed(() => {
-  if (step.value === 2) return '開始考試'
-  if (step.value === 4) return '回首頁'
-  return '下一步'
+  if (step.value === 2) return $t('testStart')
+  if (step.value === 4) return $t('goHome')
+  return $t('prev')
 })
 
 const prevStep = async () => {
@@ -134,10 +130,6 @@ watch(step, (newStep) => {
   } else {
     store.isPlaying = false
   }
-})
-
-onUnmounted(() => {
-  store.setMode('normal')
 })
 </script>
 

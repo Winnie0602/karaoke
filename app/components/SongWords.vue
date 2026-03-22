@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { SongData, WordData } from '~/types/song'
 import type { DisplayAPIResult } from '~/types/tatoeba'
-import { LANG_CONFIG_MAP } from '~/types/lang'
+import { LANG_CONFIG_MAP, I18N_TO_DB } from '~/types/lang'
+const { locale } = useI18n()
 
 const { song, currentNanoid } = defineProps<{
   song: SongData
@@ -25,6 +26,7 @@ const tatoebaSentenses = ref<DisplayAPIResult[]>()
 
 const { get: getTatoebaResult, loading: tatoebaLoading } = useTatoeba(
   currentLangConfig.value.tatoeba,
+  LANG_CONFIG_MAP[I18N_TO_DB[locale.value]].tatoeba,
 )
 
 const selectedWord = ref('')
@@ -52,6 +54,10 @@ watch(isPanelOpen, (open) => {
     store.play()
   }
 })
+
+watch(locale, () => {
+  isPanelOpen.value = false
+})
 </script>
 
 <template>
@@ -61,23 +67,25 @@ watch(isPanelOpen, (open) => {
     <div
       class="mb-6 flex items-center justify-between border-b border-[#FFF9F9] pb-1 md:pb-4"
     >
-      <div class="items-center gap-3">
+      <!-- 左邊 -->
+      <div class="flex items-center">
         <h3
-          class="flex flex-col text-lg font-black tracking-widest text-[#7A3A3A] md:flex-row md:items-center md:text-xl"
+          class="flex flex-col text-lg font-black tracking-widest text-[#7A3A3A] md:gap-3 md:text-xl"
+          :class="locale === 'en' ? '' : 'md:flex-row md:items-center'"
         >
-          單字庫 & 例句
-          <span
-            class="text-xs font-medium text-[#A66B6B] uppercase opacity-60 md:ml-2"
-          >
-            Vocabulary & Sentences
+          {{ $t('wors_examples') }}
+
+          <span class="text-xs font-medium text-[#A66B6B] uppercase opacity-60">
+            {{ $t('wors_examples_sub') }}
           </span>
         </h3>
       </div>
 
+      <!-- 右邊 -->
       <span
-        class="rounded-lg bg-[#FFE5E5] px-2 py-1 text-[10px] font-bold text-[#F9595F]"
+        class="flex-none rounded-lg bg-[#FFE5E5] px-2 py-1 text-[10px] font-bold whitespace-nowrap text-[#F9595F]"
       >
-        共 {{ song.words?.length || 0 }} 個
+        {{ $t('total_items', { count: song.words?.length || 0 }) }}
       </span>
     </div>
 
@@ -110,7 +118,7 @@ watch(isPanelOpen, (open) => {
       v-else
       class="my-2 ml-3 flex w-full text-sm text-red-600 md:justify-center md:text-base"
     >
-      這首歌目前沒有相關單字
+      {{ $t('no_words') }}
     </div>
 
     <BottomPanel

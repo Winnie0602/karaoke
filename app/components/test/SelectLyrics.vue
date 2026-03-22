@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import type { SongData } from '~/types/song'
+import { I18N_TO_DB } from '~/types/lang'
+const { locale } = useI18n()
+
 const { show } = useToast()
 
 const { currentSong, selected } = defineProps<{
@@ -36,7 +39,7 @@ const setTestIndex = (index: number) => {
 
   // 選超過五句歌詞 -> return
   if (index - selected.start >= 5) {
-    show('不能選超過五句歌詞', 2000)
+    show($t('up_to_5_words'), 2000)
 
     return
   }
@@ -92,7 +95,7 @@ watch(
           'text-[#8F5F5F]': step !== 1,
         }"
       >
-        設定開始段落
+        {{ $t('set_start') }}
       </div>
       <div
         class="shrink-0 rounded-full px-3 py-1.5 text-[12px] font-medium whitespace-nowrap md:rounded-md md:px-3 md:py-4 md:text-sm"
@@ -101,7 +104,7 @@ watch(
           'text-[#8F5F5F]': step !== 2,
         }"
       >
-        設定結束段落
+        {{ $t('set_end') }}
       </div>
     </div>
 
@@ -136,7 +139,7 @@ watch(
             </span>
           </div>
           <span class="mt-1 text-[12px] text-gray-500 md:text-[13px]">
-            {{ lyric.zh }}
+            {{ lyric[I18N_TO_DB[locale]] }}
           </span>
         </div>
 
@@ -163,7 +166,7 @@ watch(
             @click.stop="reset(index)"
           >
             <span class="md:hidden">✕</span>
-            <span class="hidden md:inline">重設</span>
+            <span class="hidden md:inline">{{ $t('reset') }}</span>
           </div>
         </div>
       </div>
