@@ -33,5 +33,14 @@
   "re_listen_time": "Replay Attempts",
   "selected_range_prefix": "Selected from",
   "selected_range_middle": "to",
-  "selected_range_suffix": "lines"
+  "selected_range_suffix": "lines",
+  "quiz_type": {
+    "partial": "Partial Fill",
+    "allBlank": "Full Fill",
+    "translation": "Translation"
+  },
+  "confirm_back_title": "Confirm going back?",
+  "confirm_back_message": "Going back will lose your current input.",
+  "confirm": "Confirm",
+  "cancel": "Cancel"
 }

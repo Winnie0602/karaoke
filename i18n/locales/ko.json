@@ -33,5 +33,14 @@
   "re_listen_time": "다시 듣기 기회",
   "selected_range_prefix": "",
   "selected_range_middle": "번부터",
-  "selected_range_suffix": "번까지 가사 선택됨"
+  "selected_range_suffix": "번까지 가사 선택됨",
+  "quiz_type": {
+    "partial": "부분 빈칸",
+    "allBlank": "전체 빈칸",
+    "translation": "번역"
+  },
+  "confirm_back_title": "돌아가시겠습니까?",
+  "confirm_back_message": "이전 단계로 돌아가면 현재 입력 내용이 사라집니다.",
+  "confirm": "확인",
+  "cancel": "취소"
 }

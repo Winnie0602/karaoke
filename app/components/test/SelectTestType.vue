@@ -13,7 +13,7 @@ const { currentSong, isPlaying, selected } = defineProps<{
 const emit = defineEmits<{
   (e: 'setSpeed', value: number): void
   (e: 'setPlaying', value: boolean): void
-  (e: 'setQuizeType', value: 'partial' | 'allBlank'): void
+  (e: 'setQuizeType', value: 'partial' | 'allBlank' | 'translation'): void
 }>()
 
 const currentSpeed = ref(1)
@@ -21,9 +21,9 @@ const currentSpeed = ref(1)
 // 控制底下題型預覽的動畫特效
 const animationOn = ref(false)
 
-const quizTypes = ['partial', 'allBlank'] as const
+const quizTypes = ['partial', 'allBlank', 'translation'] as const
 
-const selectedQuizType = ref<'partial' | 'allBlank'>('partial')
+const selectedQuizType = ref<'partial' | 'allBlank' | 'translation'>('partial')
 
 // 速度設定
 const speedSteps = [0.5, 0.75, 1, 1.25, 1.5]
@@ -166,7 +166,7 @@ watch(selectedQuizType, () => {
                 "
                 @click="selectedQuizType = t"
               >
-                {{ t }}
+                {{ $t(`quiz_type.${t}`) }}
               </button>
             </div>
             <!-- 預覽題型 -->

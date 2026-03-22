@@ -33,5 +33,14 @@
   "re_listen_time": "重新聆聽機會",
   "selected_range_prefix": "已選取第",
   "selected_range_middle": "至",
-  "selected_range_suffix": "句歌詞"
+  "selected_range_suffix": "句歌詞",
+  "quiz_type": {
+    "partial": "部分填空",
+    "allBlank": "全部填空",
+    "translation": "語言翻譯"
+  },
+  "confirm_back_title": "確認返回?",
+  "confirm_back_message": "返回上一步將會遺失目前輸入的內容。",
+  "confirm": "確認",
+  "cancel": "取消"
 }

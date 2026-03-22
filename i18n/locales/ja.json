@@ -33,5 +33,14 @@
   "re_listen_time": "再試聴回数",
   "selected_range_prefix": "第",
   "selected_range_middle": "から",
-  "selected_range_suffix": "行の歌詞を選択中"
+  "selected_range_suffix": "行の歌詞を選択中",
+  "quiz_type": {
+    "partial": "部分穴埋め",
+    "allBlank": "全文穴埋め",
+    "translation": "翻訳"
+  },
+  "confirm_back_title": "戻りますか？",
+  "confirm_back_message": "前のステップに戻ると、入力内容は失われます。",
+  "confirm": "確認",
+  "cancel": "キャンセル"
 }

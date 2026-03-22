@@ -98,8 +98,8 @@ const prevStep = async () => {
   if (step.value > 1) {
     if (step.value === 3) {
       const check = await open(
-        '確認返回?',
-        '返回上一步將會遺失目前輸入的內容。',
+        $t('confirm_back_title'),
+        $t('confirm_back_message'),
         'ask',
       )
 
