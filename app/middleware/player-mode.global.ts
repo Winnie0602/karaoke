@@ -4,7 +4,6 @@ export default defineNuxtRouteMiddleware((to) => {
   const path = to.path
 
   if (path.startsWith('/song/test')) {
-    console.log(1)
     store.setMode('test')
 
     const id = to.params.id as string

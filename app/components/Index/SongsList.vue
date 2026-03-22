@@ -17,7 +17,7 @@ const emit = defineEmits<{
 
 const showType = ref<'list' | 'grid'>('list')
 const tabs = Object.keys(languageMapCode) as Tab[]
-const nowTab = ref<Tab>('日本語')
+const nowTab = ref<Tab>('English')
 
 watch(nowTab, () => {
   emit('refresh', { lang: languageMapCode[nowTab.value], page: 1 })

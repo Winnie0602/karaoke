@@ -3,7 +3,7 @@ import type { Tab } from '~/types/lang'
 import { languageMapCode } from '~/types/lang'
 
 const tabs = Object.keys(languageMapCode) as Tab[]
-const nowTab = ref<Tab>('日本語')
+const nowTab = ref<Tab>('English')
 </script>
 
 <template>

@@ -44,7 +44,7 @@ const getTranslate = (lyric: LyricData, lang: LangCode) => {
 // 若有，優先使用（暫時顯示用的假值）
 const tempIndex = ref<number | null>(null)
 
-//使 用真資料還是假資料
+// 使用真資料還是假資料
 const activeIndex = computed(() => {
   // 如果有手動點擊的假值，優先用temp
   return tempIndex.value !== null ? tempIndex.value : currentLineIndex
