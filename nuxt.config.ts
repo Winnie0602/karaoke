@@ -16,8 +16,8 @@ export default defineNuxtConfig({
   },
   css: ['~/assets/css/main.css'],
   auth: {
-    originEnvKey: 'http://localhost:3000',
-    baseURL: 'http://localhost:3000/api/auth',
+    originEnvKey: process.env.APP_URL,
+    baseURL: process.env.AUTH_ORIGIN,
     provider: {
       type: 'authjs',
     },
