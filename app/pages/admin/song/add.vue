@@ -5,7 +5,7 @@ definePageMeta({
   layout: 'no-player',
 })
 
-const emit = defineEmits(['goBack'])
+const { signOut } = useAuth()
 
 const router = useRouter()
 
@@ -64,6 +64,10 @@ const handleSubmit = async () => {
     await open('新增失敗', '', 'noAsk')
   }
 }
+
+const logout = async () => {
+  await signOut()
+}
 </script>
 
 <template>
@@ -102,13 +106,13 @@ const handleSubmit = async () => {
           </nav>
 
           <div class="mt-auto hidden border-t border-gray-50 pt-4 md:block">
-            <NuxtLink
-              to="/"
+            <button
               class="flex items-center gap-3 px-5 py-3 text-sm font-medium text-gray-400 hover:text-[#F9595F]"
+              @click="logout"
             >
               <i class="fa-solid fa-arrow-right-from-bracket"></i>
               登出
-            </NuxtLink>
+            </button>
           </div>
         </div>
       </aside>

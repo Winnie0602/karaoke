@@ -14,7 +14,7 @@ useHead({
 </script>
 
 <template>
-  <NuxtLayout name="test">
+  <NuxtLayout name="no-player">
     <div v-if="error?.statusCode === 404" class="flex flex-col items-center">
       <p class="mt-32 mb-6 text-3xl">404 Page Not Found</p>
       <p class="mb-3 text-xl">{{ error?.statusMessage }}</p>

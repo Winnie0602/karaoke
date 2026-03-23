@@ -7,18 +7,39 @@ const username = ref('')
 const password = ref('')
 const rememberMe = ref(false)
 
-// 模擬登入
-const handleLogin = () => {
-  console.log('Login:', {
-    username: username.value,
-    password: password.value,
-    remember: rememberMe.value,
-  })
-  // 這裡之後接你的 API 邏輯
+const { signIn, status } = useAuth()
+
+const loading = computed(() => status.value === 'loading')
+
+const handleLogin = async () => {
+  try {
+    const res = await signIn('credentials', {
+      username: username.value,
+      password: password.value,
+      redirect: false, // 自己控制跳轉
+    })
+
+    if (res?.error) {
+      alert('登入失敗')
+      return
+    }
+
+    // 記住帳號
+    if (rememberMe.value) {
+      localStorage.setItem('admin_account', username.value)
+    } else {
+      localStorage.removeItem('admin_account')
+    }
+
+    // 登入成功 → 跳轉後台
+    await navigateTo('/admin')
+  } catch (err) {
+    console.error(err)
+    alert('發生錯誤')
+  }
 }
 
 onMounted(() => {
-  // 檢查是否有記住過的帳號
   const savedAccount = localStorage.getItem('admin_account')
   if (savedAccount) {
     username.value = savedAccount

@@ -8,11 +8,20 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     'pinia-plugin-persistedstate/nuxt',
     '@nuxtjs/i18n',
+    '@sidebase/nuxt-auth',
   ],
   runtimeConfig: {
     mongoURI: process.env.MONGODB_URI || '',
+    authSecret: process.env.AUTH_SECRET,
   },
   css: ['~/assets/css/main.css'],
+  auth: {
+    originEnvKey: 'http://localhost:3000',
+    baseURL: 'http://localhost:3000/api/auth',
+    provider: {
+      type: 'authjs',
+    },
+  },
   app: {
     pageTransition: false,
     layoutTransition: false,
@@ -28,7 +37,6 @@ export default defineNuxtConfig({
   i18n: {
     strategy: 'no_prefix',
     locales: [
-      // code 專案識別, language 瀏覽器識別, name UI識別
       {
         code: 'en',
         language: 'en-US',
