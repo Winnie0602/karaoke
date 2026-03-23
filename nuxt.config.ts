@@ -1,4 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
@@ -16,8 +17,8 @@ export default defineNuxtConfig({
   },
   css: ['~/assets/css/main.css'],
   auth: {
-    originEnvKey: process.env.APP_URL,
-    baseURL: process.env.AUTH_ORIGIN,
+    originEnvKey: process.env.APP_URL || 'http://localhost:3000',
+    baseURL: process.env.AUTH_ORIGIN || 'http://localhost:3000/api/auth',
     provider: {
       type: 'authjs',
     },
