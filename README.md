@@ -1,75 +1,123 @@
-# Nuxt Minimal Starter
+# SyncTune – Global Music Player & CMS
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+A full-featured web-based music player built with Nuxt 4, combining music playback, language learning, and content management.
 
-## Setup
+---
 
-Make sure to install dependencies:
+## Overview
 
-```bash
-# npm
-npm install
+This project is a full-stack application that integrates:
 
-# pnpm
-pnpm install
+- Music playback
+- Synchronized lyrics
+- Language learning features
+- Admin CMS for content management
 
-# yarn
-yarn install
+---
 
-# bun
-bun install
-```
+## Features
 
-## Development Server
+### Music Player
 
-Start the development server on `http://localhost:3000`:
+- Global music player with cross-page playback
+- Integrated YouTube Player API
+- Persistent playback across routes
 
-```bash
-# npm
-npm run dev
+### Lyrics System
 
-# pnpm
-pnpm dev
+- Synchronized lyrics with custom timing logic
+- Multi-language translation display
+- Structured lyric data handling
 
-# yarn
-yarn dev
+### Internationalization
 
-# bun
-bun run dev
-```
+- Supports:
+  - Chinese
+  - English
+  - Japanese
+  - Korean
+- Built with scalable i18n architecture
 
-## Production
+### Learning Features
 
-Build the application for production:
+- Text-to-Speech for words and sentences
+- Example sentences via Tatoeba API
+- Context-based language learning
 
-```bash
-# npm
-npm run build
+### Interactive Features
 
-# pnpm
-pnpm build
+- Lyric quiz mode
+  - Listen and type lyrics
+  - Improves listening accuracy
 
-# yarn
-yarn build
+### CMS (Admin Panel)
 
-# bun
-bun run build
-```
+- Admin authentication
+- Full CRUD system:
+  - Create songs
+  - Edit lyrics and timing
+  - Delete content
+- Content updates reflected on frontend
 
-Locally preview production build:
+---
 
-```bash
-# npm
-npm run preview
+## Tech Stack
 
-# pnpm
-pnpm preview
+### Frontend
 
-# yarn
-yarn preview
+- Nuxt 4
+- Vue 3
+- TypeScript
 
-# bun
-bun run preview
-```
+### State Management
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+- Pinia
+- pinia-plugin-persistedstate
+
+### UI / Styling
+
+- Tailwind CSS
+- Headless UI
+
+### Backend / Database
+
+- MongoDB
+
+### Authentication
+
+- @sidebase/nuxt-auth (Credentials-based)
+
+### Internationalization
+
+- @nuxtjs/i18n
+
+---
+
+## API Integrations
+
+- YouTube Player API  
+  Music playback and control
+
+- Google Text-to-Speech API  
+  Audio generation for pronunciation
+
+- Tatoeba API  
+  Example sentence retrieval
+
+---
+
+## Technical Highlights
+
+- SSR architecture using Nuxt 4
+- Global audio state management with Pinia
+- Custom lyric synchronization system
+- Integration of multiple external APIs
+- Built-in CMS within a single application
+- JWT-based authentication with role control
+- Consistent cross-page user experience
+
+---
+
+## Author
+
+Winnie Chang
