@@ -4,7 +4,7 @@ const { fullPath } = useRoute()
 
 const songsPage = ref(1)
 
-const songListLang = ref<LangCode | 'all'>('ja')
+const songListLang = ref<LangCode | 'all'>('en')
 
 const {
   data: songListData,
