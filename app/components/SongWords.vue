@@ -26,7 +26,7 @@ const tatoebaSentenses = ref<DisplayAPIResult[]>()
 
 const { get: getTatoebaResult, loading: tatoebaLoading } = useTatoeba(
   currentLangConfig.value.tatoeba,
-  LANG_CONFIG_MAP[I18N_TO_DB[locale.value]].tatoeba,
+  computed(() => LANG_CONFIG_MAP[I18N_TO_DB[locale.value]].tatoeba),
 )
 
 const selectedWord = ref('')

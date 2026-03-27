@@ -1,6 +1,6 @@
 import type { DisplayAPIResult } from '~/types/tatoeba'
 
-export function useTatoeba(langFrom: string, langTo: string) {
+export function useTatoeba(langFrom: string, langTo: MaybeRefOrGetter<string>) {
   const cache = new Map<string, DisplayAPIResult[]>()
   const loading = ref(false)
 
@@ -8,8 +8,8 @@ export function useTatoeba(langFrom: string, langTo: string) {
     if (!query) return []
 
     // 有 cache 直接回傳
-    if (cache.has(`${query}-${langTo}`)) {
-      return cache.get(`${query}-${langTo}`)!
+    if (cache.has(`${query}-${toValue(langTo)}`)) {
+      return cache.get(`${query}-${toValue(langTo)}`)!
     }
 
     loading.value = true
@@ -18,12 +18,12 @@ export function useTatoeba(langFrom: string, langTo: string) {
       const res = await $fetch<DisplayAPIResult[]>('/api/tatoeba', {
         params: {
           from: langFrom,
-          to: langTo,
+          to: toValue(langTo),
           query,
         },
       })
 
-      cache.set(`${query}-${langTo}`, res)
+      cache.set(`${query}-${toValue(langTo)}`, res)
 
       return res
     } finally {
