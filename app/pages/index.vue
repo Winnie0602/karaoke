@@ -19,6 +19,16 @@ const {
   },
 })
 
+const { data: allSongData, pending: allSongPending } = await useFetch(
+  '/api/list/songs',
+  {
+    query: {
+      language: 'all',
+      sort: 'desc',
+    },
+  },
+)
+
 const handler = async (
   component: string,
   payload: { page?: number; lang?: LangCode },
@@ -39,8 +49,8 @@ const handler = async (
 <template>
   <div class="w-full">
     <IndexTopCarousel
-      v-if="fullPath === '/' && songListData?.songs"
-      :songs="songListData.songs"
+      v-if="fullPath === '/' && allSongData?.songs && !allSongPending"
+      :songs="allSongData.songs"
     />
 
     <!-- Song List -->
