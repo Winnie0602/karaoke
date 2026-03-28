@@ -1,13 +1,9 @@
 <script setup lang="ts">
 import type { SongData } from '~/types/song'
 
-const { currentSong, isPlaying, selected } = defineProps<{
+const { currentSong, isPlaying } = defineProps<{
   currentSong: SongData
   isPlaying: boolean
-  selected: {
-    start: number
-    end: number
-  }
 }>()
 
 const emit = defineEmits<{
@@ -78,7 +74,7 @@ watch(selectedQuizType, () => {
             </div>
           </div>
 
-          <div
+          <!-- <div
             class="rounded-2xl border border-dashed border-[#F9595F]/30 bg-[#FFE5E5]/20 p-4"
           >
             <span
@@ -97,7 +93,7 @@ watch(selectedQuizType, () => {
               </span>
               {{ $t('selected_range_suffix') }}
             </p>
-          </div>
+          </div> -->
         </div>
 
         <div class="space-y-10 lg:col-span-7 lg:pt-2">

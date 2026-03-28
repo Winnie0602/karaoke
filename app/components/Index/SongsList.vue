@@ -145,7 +145,9 @@ watch(nowTab, () => {
                   >
                     {{ song.title }}
                   </span>
-                  <span class="mt-1 text-xs text-[#A66B6B] md:text-sm">
+                  <span
+                    class="mt-1 line-clamp-1 text-xs text-[#A66B6B] md:text-sm"
+                  >
                     {{ song.artist }}
                   </span>
                 </NuxtLink>
@@ -203,7 +205,9 @@ watch(nowTab, () => {
                 >
                   {{ song.title }}
                 </NuxtLink>
-                <span class="mt-1 text-xs text-[#A66B6B] md:text-sm">
+                <span
+                  class="mt-1 line-clamp-1 text-xs text-[#A66B6B] md:text-sm"
+                >
                   {{ song.artist }}
                 </span>
                 <div

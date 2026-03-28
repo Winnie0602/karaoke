@@ -6,9 +6,6 @@ const store = usePlayerStore()
 
 const seekingTime = ref(0)
 
-// 蓋板歌詞播放器
-const showFullPlayer = ref(false)
-
 // 只有 song/[id] 頁顯示影片
 const showVideo = computed(
   () =>
@@ -59,7 +56,7 @@ onMounted(() => {
 
 <template>
   <div class="mt-[56px]">
-    <div v-show="!showFullPlayer" class="flex flex-col">
+    <div class="flex flex-col">
       <!--  影片（只有需要時才顯示） -->
       <ClientOnly>
         <div
@@ -215,24 +212,20 @@ onMounted(() => {
               </div>
 
               <!-- 打開全螢幕歌詞 -->
-              <div
+              <NuxtLink
+                v-if="route.params.id !== store.videoId"
+                :to="`/song/${store.videoId}`"
                 class="flex h-7 w-7 items-center justify-center"
-                @click="showFullPlayer = true"
               >
                 <i
                   class="fa-solid fa-expand cursor-pointer text-xl text-[#F9595F] duration-150 hover:scale-125 hover:rotate-[-10deg]"
                 ></i>
-              </div>
+              </NuxtLink>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <!-- 蓋板歌詞播放器 -->
-    <FullScreenPlayer
-      :show-full-player="showFullPlayer"
-      @close-full-screen="showFullPlayer = false"
-    />
   </div>
 </template>
 

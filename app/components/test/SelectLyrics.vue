@@ -1,175 +1,117 @@
 <script setup lang="ts">
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
 import type { SongData } from '~/types/song'
 import { I18N_TO_DB } from '~/types/lang'
 const { locale } = useI18n()
 
 const { show } = useToast()
 
-const { currentSong, selected } = defineProps<{
-  currentSong: SongData
-  selected: {
-    start: number
-    end: number
-  }
-}>()
+const store = usePlayerStore()
 
-const step = ref<1 | 2>(1)
+const { currentSong } = defineProps<{
+  currentSong: SongData
+}>()
 
 const emit = defineEmits<{
-  (e: 'update', value: { start: number; end: number }): void
+  (e: 'update', testIds: string[]): void
 }>()
 
-const setTestIndex = (index: number) => {
+const testIds = ref<string[]>([])
+
+const setTestlyric = (nanoid: string, close: () => void) => {
   // 已經選完了->return
-  if (selected.start !== -1 && selected.end !== -1) {
-    return
-  }
-
-  // 第一次選
-  if (selected.start === -1 && selected.end === -1) {
-    emit('update', { start: index, end: -1 })
-
-    return
-  }
-  // 第二次選
-  // 不能選比start小的
-  if (index <= selected.start) {
-    return
-  }
-
-  // 選超過五句歌詞 -> return
-  if (index - selected.start >= 5) {
+  if (testIds.value.length >= 8) {
     show($t('up_to_5_words'), 2000)
 
     return
   }
 
-  if (selected.start !== -1 && selected.end === -1) {
-    emit('update', { start: selected.start, end: index })
+  close()
 
-    return
-  }
+  testIds.value.push(nanoid)
+
+  emit('update', testIds.value)
 }
 
-const isSelected = (index: number) => {
-  if (selected.start === -1) return false
-  if (selected.end === -1) return index === selected.start
-  return index >= selected.start && index <= selected.end
+const isSelected = (id: string) => {
+  return testIds.value.includes(id)
 }
 
-const reset = (index: number) => {
-  if (index === selected.start) {
-    emit('update', { start: -1, end: -1 })
-    return
-  }
-
-  if (index === selected.end) {
-    emit('update', { start: selected.start, end: -1 })
-    return
-  }
+const reset = (id: string, close: () => void) => {
+  testIds.value = testIds.value.filter((i) => i !== id)
+  close()
 }
-
-watch(
-  () => [selected.start, selected.end],
-  ([start, end]) => {
-    if (start !== -1) {
-      step.value = 2
-    } else {
-      step.value = 1
-    }
-  },
-)
 </script>
 
 <template>
-  <div
-    class="flex h-full w-full flex-col overflow-hidden md:h-[calc(100%-40px)] md:flex-row"
-  >
-    <div
-      class="hide-scroll z-10 flex shrink-0 flex-row items-center space-y-0 space-x-2 overflow-x-auto bg-[#f6f6f6]/50 px-2 py-1.5 md:flex-[1] md:flex-col md:items-stretch md:space-y-1 md:space-x-0 md:overflow-y-hidden md:px-3 md:py-2 md:py-4"
-    >
-      <div
-        class="shrink-0 rounded-full px-3 py-1.5 text-[12px] font-medium whitespace-nowrap md:rounded-md md:px-3 md:py-4 md:text-sm"
-        :class="{
-          'bg-[#B58C8C]/90 text-white': step === 1,
-          'text-[#8F5F5F]': step !== 1,
-        }"
+  <div class="h-full w-full md:h-[calc(100%-40px)] md:flex-row">
+    <div class="mt-1 flex-[3] space-y-4 bg-white md:space-y-6 md:px-6 md:py-6">
+      <Disclosure
+        v-for="lyric in currentSong?.lyrics"
+        :key="lyric.nanoid"
+        as="div"
       >
-        {{ $t('set_start') }}
-      </div>
-      <div
-        class="shrink-0 rounded-full px-3 py-1.5 text-[12px] font-medium whitespace-nowrap md:rounded-md md:px-3 md:py-4 md:text-sm"
-        :class="{
-          'bg-[#B58C8C]/90 text-white': step === 2,
-          'text-[#8F5F5F]': step !== 2,
-        }"
-      >
-        {{ $t('set_end') }}
-      </div>
-    </div>
-
-    <div class="hidden w-px self-stretch bg-gray-200 md:block"></div>
-
-    <div
-      class="hide-scroll flex-[3] overflow-y-scroll bg-white md:px-4 md:px-6 md:py-6"
-    >
-      <div
-        v-for="(lyric, index) in currentSong?.lyrics"
-        :key="lyric.start"
-        class="group relative flex flex-col justify-center px-4 py-2 text-sm transition-all md:flex-row md:items-center md:justify-between md:px-3 md:py-2 md:py-3 md:text-base"
-        :class="{
-          'bg-[#F9595F]/10': isSelected(index),
-          'cursor-pointer hover:bg-gray-100':
-            !isSelected(index) &&
-            (selected.start === -1 || selected.end === -1) &&
-            index > selected.start,
-        }"
-        @click="setTestIndex(index)"
-      >
-        <div class="mt-2 flex flex-col pr-12 md:pr-0">
-          <div class="flex flex-wrap text-[#8F5F5F]">
-            <span
-              v-for="(word, wIndex) in lyric[currentSong.language]"
-              :key="wIndex"
-              class="md:font-medium"
-              :class="{ 'md:mr-1': currentSong.language !== 'en' }"
-            >
-              <div v-if="word === ' '" class="w-2"></div>
-              <span v-else>{{ word }}</span>
-            </span>
-          </div>
-          <span class="mt-1 text-[12px] text-gray-500 md:text-[13px]">
-            {{ lyric[I18N_TO_DB[locale]] }}
-          </span>
-        </div>
-
         <div
-          class="absolute top-2 right-2 flex items-center md:relative md:top-0 md:right-0 md:gap-2"
+          class="group relative flex flex-col justify-center px-4 py-2 text-sm transition-all md:flex-row md:items-center md:justify-between md:px-3 md:py-3 md:text-base"
+          :class="{
+            'bg-[#F9595F]/10': isSelected(lyric.nanoid),
+          }"
         >
-          <div
-            v-if="selected.start === index"
-            class="rounded bg-[#F9595F] bg-transparent px-1.5 py-0.5 text-[9px] text-[10px] font-black text-[#F9595F] uppercase md:p-0"
-          >
-            Start
-          </div>
+          <div class="flex w-full flex-col">
+            <DisclosureButton
+              class="flex flex-col text-left focus:outline-none"
+            >
+              <div
+                v-if="currentSong.language === 'ja'"
+                class="text-[#8F5F5F]"
+                v-html="lyric.ruby"
+              />
 
-          <div
-            v-if="selected.end === index"
-            class="rounded bg-[#B58C8C] bg-transparent px-1.5 py-0.5 text-[9px] text-[10px] font-black text-[#B58C8C] uppercase md:p-0"
-          >
-            End
-          </div>
+              <div v-else class="flex flex-wrap text-[#8F5F5F]">
+                {{ lyric[currentSong.language] }}
+              </div>
 
-          <div
-            v-if="selected.start === index || selected.end === index"
-            class="flex cursor-pointer items-center justify-center rounded-full border border-[#F9595F] bg-white px-2 py-0.5 text-[10px] font-bold text-[#F9595F] transition-all hover:bg-[#F9595F] hover:text-white md:rounded-md md:px-2 md:py-0.5 md:text-[11px]"
-            @click.stop="reset(index)"
-          >
-            <span class="md:hidden">✕</span>
-            <span class="hidden md:inline">{{ $t('reset') }}</span>
+              <span class="mt-1 text-[12px] text-gray-500 md:text-[13px]">
+                {{ lyric[I18N_TO_DB[locale]] }}
+              </span>
+            </DisclosureButton>
+
+            <transition
+              enter-active-class="transition-[max-height,opacity] duration-300 ease-out overflow-hidden"
+              enter-from-class="max-h-0 opacity-0"
+              enter-to-class="max-h-[200px] opacity-100"
+              leave-active-class="transition-[max-height,opacity] duration-200 ease-in overflow-hidden"
+              leave-from-class="max-h-[200px] opacity-100"
+              leave-to-class="max-h-0 opacity-0"
+            >
+              <DisclosurePanel v-slot="{ close }" class="mt-3 flex gap-2 pb-2">
+                <button
+                  class="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-full border border-[#F9595F] bg-[#F9595F]/90 px-4 py-1.5 text-xs font-bold text-white transition-all hover:bg-[#e8484e] md:flex-none md:rounded-md md:px-4 md:text-sm"
+                  @click="store.playSegmentRequest(lyric.start, lyric.end)"
+                >
+                  <i class="fa-solid fa-play"></i>
+                  <span>試聽</span>
+                </button>
+
+                <button
+                  v-if="testIds.includes(lyric.nanoid)"
+                  class="flex flex-1 cursor-pointer items-center justify-center rounded-full border border-[#F9595F] bg-white px-2 py-1.5 text-xs font-bold text-[#F9595F] transition-all hover:bg-[#F9595F]/5 md:flex-none md:rounded-md md:px-4 md:text-sm"
+                  @click="reset(lyric.nanoid, close)"
+                >
+                  <span>{{ $t('reset') }}</span>
+                </button>
+                <button
+                  v-else
+                  class="flex flex-1 cursor-pointer items-center justify-center rounded-full border border-[#F9595F] bg-white px-2 py-1.5 text-xs font-bold text-[#F9595F] transition-all hover:bg-[#F9595F]/5 md:flex-none md:rounded-md md:px-4 md:text-sm"
+                  @click="setTestlyric(lyric.nanoid, close)"
+                >
+                  <span>選擇此歌詞</span>
+                </button>
+              </DisclosurePanel>
+            </transition>
           </div>
         </div>
-      </div>
+      </Disclosure>
     </div>
   </div>
 </template>

@@ -6,7 +6,7 @@ const { currentSong, testLyrics, isPlaying, selectedQuizType } = defineProps<{
   currentSong: SongData
   testLyrics: LyricData[]
   isPlaying: boolean
-  selectedQuizType: 'partial' | 'allBlank'
+  selectedQuizType: 'partial' | 'allBlank' | 'translation'
 }>()
 
 const emit = defineEmits<{

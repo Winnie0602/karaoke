@@ -27,43 +27,29 @@ if (!currentSong.value && !pending.value) {
 // 目前在第幾步驟
 const step = ref<1 | 2 | 3 | 4>(1)
 
-// 想要考試的index
-const selectedLyricsIndex = reactive({
-  start: -1,
-  end: -1,
-})
+const selectedLyricsId = ref<string[]>([])
 
 // 選擇的題型
-const selectedQuizType = ref<'partial' | 'allBlank'>('partial')
+const selectedQuizType = ref<'partial' | 'allBlank' | 'translation'>('partial')
 
 // 使用者的答案
 const userAnswers = ref<{ cAnswer: string; uAnswer: string }[]>([])
 
 // 想要考試的資料陣列
 const selectedLyrics = computed<LyricData[]>(() => {
-  const start = selectedLyricsIndex.start ?? 0
-  const end = selectedLyricsIndex.end ?? 0
-
   return (
-    currentSong.value?.lyrics.filter((_, i) => i >= start && i <= end) ?? []
+    currentSong.value?.lyrics.filter((lyric) =>
+      selectedLyricsId.value.includes(lyric.nanoid),
+    ) ?? []
   )
 })
 
-const seekTime = computed(() => {
-  if (selectedLyricsIndex.start !== -1) {
-    return currentSong.value?.lyrics[selectedLyricsIndex.start]?.start
-  } else {
-    return 0
-  }
-})
-
 const setSpeed = (speed: number) => {
-  const startIndex = selectedLyricsIndex.start
-  if (currentSong.value && startIndex >= 0) {
+  if (currentSong.value) {
     store.setPlaybackRate(speed)
     store.playSegmentRequest(
-      currentSong.value?.lyrics[selectedLyricsIndex.start]?.start ?? 0,
-      currentSong.value?.lyrics[selectedLyricsIndex.end]?.end ?? 0,
+      currentSong.value?.lyrics[0]?.start ?? 0,
+      currentSong.value?.lyrics[5]?.end ?? 0,
     )
   }
 }
@@ -91,7 +77,7 @@ const nextStep = () => {
 const nextLabel = computed(() => {
   if (step.value === 2) return $t('testStart')
   if (step.value === 4) return $t('goHome')
-  return $t('prev')
+  return $t('next')
 })
 
 const prevStep = async () => {
@@ -110,26 +96,23 @@ const prevStep = async () => {
 }
 
 const canNext = computed(() => {
-  if (step.value === 1)
-    return selectedLyricsIndex.start !== -1 && selectedLyricsIndex.end !== -1
-  if (step.value === 2) return true
+  if (step.value === 1) return true
+  if (step.value === 2) return selectedLyricsId.value.length >= 3
   if (step.value === 3)
     return userAnswers.value.length === selectedLyrics.value.length
   return true
 })
 
 watch(step, (newStep) => {
-  if (newStep === 2) {
-    store.playSegmentRequest(
-      currentSong.value?.lyrics[selectedLyricsIndex.start]?.start ?? 0,
-      currentSong.value?.lyrics[selectedLyricsIndex.end]?.end ?? 0,
-    )
-    store.seekToRequest(seekTime.value ?? 0)
-  } else if (newStep === 4) {
+  if (newStep === 4) {
     store.setPlaybackRate(1)
   } else {
     store.isPlaying = false
   }
+})
+
+onMounted(() => {
+  store.seekToRequest(currentSong.value?.lyrics[0]?.start ?? 0)
 })
 </script>
 
@@ -159,28 +142,27 @@ watch(step, (newStep) => {
           </div>
         </div>
       </div>
-      <!-- 第一步驟 選取歌詞 -->
-      <SelectLyrics
+
+      <!-- 第一步驟 選取速度／形式 -->
+      <SelectTestType
         v-if="currentSong && step === 1"
         :current-song="currentSong"
-        :selected="selectedLyricsIndex"
-        @update="
-          (payload: { start: number; end: number }) => {
-            selectedLyricsIndex.start = payload.start
-            selectedLyricsIndex.end = payload.end
-          }
-        "
-      />
-      <!-- 第二步驟 選取速度／形式 -->
-      <SelectTestType
-        v-if="currentSong && step === 2"
-        :current-song="currentSong"
-        :selected="selectedLyricsIndex"
         :is-playing="store.isPlaying"
         :step="step"
         @set-speed="(speed) => setSpeed(speed)"
         @set-playing="(boo) => handlePlay(boo)"
         @set-quize-type="(str) => (selectedQuizType = str)"
+      />
+
+      <!-- 第二步驟 選取歌詞 -->
+      <SelectLyrics
+        v-if="currentSong && step === 2"
+        :current-song="currentSong"
+        @update="
+          (testIds: string[]) => {
+            selectedLyricsId = testIds
+          }
+        "
       />
 
       <!-- 第三步驟 開始考試 -->

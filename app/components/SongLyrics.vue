@@ -164,7 +164,7 @@ watch(
           :class="{ hidden: index === currentLineIndex }"
           @click="clickLyric(lyric.start, index)"
         >
-          <i class="fa-solid fa-play text-xs md:text-sm"></i>
+
         </button>
       </div>
     </div>

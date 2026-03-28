@@ -6,7 +6,7 @@ const { eachLyric, isNowCard, life, selectedQuizType, language } = defineProps<{
   eachLyric: LyricData
   isNowCard: boolean
   life: 0 | 1 | 2 | 3
-  selectedQuizType: 'partial' | 'allBlank'
+  selectedQuizType: 'partial' | 'allBlank' | 'translation'
   language: LangCode
 }>()
 

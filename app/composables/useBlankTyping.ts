@@ -3,7 +3,7 @@ import type { LyricData } from '~/types/song'
 
 interface UseTypingModeOptions {
   lyricData: LyricData
-  mode: 'allBlank' | 'partial'
+  mode: 'allBlank' | 'partial' | 'translation'
   blankCountPercent?: number // 只給 partialBlank 用
   language: LangCode
 }

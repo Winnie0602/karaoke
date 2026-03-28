@@ -5,10 +5,10 @@ const steps = [1, 2, 3, 4] as const
 
 const stepConfig = {
   1: {
-    titleKey: 'test_step.selectLyrics',
+    titleKey: 'test_step.selectQuizType',
   },
   2: {
-    titleKey: 'test_step.selectQuizType',
+    titleKey: 'test_step.selectLyrics',
   },
   3: {
     titleKey: 'test_step.startTest',
