@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import SelectLyrics from '~/components/test/SelectLyrics.vue'
 import SelectTestType from '~/components/test/SelectTestType.vue'
+import type { LangCode } from '~/types/lang'
 import type { SongData, LyricData } from '~/types/song'
 
 const store = usePlayerStore()
@@ -32,6 +33,8 @@ const selectedLyricsId = ref<string[]>([])
 // 選擇的題型
 const selectedQuizType = ref<'partial' | 'allBlank' | 'translation'>('partial')
 
+const translationGameLang = ref<LangCode | null>(null)
+
 // 使用者的答案
 const userAnswers = ref<{ cAnswer: string; uAnswer: string }[]>([])
 
@@ -43,24 +46,6 @@ const selectedLyrics = computed<LyricData[]>(() => {
     ) ?? []
   )
 })
-
-const setSpeed = (speed: number) => {
-  if (currentSong.value) {
-    store.setPlaybackRate(speed)
-    store.playSegmentRequest(
-      currentSong.value?.lyrics[0]?.start ?? 0,
-      currentSong.value?.lyrics[5]?.end ?? 0,
-    )
-  }
-}
-
-const handlePlay = (boo: boolean) => {
-  if (boo) {
-    store.play()
-  } else {
-    store.pause()
-  }
-}
 
 // ===== 頁面控制邏輯 =====
 const { open } = useCheckConfirm()
@@ -117,7 +102,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex h-full w-full flex-col p-4 md:max-w-[1280px] md:p-6">
+  <div
+    class="flex h-full min-h-[80vh] w-full flex-col p-4 md:max-w-[1280px] md:p-6"
+  >
     <div class="flex-none pb-4">
       <TestStepProgress :step="step" />
     </div>
@@ -149,9 +136,8 @@ onMounted(() => {
         :current-song="currentSong"
         :is-playing="store.isPlaying"
         :step="step"
-        @set-speed="(speed) => setSpeed(speed)"
-        @set-playing="(boo) => handlePlay(boo)"
         @set-quize-type="(str) => (selectedQuizType = str)"
+        @set-trans-game-lang="(lang) => (translationGameLang = lang)"
       />
 
       <!-- 第二步驟 選取歌詞 -->
