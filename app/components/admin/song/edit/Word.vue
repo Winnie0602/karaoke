@@ -128,6 +128,7 @@ const tatoebaSentenses = ref<DisplayAPIResult[]>()
 
 const { get: getTatoebaResult, loading: tatoebaLoading } = useTatoeba(
   currentLangConfig.value.tatoeba,
+  'zh',
 )
 
 const showTatoeba = async () => {

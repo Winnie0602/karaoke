@@ -40,8 +40,6 @@ const playLyric = (eachLyric: LyricData) => {
       end: eachLyric.end,
     })
     life.value--
-  } else {
-    console.log('stop')
   }
 }
 

@@ -42,5 +42,10 @@
   "confirm_back_title": "戻りますか？",
   "confirm_back_message": "前のステップに戻ると、入力内容は失われます。",
   "confirm": "確認",
-  "cancel": "キャンセル"
+  "cancel": "キャンセル",
+  "no_videos": "動画がありません",
+  "no_songs": "曲がありません",
+  "animation": "アニメ",
+  "radio": "ラジオ",
+  "video_count": "動画{count}本"
 }

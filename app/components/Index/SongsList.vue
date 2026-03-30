@@ -36,7 +36,7 @@ watch(nowTab, () => {
           {{ $t('song_list') }}
         </div>
 
-        <div class="flex items-end space-x-1 text-[13px] md:text-base">
+        <div class="flex items-end space-x-1 text-[13px]">
           <div v-for="tab in tabs" :key="tab">
             <div
               v-if="nowTab === tab"
@@ -234,7 +234,9 @@ watch(nowTab, () => {
         </template>
 
         <div v-else class="py-24 text-center">
-          <p class="font-light tracking-widest text-gray-400">目前沒有歌曲</p>
+          <p class="font-light tracking-widest text-gray-400">
+            {{ $t('no_songs') }}
+          </p>
         </div>
 
         <div v-if="!pending && totalPages > 1" class="flex justify-center pt-4">

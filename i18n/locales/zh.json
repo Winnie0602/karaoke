@@ -42,5 +42,10 @@
   "confirm_back_title": "確認返回?",
   "confirm_back_message": "返回上一步將會遺失目前輸入的內容。",
   "confirm": "確認",
-  "cancel": "取消"
+  "cancel": "取消",
+  "no_videos": "目前沒有影片",
+  "no_songs": "目前沒有歌曲",
+  "animation": "動畫",
+  "radio": "廣播",
+  "video_count": "{count} 部影片"
 }

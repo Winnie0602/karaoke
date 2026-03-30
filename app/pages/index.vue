@@ -6,6 +6,10 @@ const songsPage = ref(1)
 
 const songListLang = ref<LangCode | 'all'>('en')
 
+const videosPage = ref(1)
+
+const videosLang = ref<LangCode | 'all'>('en')
+
 const {
   data: songListData,
   refresh: songListRefresh,
@@ -29,6 +33,19 @@ const { data: allSongData, pending: allSongPending } = await useFetch(
   },
 )
 
+const {
+  data: videosData,
+  refresh: videosRefresh,
+  pending: videosPending,
+} = await useFetch('/api/list/videos', {
+  query: {
+    language: videosLang,
+    page: videosPage,
+    sort: 'desc',
+    limit: 5,
+  },
+})
+
 const handler = async (
   component: string,
   payload: { page?: number; lang?: LangCode },
@@ -41,6 +58,15 @@ const handler = async (
     if (payload.lang !== undefined) {
       songListLang.value = payload.lang
       songListRefresh()
+    }
+  } else if (component === 'videoList') {
+    if (payload.page !== undefined) {
+      videosPage.value = payload.page
+    }
+
+    if (payload.lang !== undefined) {
+      videosLang.value = payload.lang
+      videosRefresh()
     }
   }
 }
@@ -66,7 +92,15 @@ const handler = async (
       />
 
       <!-- Grammer -->
-      <IndexGrammerList />
+      <IndexVideosList
+        v-if="videosData?.videos"
+        :videos="videosData?.videos"
+        :page="videosData.page"
+        :total-pages="videosData.totalPages"
+        :total="videosData.total"
+        :pending="videosPending"
+        @refresh="(payload) => handler('videoList', payload)"
+      />
 
       <!-- Reading -->
       <IndexReadingList />

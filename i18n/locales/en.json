@@ -42,5 +42,10 @@
   "confirm_back_title": "Confirm going back?",
   "confirm_back_message": "Going back will lose your current input.",
   "confirm": "Confirm",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+  "no_videos": "No videos available",
+  "no_songs": "No songs available",
+  "animation": "Animation",
+  "radio": "Radio",
+  "video_count": "{count} videos"
 }

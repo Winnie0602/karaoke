@@ -25,3 +25,4 @@ logs
 
 # TTS
 server/tts-key.json
+server/data/songs/example.json

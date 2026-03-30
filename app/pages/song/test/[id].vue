@@ -91,6 +91,11 @@ const canNext = computed(() => {
 })
 
 watch(step, (newStep) => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth',
+  })
+
   if (newStep === 1) {
     selectedQuizType.value = 'translation'
   } else if (newStep === 4) {
