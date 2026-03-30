@@ -131,7 +131,7 @@ const clickAnswer = (userAns: string, index: number) => {
         @click="clickAnswer(a, index)"
       >
         <div
-          class="flex h-5 w-5 items-center justify-center rounded-full border border-gray-500 bg-[#7A3A3A] text-white"
+          class="flex h-5 w-5 items-center justify-center rounded-full border border-[#7A3A3A] bg-[#7A3A3A] text-white"
         >
           {{ index + 1 }}
         </div>

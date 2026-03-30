@@ -91,36 +91,29 @@ const emit = defineEmits<{
         </div>
         <div
           v-else-if="userAnswers[index] && selectedQuizType === 'translation'"
+          class="mt-6 flex items-center gap-4 rounded-2xl bg-[#FFE5E5]/30 p-3 md:p-8"
         >
           <div
-            class="mt-6 flex items-center gap-4 rounded-2xl bg-[#FFE5E5]/30 p-3 md:p-8"
+            class="flex-none text-[10px] leading-6 font-black md:h-8 md:leading-8"
           >
-            <div class="flex flex-none flex-col space-y-2">
-              <span
-                class="h-6 text-[10px] leading-6 font-black md:h-8 md:leading-8"
-              >
-                回答
-              </span>
-            </div>
+            回答
+          </div>
 
-            <div class="flex flex-wrap justify-start gap-x-2 gap-y-4">
-              <div class="flex items-center justify-center space-x-2">
-                <span
-                  class="h-6 font-mono text-base leading-6 font-bold text-[#7A3A3A] md:h-8 md:text-xl md:leading-8"
-                  :class="{
-                    'text-red-600':
-                      userAnswers[index].uAnswer !== userAnswers[index].cAnswer,
-                  }"
-                >
-                  {{ userAnswers[index].uAnswer }}
-                </span>
-                <i
-                  v-if="
-                    userAnswers[index].uAnswer !== userAnswers[index].cAnswer
-                  "
-                  class="fa-solid fa-circle-xmark text-red-600"
-                ></i>
-              </div>
+          <div class="flex flex-wrap justify-start gap-x-2 gap-y-4">
+            <div class="flex items-center justify-center space-x-2">
+              <span
+                class="font-mono text-base leading-6 font-bold text-[#7A3A3A] md:h-8 md:text-xl md:leading-8"
+                :class="{
+                  'text-red-600':
+                    userAnswers[index].uAnswer !== userAnswers[index].cAnswer,
+                }"
+              >
+                {{ userAnswers[index].uAnswer }}
+              </span>
+              <i
+                v-if="userAnswers[index].uAnswer !== userAnswers[index].cAnswer"
+                class="fa-solid fa-circle-xmark text-red-600"
+              ></i>
             </div>
           </div>
         </div>
