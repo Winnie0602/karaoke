@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
 import type { SongData } from '~/types/song'
+import type { LangCode } from '~/types/lang'
 import { I18N_TO_DB } from '~/types/lang'
 const { locale } = useI18n()
 
@@ -8,8 +9,10 @@ const { show } = useToast()
 
 const store = usePlayerStore()
 
-const { currentSong } = defineProps<{
+const { currentSong, translationGameLang } = defineProps<{
   currentSong: SongData
+  translationGameLang: LangCode | null
+  selectedQuizType: 'partial' | 'allBlank' | 'translation'
 }>()
 
 const emit = defineEmits<{
@@ -72,7 +75,11 @@ const reset = (id: string, close: () => void) => {
               </div>
 
               <span class="mt-1 text-[12px] text-gray-500 md:text-[13px]">
-                {{ lyric[I18N_TO_DB[locale]] }}
+                {{
+                  selectedQuizType === 'translation'
+                    ? lyric[translationGameLang ?? I18N_TO_DB[locale]]
+                    : lyric[I18N_TO_DB[locale]]
+                }}
               </span>
             </DisclosureButton>
 

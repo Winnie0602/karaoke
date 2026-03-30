@@ -1,11 +1,19 @@
 <script setup lang="ts">
 import type TypingComposition from '~/components/test/card/TypingComposition.vue'
+import type { LangCode } from '~/types/lang'
 import type { SongData, LyricData } from '~/types/song'
 
-const { currentSong, testLyrics, isPlaying, selectedQuizType } = defineProps<{
+const {
+  currentSong,
+  testLyrics,
+  isPlaying,
+  translationGameLang,
+  selectedQuizType,
+} = defineProps<{
   currentSong: SongData
   testLyrics: LyricData[]
   isPlaying: boolean
+  translationGameLang: LangCode | null
   selectedQuizType: 'partial' | 'allBlank' | 'translation'
 }>()
 
@@ -106,26 +114,41 @@ watch(nowIndex, (index) => {
         />
       </button>
 
-      <TestCardTypingComposition
-        v-if="['ja', 'zh', 'kr'].includes(currentSong.language)"
-        ref="cardRefs"
-        :each-lyric="eachLyric"
-        :is-now-card="i === nowIndex"
-        :life="life"
-        :language="currentSong.language"
-        :selected-quiz-type="selectedQuizType"
-        @next-test="nowIndex = i + 1"
-        @set-answer="(ans) => setAnswers(ans, i)"
-      />
+      <!-- 填空題型 -->
+      <template v-if="['partial', 'allBlank'].includes(selectedQuizType)">
+        <TestCardTypingComposition
+          v-if="['ja', 'zh', 'kr'].includes(currentSong.language)"
+          ref="cardRefs"
+          :each-lyric="eachLyric"
+          :is-now-card="i === nowIndex"
+          :life="life"
+          :language="currentSong.language"
+          :selected-quiz-type="selectedQuizType"
+          @next-test="nowIndex = i + 1"
+          @set-answer="(ans) => setAnswers(ans, i)"
+        />
 
-      <TestCardTypingInput
-        v-if="['en'].includes(currentSong.language)"
-        ref="cardRefs"
+        <TestCardTypingInput
+          v-if="['en'].includes(currentSong.language)"
+          ref="cardRefs"
+          :each-lyric="eachLyric"
+          :is-now-card="i === nowIndex"
+          :life="life"
+          :language="currentSong.language"
+          :selected-quiz-type="selectedQuizType"
+          @next-test="nowIndex = i + 1"
+          @set-answer="(ans) => setAnswers(ans, i)"
+        />
+      </template>
+
+      <!-- 聽力翻譯題型 -->
+      <TestCardListeningTranslation
+        v-if="translationGameLang"
         :each-lyric="eachLyric"
         :is-now-card="i === nowIndex"
         :life="life"
-        :language="currentSong.language"
-        :selected-quiz-type="selectedQuizType"
+        :translation-game-lang="translationGameLang"
+        :all-lyrics="currentSong.lyrics"
         @next-test="nowIndex = i + 1"
         @set-answer="(ans) => setAnswers(ans, i)"
       />

@@ -56,6 +56,9 @@ const handlePlay = (boo: boolean) => {
 // 題型更換時開啟特效
 watch(selectedQuizType, () => {
   emit('setQuizeType', selectedQuizType.value)
+  console.log(selectedQuizType.value)
+
+  translationGameLang.value = null
 
   animationOn.value = true
 
@@ -269,11 +272,7 @@ onMounted(() => {
                 <div class="text-xs leading-relaxed font-bold text-[#A66B6B]">
                   <div class="flex items-center gap-1.5 text-[#F9595F]">
                     <i class="fa-solid fa-circle-info"></i>
-                    <span>
-                      {{
-                        $t('translation_game_hint', '聆聽歌詞，選擇正確的翻譯')
-                      }}
-                    </span>
+                    <span>聆聽歌詞，選擇正確的翻譯</span>
                   </div>
                   <p class="mt-1 opacity-80">請選擇想要練習的翻譯語言：</p>
                 </div>
@@ -296,15 +295,14 @@ onMounted(() => {
               </div>
 
               <div
-                class="relative overflow-hidden rounded-2xl border border-[#F9595F]/10 bg-white/80 p-5 shadow-sm"
+                class="overflow-hidden rounded-2xl border border-[#F9595F]/10 bg-white/80 px-3 py-1 shadow-sm md:px-5 md:py-3"
               >
-                <div
-                  class="absolute top-0 right-0 rounded-bl-xl bg-[#F9595F] px-3 py-1 text-[10px] font-black tracking-widest text-white"
-                >
-                  EXAMPLE
-                </div>
-
                 <div class="space-y-4">
+                  <span
+                    class="rounded-xl bg-[#F9595F] px-3 py-1 text-[10px] font-black tracking-widest text-white"
+                  >
+                    EXAMPLE
+                  </span>
                   <div class="flex items-center gap-4">
                     <span class="text-xs font-bold text-[#A66B6B]">
                       聆聽題目

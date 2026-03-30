@@ -4,10 +4,11 @@ import type { LangCode } from '~/types/lang'
 
 const store = usePlayerStore()
 
-const { userAnswers, testLyrics, lang } = defineProps<{
+const { userAnswers, testLyrics, lang, selectedQuizType } = defineProps<{
   userAnswers: { cAnswer: string; uAnswer: string }[]
   testLyrics: LyricData[]
   lang: LangCode
+  selectedQuizType: 'partial' | 'allBlank' | 'translation'
 }>()
 
 const emit = defineEmits<{
@@ -43,7 +44,7 @@ const emit = defineEmits<{
             </p>
           </div>
         </div>
-        <div v-if="userAnswers[index]" class="">
+        <div v-if="userAnswers[index] && selectedQuizType !== 'translation'">
           <div
             class="mt-6 flex items-center gap-4 rounded-2xl bg-[#FFE5E5]/30 p-3 md:p-8"
           >
@@ -84,6 +85,41 @@ const emit = defineEmits<{
                 >
                   {{ userAnswers[index].uAnswer[i] || ' ' }}
                 </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          v-else-if="userAnswers[index] && selectedQuizType === 'translation'"
+        >
+          <div
+            class="mt-6 flex items-center gap-4 rounded-2xl bg-[#FFE5E5]/30 p-3 md:p-8"
+          >
+            <div class="flex flex-none flex-col space-y-2">
+              <span
+                class="h-6 text-[10px] leading-6 font-black md:h-8 md:leading-8"
+              >
+                回答
+              </span>
+            </div>
+
+            <div class="flex flex-wrap justify-start gap-x-2 gap-y-4">
+              <div class="flex items-center justify-center space-x-2">
+                <span
+                  class="h-6 font-mono text-base leading-6 font-bold text-[#7A3A3A] md:h-8 md:text-xl md:leading-8"
+                  :class="{
+                    'text-red-600':
+                      userAnswers[index].uAnswer !== userAnswers[index].cAnswer,
+                  }"
+                >
+                  {{ userAnswers[index].uAnswer }}
+                </span>
+                <i
+                  v-if="
+                    userAnswers[index].uAnswer !== userAnswers[index].cAnswer
+                  "
+                  class="fa-solid fa-circle-xmark text-red-600"
+                ></i>
               </div>
             </div>
           </div>

@@ -31,7 +31,9 @@ const step = ref<1 | 2 | 3 | 4>(1)
 const selectedLyricsId = ref<string[]>([])
 
 // 選擇的題型
-const selectedQuizType = ref<'partial' | 'allBlank' | 'translation'>('partial')
+const selectedQuizType = ref<'partial' | 'allBlank' | 'translation'>(
+  'translation',
+)
 
 const translationGameLang = ref<LangCode | null>(null)
 
@@ -89,7 +91,9 @@ const canNext = computed(() => {
 })
 
 watch(step, (newStep) => {
-  if (newStep === 4) {
+  if (newStep === 1) {
+    selectedQuizType.value = 'translation'
+  } else if (newStep === 4) {
     store.setPlaybackRate(1)
   } else {
     store.isPlaying = false
@@ -144,6 +148,8 @@ onMounted(() => {
       <SelectLyrics
         v-if="currentSong && step === 2"
         :current-song="currentSong"
+        :selected-quiz-type="selectedQuizType"
+        :translation-game-lang="translationGameLang"
         @update="
           (testIds: string[]) => {
             selectedLyricsId = testIds
@@ -158,6 +164,7 @@ onMounted(() => {
         :test-lyrics="selectedLyrics"
         :is-playing="store.isPlaying"
         :selected-quiz-type="selectedQuizType"
+        :translation-game-lang="translationGameLang"
         @play-segment="
           (e: { start: number; end: number }) =>
             store.playSegmentRequest(e.start, e.end)
@@ -171,6 +178,7 @@ onMounted(() => {
         :user-answers="userAnswers"
         :test-lyrics="selectedLyrics"
         :lang="currentSong.language"
+        :selected-quiz-type="selectedQuizType"
         @play-segment="
           (e: { start: number; end: number }) =>
             store.playSegmentRequest(e.start, e.end)
