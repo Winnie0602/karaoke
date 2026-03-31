@@ -25,8 +25,6 @@ if (!currentSong.value && !pending.value) {
 // 該歌曲有沒有時間戳記
 const hasTimeStamp = ref(currentSong.value?.lyrics[0]?.start !== undefined)
 
-const page = ref(1)
-
 // 要顯示的翻譯語言
 const showTranslations = ref<LangCode[]>([])
 
@@ -84,7 +82,6 @@ const { data: otherSongs } = await useFetch<{ songs: SongsList[] }>(
   {
     query: {
       language: 'all',
-      page,
       limit: 8,
     },
   },
