@@ -73,6 +73,7 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
   watch(
     () => store.storeMode,
     (mode) => {
+
       if (!player.value) return
 
       // 一般頁面

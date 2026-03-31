@@ -22,7 +22,7 @@ const showPlayer = computed(
 )
 
 const { createPlayer, play, pause, seekTo } = useYoutubePlayer(
-  toRef(store, 'videoId'),
+  toRef(store, store.storeMode === 'normal' ? 'videoId' : 'test_videoId'),
 )
 
 const onSeekInput = (e: Event) => {
@@ -49,9 +49,14 @@ watch(
   { immediate: true },
 )
 
-onMounted(() => {
-  createPlayer('player')
-})
+watch(
+  () => store.test_videoId,
+  (id) => {
+    if (!id) return
+    createPlayer('player')
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
