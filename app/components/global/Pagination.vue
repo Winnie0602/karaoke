@@ -5,7 +5,7 @@ const { page, totalPages } = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'updatePage', value: { newPage: number }): void
+  (e: 'updatePage', newPage: number): void
 }>()
 </script>
 
@@ -20,7 +20,7 @@ const emit = defineEmits<{
           ? 'border-[#F9595F] bg-[#F9595F] text-white'
           : 'border-transparent text-[#B58C8C] hover:bg-[#FFE5E5]/50'
       "
-      @click="emit('updatePage', { newPage: i })"
+      @click="emit('updatePage', i)"
     >
       {{ i }}
     </div>

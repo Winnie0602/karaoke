@@ -1,6 +1,7 @@
 import { getQuery } from 'h3'
 import { connectToDatabase } from '~~/server/utils/mongodb'
 import type { VideosList } from '~/types/video'
+import type { LangCode } from '~/types/lang'
 
 export default defineEventHandler(async (event) => {
   const { db } = await connectToDatabase()
@@ -18,7 +19,7 @@ export default defineEventHandler(async (event) => {
   // Partial --> 可選欄位
   const filter: Partial<Pick<VideosList, 'language'>> = {}
 
-  if (language !== 'all') filter.language = language as VideosList['language']
+  if (language !== 'all') filter.language = language as LangCode
 
   const collection = db.collection<VideosList>('videos')
 

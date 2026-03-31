@@ -3,13 +3,11 @@ import type { SongsList } from '~/types/song'
 import emblaCarouselVue from 'embla-carousel-vue'
 import Autoplay from 'embla-carousel-autoplay'
 
-const [emblaRef] = emblaCarouselVue({ loop: true, duration: 10 }, [
+const [emblaRef] = emblaCarouselVue({ loop: true }, [
   Autoplay({ delay: 3000, stopOnInteraction: false, stopOnMouseEnter: true }),
 ])
 
 const { songs } = defineProps<{ songs: SongsList[] }>()
-
-// :src="`https://img.youtube.com/vi/${song.id}/mqdefault.jpg`"
 </script>
 
 <template>

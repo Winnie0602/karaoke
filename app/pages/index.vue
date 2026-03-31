@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { LangCode } from '~/types/lang'
-const { fullPath } = useRoute()
 
 const songsPage = ref(1)
 
@@ -10,19 +9,19 @@ const videosPage = ref(1)
 
 const videosLang = ref<LangCode | 'all'>('en')
 
-const {
-  data: songListData,
-  refresh: songListRefresh,
-  pending: songListPending,
-} = await useFetch('/api/list/songs', {
-  query: {
-    language: songListLang,
-    page: songsPage,
-    sort: 'desc',
-    limit: 5,
+const { data: songListData, pending: songListPending } = await useFetch(
+  '/api/list/songs',
+  {
+    query: {
+      language: songListLang,
+      page: songsPage,
+      sort: 'desc',
+      limit: 6,
+    },
   },
-})
+)
 
+// 輪播資料用
 const { data: allSongData, pending: allSongPending } = await useFetch(
   '/api/list/songs',
   {
@@ -33,41 +32,41 @@ const { data: allSongData, pending: allSongPending } = await useFetch(
   },
 )
 
-const {
-  data: videosData,
-  refresh: videosRefresh,
-  pending: videosPending,
-} = await useFetch('/api/list/videos', {
-  query: {
-    language: videosLang,
-    page: videosPage,
-    sort: 'desc',
-    limit: 5,
+const { data: videosData, pending: videosPending } = await useFetch(
+  '/api/list/videos',
+  {
+    query: {
+      language: videosLang,
+      page: videosPage,
+      sort: 'desc',
+      limit: 5,
+    },
   },
-})
+)
 
-const handler = async (
-  component: string,
+const handler = (
+  component: 'songList' | 'videoList',
   payload: { page?: number; lang?: LangCode },
 ) => {
-  if (component === 'songList') {
-    if (payload.page !== undefined) {
-      songsPage.value = payload.page
-    }
+  const componentMap = {
+    songList: {
+      page: songsPage,
+      lang: songListLang,
+    },
+    videoList: {
+      page: videosPage,
+      lang: videosLang,
+    },
+  }
 
-    if (payload.lang !== undefined) {
-      songListLang.value = payload.lang
-      songListRefresh()
-    }
-  } else if (component === 'videoList') {
-    if (payload.page !== undefined) {
-      videosPage.value = payload.page
-    }
+  const target = componentMap[component]
 
-    if (payload.lang !== undefined) {
-      videosLang.value = payload.lang
-      videosRefresh()
-    }
+  if (payload.page !== undefined) {
+    target.page.value = payload.page
+  }
+
+  if (payload.lang !== undefined) {
+    target.lang.value = payload.lang
   }
 }
 </script>
@@ -75,12 +74,12 @@ const handler = async (
 <template>
   <div class="w-full">
     <IndexTopCarousel
-      v-if="fullPath === '/' && allSongData?.songs && !allSongPending"
+      v-if="allSongData?.songs && !allSongPending"
       :songs="allSongData.songs"
     />
 
-    <!-- Song List -->
     <div class="mx-auto my-4 w-full px-4 md:my-8 md:max-w-[1280px] md:px-8">
+      <!-- Song List -->
       <IndexSongsList
         v-if="songListData?.songs"
         :songs="songListData.songs"
@@ -91,7 +90,7 @@ const handler = async (
         @refresh="(payload) => handler('songList', payload)"
       />
 
-      <!-- Grammer -->
+      <!-- Videos -->
       <IndexVideosList
         v-if="videosData?.videos"
         :videos="videosData?.videos"

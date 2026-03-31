@@ -9,7 +9,7 @@ const store = usePlayerStore()
 
 const videoId = computed(() => route.params.id as string)
 
-// 該歌詞
+// 該歌api資料
 const { data: currentSong, pending } = await useFetch<SongData | null>(
   `/api/song/${videoId.value}`,
 )
@@ -39,14 +39,14 @@ const handleTranslations = (lang: LangCode) => {
   }
 }
 // ＊＊＊＊＊＊＊＊計算目前的歌詞
-const findLyricIndexByTime = (time: number, lyrics: LyricData[]): number => {
+const findLyricIndexByTime = (time: number, lyrics: LyricData[]) => {
   if (!hasTimeStamp.value) return -1
 
   let low = 0
   let high = lyrics.length - 1
 
   while (low <= high) {
-    const mid = (low + high) >>> 1 // 使用位運算取中間值，效能極佳
+    const mid = Math.floor((low + high) / 2) // 取中間值
     const lyric = lyrics[mid]
 
     if (lyric?.start === undefined || lyric?.end === undefined) return -1
@@ -79,7 +79,7 @@ const currentNanoid = computed(() => {
 
 // ＊＊＊＊＊＊＊
 
-const { data: randomSongs } = await useFetch<{ songs: SongsList[] }>(
+const { data: otherSongs } = await useFetch<{ songs: SongsList[] }>(
   '/api/list/songs',
   {
     query: {
@@ -186,10 +186,10 @@ watch(
           {{ $t('recommended_songs') }}
         </div>
 
-        <div v-if="randomSongs?.songs" class="space-y-2">
+        <div v-if="otherSongs?.songs" class="space-y-2">
           <ClientOnly>
             <VideoCard
-              v-for="song in randomSongs.songs"
+              v-for="song in otherSongs.songs"
               :key="song.id"
               :song="song"
             />

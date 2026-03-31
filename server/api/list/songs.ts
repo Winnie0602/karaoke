@@ -1,6 +1,7 @@
 import { getQuery } from 'h3'
 import { connectToDatabase } from '~~/server/utils/mongodb'
 import type { SongsList } from '~/types/song'
+import type { LangCode } from '~/types/lang'
 
 export default defineEventHandler(async (event) => {
   const { db } = await connectToDatabase()
@@ -19,7 +20,7 @@ export default defineEventHandler(async (event) => {
   // Partial --> 可選欄位
   const filter: Partial<Pick<SongsList, 'language' | 'artist'>> = {}
 
-  if (language !== 'all') filter.language = language as SongsList['language']
+  if (language !== 'all') filter.language = language as LangCode
   if (artist) filter.artist = artist
 
   const collection = db.collection<SongsList>('list')

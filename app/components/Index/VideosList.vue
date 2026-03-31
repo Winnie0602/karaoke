@@ -82,7 +82,7 @@ watch(nowTab, () => {
           class="group flex flex-col overflow-hidden rounded-2xl border border-[#F9595F]/10 bg-white shadow-sm transition hover:shadow-md"
         >
           <NuxtLink
-            :to="`/video/${video.nanoid}`"
+            :to="`/video/${video.episode.at(0)?.videoId}`"
             class="relative aspect-video w-full overflow-hidden"
           >
             <img
@@ -101,7 +101,7 @@ watch(nowTab, () => {
           </NuxtLink>
           <div class="flex flex-1 flex-col p-3">
             <NuxtLink
-              :to="`/video/${video.nanoid}`"
+              :to="`/video/${video.episode.at(0)?.videoId}`"
               class="line-clamp-1 text-sm font-medium text-[#5A3E3E] group-hover:text-[#F9595F] md:text-lg"
             >
               {{ video.name }}
@@ -140,7 +140,7 @@ watch(nowTab, () => {
           :total="total || 0"
           :page="page"
           :total-pages="totalPages || 0"
-          @update-page="({ newPage }) => emit('refresh', { page: newPage })"
+          @update-page="(newPage) => emit('refresh', { page: newPage })"
         />
       </div>
     </div>

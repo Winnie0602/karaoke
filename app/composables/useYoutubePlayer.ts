@@ -211,7 +211,7 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
           if ([100, 101, 150, 2, 5].includes(event.data)) {
             showError({
               statusCode: 404,
-              statusMessage: '影片不存在或無法播放',
+              statusMessage: 'Oops! Something wrong!',
             })
           }
         },

@@ -244,7 +244,7 @@ watch(nowTab, () => {
             :total="total || 0"
             :page="page"
             :total-pages="totalPages || 0"
-            @update-page="({ newPage }) => emit('refresh', { page: newPage })"
+            @update-page="(newPage) => emit('refresh', { page: newPage })"
           />
         </div>
       </div>
