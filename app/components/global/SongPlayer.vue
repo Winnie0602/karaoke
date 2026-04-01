@@ -15,15 +15,18 @@ const showVideo = computed(
     !route.path.includes('test'),
 )
 
-const showPlayer = computed(
-  () =>
-    (store.storeMode === 'normal' && !route.path.includes('test')) ||
-    store.storeMode === 'admin',
-)
+const showPlayer = computed(() => {
+  if (store.storeMode === 'test') {
+    return false
+  }
+  // 一般模式下，有 videoId 才顯示
+  if (store.storeMode === 'normal') {
+    return !!store.videoId && !route.path.includes('test')
+  }
+  return store.storeMode === 'admin'
+})
 
-const { createPlayer, play, pause, seekTo } = useYoutubePlayer(
-  toRef(store, store.storeMode === 'normal' ? 'videoId' : 'test_videoId'),
-)
+const { createPlayer, play, pause, seekTo, player } = useYoutubePlayer()
 
 const onSeekInput = (e: Event) => {
   const value = Number((e.target as HTMLInputElement).value)
@@ -41,18 +44,12 @@ const setRate = (speed: number) => {
 }
 
 watch(
-  () => store.videoId,
-  (id) => {
-    if (!id) return
-    createPlayer('player')
-  },
-  { immediate: true },
-)
+  () => (store.storeMode === 'test' ? store.test_videoId : store.videoId),
+  (activeId) => {
+    // 1. 如果沒有 ID，或是 Player 實體已經存在了，就不要再執行 createPlayer
+    // (Player 存在後的影片切換，應該交給 composable 內部的 watch 處理)
+    if (!activeId || player.value) return
 
-watch(
-  () => store.test_videoId,
-  (id) => {
-    if (!id) return
     createPlayer('player')
   },
   { immediate: true },

@@ -1,8 +1,13 @@
-export function useYoutubePlayer(videoId: Ref<string | null>) {
+export function useYoutubePlayer() {
   const store = usePlayerStore()
   const player = ref<YT.Player | null>(null)
+  const isPlayerReady = ref(false)
 
   let rafId: number | null = null
+
+  const activeId = computed(() =>
+    store.storeMode === 'test' ? store.test_videoId : store.videoId,
+  )
 
   // YouTube API 載入
   function loadYoutubeAPI(): Promise<void> {
@@ -25,6 +30,7 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
       }
     })
   }
+
   // 播放時間追蹤
   function startTick() {
     if (rafId !== null) return
@@ -54,38 +60,30 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
     }
   }
 
-  function setPlaybackRate(rate: number) {
-    player.value?.setPlaybackRate(rate)
-  }
+  watch(
+    activeId,
+    (newId) => {
+      if (!import.meta.client || !newId) return
 
-  function setTestPlaybackRate(rate: number) {
-    player.value?.setPlaybackRate(rate)
-  }
+      if (!player.value) {
+        // 第一次建立實體
+        createPlayer('player')
+      } else {
+        // 實體已存在，直接切換影片內容
+        // 如果是從考試回一般模式，且一般模式有進度，則跳轉到 currentTime
+        const targetTime = store.storeMode === 'normal' ? store.currentTime : 0
+        player.value.loadVideoById(newId, targetTime)
+      }
+    },
+    { immediate: true },
+  )
 
-  //  換歌（不重建 player）
-  watch(videoId, (id) => {
-    if (!player.value || !id) return
-
-    player.value.loadVideoById(id, 0)
-  })
-
-  // 更換模式時
   watch(
     () => store.storeMode,
-    (mode) => {
-
-      if (!player.value) return
-
-      // 一般頁面
-      if (mode === 'normal' && videoId.value) {
-        player.value.loadVideoById(videoId.value, store.currentTime)
-        player.value.setVolume(store.volume)
-        // 考試頁面
-      } else if (mode === 'test' && store.test_videoId) {
-        player.value.loadVideoById(store.test_videoId, 0)
-        setTimeout(() => player.value?.setVolume(100), 500)
-      } else if (mode === 'admin') {
-        setTimeout(() => player.value?.stopVideo())
+    (newMode) => {
+      if (newMode === 'normal' && !store.videoId && player.value) {
+        // 一般模式沒歌 把考試的歌停掉並清空畫面
+        player.value.stopVideo()
       }
     },
   )
@@ -150,12 +148,11 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
   async function createPlayer(elementId: string) {
     if (!import.meta.client) return
     if (player.value) return
-    if (!videoId.value) return
+    if (!store.test_videoId && !store.videoId) return
+    isPlayerReady.value = false
 
     const initialId =
-      store.storeMode === 'test'
-        ? store.test_videoId || videoId.value
-        : videoId.value
+      store.storeMode === 'test' ? store.test_videoId : store.videoId
 
     if (!initialId) return
 
@@ -168,6 +165,7 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
       },
       events: {
         onReady: () => {
+          isPlayerReady.value = true
           store.setDuration(player.value!.getDuration())
 
           if (store.currentTime > 0) {
@@ -222,16 +220,16 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
 
   // 對外控制方法
   function play() {
-    player.value?.playVideo()
+    if (isPlayerReady.value) player.value?.playVideo()
   }
 
   function pause() {
-    player.value?.pauseVideo()
+    if (isPlayerReady.value) player.value?.pauseVideo()
   }
 
   // 跳到該片段(無結束點)
   function seekTo(time: number) {
-    if (!player.value) return
+    if (!player.value || !isPlayerReady.value) return
     player.value.seekTo(time, true)
     player.value.playVideo()
   }
@@ -261,7 +259,7 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
 
   /** 播放某段時間區間（歌詞逐句播放用） */
   function playSegment(start: number, end: number) {
-    if (!player.value) return
+    if (!player.value || !isPlayerReady.value) return
     if (start >= end) return
 
     clearSegmentTimer()
@@ -288,9 +286,6 @@ export function useYoutubePlayer(videoId: Ref<string | null>) {
     destroy,
     play,
     pause,
-    seekTo,
-    playSegment,
-    setPlaybackRate,
-    setTestPlaybackRate,
+    seekTo
   }
 }

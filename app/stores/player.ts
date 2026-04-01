@@ -7,7 +7,6 @@ export const usePlayerStore = defineStore(
     const videoId = ref<string | null>(null) // 一般頁面音樂
 
     const currentTime = ref(0) // 一般
-    const test_currentTime = ref(0)
 
     const duration = ref(0) // 一般
 
@@ -49,18 +48,8 @@ export const usePlayerStore = defineStore(
       // isPlaying.value = true
     }
 
-    function play() {
-      isPlaying.value = true
-    }
-
-    function pause() {
-      isPlaying.value = false
-    }
-
     function setTime(time: number) {
-      if (storeMode.value === 'test') {
-        test_currentTime.value = time
-      } else {
+      if (storeMode.value === 'normal') {
         currentTime.value = time
       }
     }
@@ -147,8 +136,8 @@ export const usePlayerStore = defineStore(
       setMode,
       setTestVideoId,
       loadVideo,
-      play,
-      pause,
+      play: () => (isPlaying.value = true),
+      pause: () => (isPlaying.value = false),
       setTime,
       setDuration,
       setSongInfo,
@@ -165,8 +154,6 @@ export const usePlayerStore = defineStore(
       pick: [
         'videoId',
         'currentTime',
-        'duration',
-        'isPlaying',
         'volume',
         'playbackRate',
         'test_playbackRate',
