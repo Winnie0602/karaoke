@@ -36,11 +36,6 @@ const getLyric = (lyric: LyricData) => {
   return lyric[songLang] ?? ''
 }
 
-const getTranslate = (lyric: LyricData, lang: LangCode) => {
-  if (!songLang) return ''
-
-  return lyric[lang] ?? ''
-}
 // 若有，優先使用（暫時顯示用的假值）
 const tempIndex = ref<number | null>(null)
 
@@ -57,6 +52,7 @@ const clickLyric = (start: number, index: number) => {
   store.seekToRequest(start)
 }
 
+// 上一次已經處理過的歌詞index
 let lastLineIndex = -1
 
 watch(
@@ -74,7 +70,7 @@ watch(
 
     container.scrollTo({
       top: targetScrollTop,
-      behavior: 'smooth',
+      behavior: 'auto',
     })
   },
   { flush: 'post' },
@@ -153,7 +149,7 @@ watch(
                   : 'text-[#A66B6B]/60'
               "
             >
-              {{ getTranslate(lyric, lang) }}
+              {{ lyric[lang] ?? '' }}
             </p>
           </div>
         </div>

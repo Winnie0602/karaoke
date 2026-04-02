@@ -28,7 +28,7 @@ export const usePlayerStore = defineStore(
     const lastVolume = ref(100) // 靜音前的音量
     const isMuted = computed(() => volume.value === 0)
 
-    const seekToTime = ref<number | null>(null) // 由影片組件監聽，有變動的話影片跳到該段落
+    const seekToTime = ref<number | null>(null) // 由實體所在compasable監聽，有變動的話影片跳到該段落
     const isSeeking = ref(false) //拖拉bar是否在把拖拉
 
     const songTitle = ref('')
@@ -42,10 +42,8 @@ export const usePlayerStore = defineStore(
       test_videoId.value = id
     }
 
-    function loadVideo(id: string, time = 0) {
+    function loadVideo(id: string) {
       videoId.value = id
-      currentTime.value = time
-      // isPlaying.value = true
     }
 
     function setTime(time: number) {

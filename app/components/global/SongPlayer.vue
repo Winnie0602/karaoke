@@ -4,56 +4,39 @@ import { formatTime, calcProgress } from '~/utils/time'
 const route = useRoute()
 const store = usePlayerStore()
 
+// 目前歌曲的時間(ui顯示用)
 const seekingTime = ref(0)
 
-// 只有 song/[id] 頁顯示影片
+// 只有 一般模式＆歌曲頁面＆不是amin頁面也不是test也面  才顯示影片
 const showVideo = computed(
   () =>
     store.storeMode === 'normal' &&
     route.path.startsWith('/song/') &&
-    !route.path.startsWith('/admin') &&
     !route.path.includes('test'),
 )
 
+// 只有 一般模式 且 有videoid 才顯示播放器
 const showPlayer = computed(() => {
-  if (store.storeMode === 'test') {
-    return false
-  }
-  // 一般模式下，有 videoId 才顯示
   if (store.storeMode === 'normal') {
-    return !!store.videoId && !route.path.includes('test')
+    return !!store.videoId
   }
-  return store.storeMode === 'admin'
+  return false
 })
 
-const { createPlayer, play, pause, seekTo, player } = useYoutubePlayer()
+const { play, pause, seekTo } = useYoutubePlayer()
 
+// 拖曳時（改變ui）
 const onSeekInput = (e: Event) => {
   const value = Number((e.target as HTMLInputElement).value)
   seekingTime.value = value
   store.isSeeking = true
 }
 
-const onSeekCommit = async (e: Event) => {
+// 放手時，呼叫youtube api跳轉到該時間
+const onSeekCommit = (e: Event) => {
   const value = Number((e.target as HTMLInputElement).value)
   seekTo(value)
 }
-
-const setRate = (speed: number) => {
-  store.setPlaybackRate(speed)
-}
-
-watch(
-  () => (store.storeMode === 'test' ? store.test_videoId : store.videoId),
-  (activeId) => {
-    // 1. 如果沒有 ID，或是 Player 實體已經存在了，就不要再執行 createPlayer
-    // (Player 存在後的影片切換，應該交給 composable 內部的 watch 處理)
-    if (!activeId || player.value) return
-
-    createPlayer('player')
-  },
-  { immediate: true },
-)
 </script>
 
 <template>
@@ -202,7 +185,7 @@ watch(
                       'bg-[#FFE5E5] text-[#F9595F]':
                         speed === store.playbackRate,
                     }"
-                    @click="setRate(speed)"
+                    @click="store.setPlaybackRate(speed)"
                   >
                     {{ speed }}
                   </div>
@@ -210,7 +193,7 @@ watch(
               </div>
             </div>
 
-            <!-- 打開全螢幕歌詞 -->
+            <!-- 回到目前歌曲id -->
             <NuxtLink
               v-if="route.params.id !== store.videoId"
               :to="`/song/${store.videoId}`"

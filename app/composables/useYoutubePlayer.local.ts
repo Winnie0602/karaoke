@@ -74,11 +74,8 @@ export function useYoutubePlayerLocal(videoId: string) {
   }
 
   return {
-    player,
     currentTime,
     createPlayer,
     destroy,
-    loadVideoById: (id: string, start = 0) =>
-      player.value?.loadVideoById(id, start),
   }
 }

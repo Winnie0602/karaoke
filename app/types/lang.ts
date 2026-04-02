@@ -19,9 +19,14 @@ export const languageMapCode: Record<Tab, LangCode> = {
 
 // 反轉
 // db code轉ui
-export const languageMapCodeLabel: Record<LangCode, Tab> = Object.fromEntries(
-  Object.entries(languageMapCode).map(([key, value]) => [value, key]),
-) as Record<LangCode, Tab>
+const entries = Object.entries(languageMapCode)
+
+const reversed = entries.map(([code, label]) => {
+  return [label, code]
+})
+
+export const languageMapCodeLabel = Object.fromEntries(reversed)
+// ****
 
 // db code 轉 Tatoeba API & TTS API 對照表
 export const LANG_CONFIG_MAP: Record<

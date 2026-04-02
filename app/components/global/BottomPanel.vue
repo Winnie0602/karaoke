@@ -3,8 +3,6 @@ import type { DisplayAPIResult } from '~/types/tatoeba'
 import type { LangCode } from '~/types/lang'
 import { LANG_CONFIG_MAP } from '~/types/lang'
 
-
-
 const { open, word, sentense, loading, lang } = defineProps<{
   open: boolean
   word: string
@@ -190,7 +188,6 @@ const handleClose = () => {
 </template>
 
 <style scoped>
-/* 原有的 Style 全部保留 */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.2s ease;

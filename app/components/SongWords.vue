@@ -14,9 +14,6 @@ const store = usePlayerStore()
 // 底下例句panel打開狀態
 const isPanelOpen = ref(false)
 
-// 打開panel前的音樂播放狀態
-const wasListening = ref(false)
-
 // ********* Tatoeba ************
 // 歌曲語言的config
 const currentLangConfig = ref(LANG_CONFIG_MAP[song.language || 'en'])
@@ -36,12 +33,15 @@ const isNowWord = (word: WordData) => {
   return word.nanoids.includes(currentNanoid)
 }
 
+// 打開panel前的音樂播放狀態
+let wasListening = false
+
 // 打開下方panel區塊
 const openPanel = async (word: string) => {
   selectedWord.value = word
 
   // 記住打開前的播放狀態
-  wasListening.value = store.isPlaying
+  wasListening = store.isPlaying
 
   isPanelOpen.value = true
   store.pause()
@@ -50,7 +50,7 @@ const openPanel = async (word: string) => {
 }
 
 watch(isPanelOpen, (open) => {
-  if (!open && wasListening.value) {
+  if (!open && wasListening) {
     store.play()
   }
 })

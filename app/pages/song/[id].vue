@@ -65,6 +65,7 @@ const currentLineIndex = computed(() => {
   return findLyricIndexByTime(store.currentTime, currentSong.value.lyrics)
 })
 
+// 現在播放的歌詞的nanoid
 const currentNanoid = computed(() => {
   if (
     currentLineIndex.value === -1 ||
@@ -92,7 +93,7 @@ watch(
   (id) => {
     if (typeof id !== 'string') return
 
-    store.loadVideo(id, store.currentTime)
+    store.loadVideo(id)
 
     if (currentSong.value) {
       store.setSongInfo(currentSong.value?.title, currentSong.value?.artist)

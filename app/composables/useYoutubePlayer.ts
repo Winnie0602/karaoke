@@ -62,30 +62,32 @@ export function useYoutubePlayer() {
 
   watch(
     activeId,
-    (newId) => {
+    (newId, oldId) => {
       if (!import.meta.client || !newId) return
 
       if (!player.value) {
         // 第一次建立實體
         createPlayer('player')
       } else {
-        // 實體已存在，直接切換影片內容
-        // 如果是從考試回一般模式，且一般模式有進度，則跳轉到 currentTime
-        const targetTime = store.storeMode === 'normal' ? store.currentTime : 0
+        if (store.storeMode === 'normal' && !store.videoId && player.value) {
+          // 一般模式沒歌 把考試的歌停掉並清空畫面
+          player.value.stopVideo()
+
+          return
+        }
+
+        const isSameVideo = newId === oldId
+
+        let targetTime = 0
+
+        // 如果是同一首歌就用之前的currenttime 不是則從頭開始
+        if (store.storeMode === 'normal' && isSameVideo) {
+          targetTime = store.currentTime
+        }
         player.value.loadVideoById(newId, targetTime)
       }
     },
     { immediate: true },
-  )
-
-  watch(
-    () => store.storeMode,
-    (newMode) => {
-      if (newMode === 'normal' && !store.videoId && player.value) {
-        // 一般模式沒歌 把考試的歌停掉並清空畫面
-        player.value.stopVideo()
-      }
-    },
   )
 
   // state的速度變數改變時，call youtube API改變速度
@@ -151,15 +153,12 @@ export function useYoutubePlayer() {
     if (!store.test_videoId && !store.videoId) return
     isPlayerReady.value = false
 
-    const initialId =
-      store.storeMode === 'test' ? store.test_videoId : store.videoId
-
-    if (!initialId) return
+    if (!activeId.value) return
 
     await loadYoutubeAPI()
 
     player.value = new YT.Player(elementId, {
-      videoId: initialId,
+      videoId: activeId.value,
       playerVars: {
         playsinline: 1,
       },
@@ -278,14 +277,9 @@ export function useYoutubePlayer() {
   }
 
   return {
-    // state
-    player,
-
-    // methods
-    createPlayer,
     destroy,
     play,
     pause,
-    seekTo
+    seekTo,
   }
 }
