@@ -20,9 +20,6 @@ const currentSpeed = ref(1)
 // 語言翻譯遊戲 選擇的語言
 const translationGameLang = ref<LangCode | null>(null)
 
-// 控制底下題型預覽的動畫特效
-const animationOn = ref(false)
-
 const quizTypes = ['translation', 'partial', 'allBlank'] as const
 
 const selectedQuizType = ref<'partial' | 'allBlank' | 'translation'>(
@@ -56,13 +53,6 @@ const handlePlay = (boo: boolean) => {
 // 題型更換時開啟特效
 watch(selectedQuizType, () => {
   emit('setQuizeType', selectedQuizType.value)
-  console.log(selectedQuizType.value)
-
-  translationGameLang.value = null
-
-  animationOn.value = true
-
-  setTimeout(() => (animationOn.value = false), 300)
 })
 
 watch(translationGameLang, () => {
@@ -156,7 +146,7 @@ onMounted(() => {
                 '--progress': `${((currentSpeed - 0.5) / 1.0) * 100}%`,
                 'background-image': `linear-gradient(to right, #F9595F 0%, #F9595F ${((currentSpeed - 0.5) / 1.0) * 100}%, #FFE5E5 ${((currentSpeed - 0.5) / 1.0) * 100}%, #FFE5E5 100%)`,
               }"
-              @input="handleSliderChange"
+              @change="handleSliderChange"
             />
             <div
               class="mt-4 flex justify-between px-1 text-[10px] font-black text-[#E4BABA]"
@@ -200,151 +190,159 @@ onMounted(() => {
           <!-- 預覽題型 -->
           <div
             class="origin-top rounded-2xl border border-dashed border-[#F9595F]/30 bg-[#FFE5E5]/20 p-4 transition-all duration-500 ease-out"
-            :class="animationOn ? 'animate-expand' : ''"
           >
-            <span
-              class="mb-10 text-[12px] font-black tracking-widest text-[#F9595F] uppercase"
-            >
-              {{ selectedQuizType }}
-            </span>
-            <div
-              class="mb-3 flex items-center text-[14px] font-bold text-[#A66B6B] md:mb-6"
-            >
-              <span class="mr-2">{{ $t('re_listen_time') }}</span>
-              <div class="flex items-end space-x-1.5">
-                <i
-                  v-for="i in 3"
-                  :key="i"
-                  class="fa-solid fa-apple-whole text-lg text-[#F9595F] drop-shadow-[0_2px_4px_rgba(249,89,95,0.2)] transition-all duration-300 md:text-2xl"
-                />
-                <span class="ml-4">X3</span>
-              </div>
-            </div>
-            <div
-              v-show="selectedQuizType === 'allBlank'"
-              class="flex items-center space-x-3 md:space-x-5"
-            >
-              <div
-                v-for="(_, i) in 10"
-                :key="i"
-                class="flex flex-col items-center"
-              >
-                <div
-                  class="flex h-7 w-5 items-center justify-center text-xl font-black transition-all duration-200 md:h-11 md:w-8 md:text-4xl"
-                  :class="{
-                    'rounded-md bg-[#FFF9F9] text-[#F9595F] shadow-inner ring-2 ring-[#F9595F]/20 md:ring-4':
-                      i === 0,
-                  }"
-                ></div>
-
-                <div
-                  class="mt-1 h-1 w-full rounded-full bg-[#FFE5E5] transition-all duration-500 md:h-2"
-                />
-              </div>
-            </div>
-            <div
-              v-show="selectedQuizType === 'partial'"
-              class="flex items-center space-x-3 md:space-x-5"
-            >
-              <div
-                v-for="(_, i) in 10"
-                :key="i"
-                class="flex flex-col items-center"
-              >
-                <div
-                  class="flex h-7 w-5 items-center justify-center text-xl font-black text-[#A66B6B] transition-all duration-200 md:h-11 md:w-8 md:text-4xl"
-                  :class="{
-                    'rounded-md bg-[#FFF9F9] text-[#F9595F] shadow-inner ring-2 ring-[#F9595F]/20 md:ring-4':
-                      i === 0,
-                  }"
+            <Transition name="fade" mode="out-in">
+              <div :key="selectedQuizType">
+                <span
+                  class="mb-10 text-[12px] font-black tracking-widest text-[#F9595F] uppercase"
                 >
-                  {{ i === 4 ? 'A' : '' }}
-                  {{ i === 7 ? 'B' : '' }}
-                </div>
-
+                  {{ selectedQuizType }}
+                </span>
                 <div
-                  class="mt-1 h-1 w-full rounded-full bg-[#FFE5E5] transition-all duration-500 md:h-2"
-                />
-              </div>
-            </div>
-            <div v-show="selectedQuizType === 'translation'" class="space-y-6">
-              <div class="space-y-4">
-                <div class="text-xs leading-relaxed font-bold text-[#A66B6B]">
-                  <div class="flex items-center gap-1.5 text-[#F9595F]">
-                    <i class="fa-solid fa-circle-info"></i>
-                    <span>聆聽歌詞，選擇正確的翻譯</span>
+                  class="mb-3 flex items-center text-[14px] font-bold text-[#A66B6B] md:mb-6"
+                >
+                  <span class="mr-2">{{ $t('re_listen_time') }}</span>
+                  <div class="flex items-end space-x-1.5">
+                    <i
+                      v-for="i in 3"
+                      :key="i"
+                      class="fa-solid fa-apple-whole text-lg text-[#F9595F] drop-shadow-[0_2px_4px_rgba(249,89,95,0.2)] transition-all duration-300 md:text-2xl"
+                    />
+                    <span class="ml-4">X3</span>
                   </div>
-                  <p class="mt-1 opacity-80">請選擇想要練習的翻譯語言：</p>
                 </div>
-
-                <div class="flex flex-wrap gap-2">
-                  <button
-                    v-for="lang in currentSong.translation_langs"
-                    :key="lang"
-                    class="min-w-[70px] rounded-xl border-2 px-4 py-2 text-xs font-black transition-all active:scale-95"
-                    :class="
-                      translationGameLang === lang
-                        ? 'border-[#F9595F] bg-white text-[#F9595F] shadow-[0_3px_0_0_#F9595F15]'
-                        : 'border-transparent bg-white/50 text-[#A66B6B] hover:bg-white'
-                    "
-                    @click="translationGameLang = lang"
+                <div
+                  v-if="selectedQuizType === 'allBlank'"
+                  class="flex items-center space-x-3 md:space-x-5"
+                >
+                  <div
+                    v-for="(_, i) in 10"
+                    :key="i"
+                    class="flex flex-col items-center"
                   >
-                    {{ languageMapCodeLabel[lang] }}
-                  </button>
+                    <div
+                      class="flex h-7 w-5 items-center justify-center text-xl font-black transition-all duration-200 md:h-11 md:w-8 md:text-4xl"
+                      :class="{
+                        'rounded-md bg-[#FFF9F9] text-[#F9595F] shadow-inner ring-2 ring-[#F9595F]/20 md:ring-4':
+                          i === 0,
+                      }"
+                    ></div>
+
+                    <div
+                      class="mt-1 h-1 w-full rounded-full bg-[#FFE5E5] transition-all duration-500 md:h-2"
+                    />
+                  </div>
                 </div>
-              </div>
-
-              <div
-                class="overflow-hidden rounded-2xl border border-[#F9595F]/10 bg-white/80 px-3 py-1 shadow-sm md:px-5 md:py-3"
-              >
-                <div class="space-y-4">
-                  <span
-                    class="rounded-xl bg-[#F9595F] px-3 py-1 text-[10px] font-black tracking-widest text-white"
+                <div
+                  v-else-if="selectedQuizType === 'partial'"
+                  class="flex items-center space-x-3 md:space-x-5"
+                >
+                  <div
+                    v-for="(_, i) in 10"
+                    :key="i"
+                    class="flex flex-col items-center"
                   >
-                    EXAMPLE
-                  </span>
-                  <div class="flex items-center gap-4">
-                    <span class="text-xs font-bold text-[#A66B6B]">
-                      聆聽題目
-                    </span>
-                    <button
-                      class="flex h-10 w-10 items-center justify-center rounded-full border-2 border-pink-100 bg-white text-[#F9595F] shadow-sm transition-transform hover:scale-105 active:scale-95"
-                      @click="
-                        store.playSegmentRequest(
-                          currentSong.lyrics[5]?.start ?? 0,
-                          currentSong.lyrics[5]?.end ?? 0,
-                        )
-                      "
+                    <div
+                      class="flex h-7 w-5 items-center justify-center text-xl font-black text-[#A66B6B] transition-all duration-200 md:h-11 md:w-8 md:text-4xl"
+                      :class="{
+                        'rounded-md bg-[#FFF9F9] text-[#F9595F] shadow-inner ring-2 ring-[#F9595F]/20 md:ring-4':
+                          i === 0,
+                      }"
                     >
-                      <i class="fa-solid fa-volume-high text-sm"></i>
-                    </button>
+                      {{ i === 4 ? 'A' : '' }}
+                      {{ i === 7 ? 'B' : '' }}
+                    </div>
+
+                    <div
+                      class="mt-1 h-1 w-full rounded-full bg-[#FFE5E5] transition-all duration-500 md:h-2"
+                    />
+                  </div>
+                </div>
+                <div
+                  v-else-if="selectedQuizType === 'translation'"
+                  class="space-y-6"
+                >
+                  <div class="space-y-4">
+                    <div
+                      class="text-xs leading-relaxed font-bold text-[#A66B6B]"
+                    >
+                      <div class="flex items-center gap-1.5 text-[#F9595F]">
+                        <i class="fa-solid fa-circle-info"></i>
+                        <span>聆聽歌詞，選擇正確的翻譯</span>
+                      </div>
+                      <p class="mt-1 opacity-80">請選擇想要練習的翻譯語言：</p>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2">
+                      <button
+                        v-for="lang in currentSong.translation_langs"
+                        :key="lang"
+                        class="min-w-[70px] rounded-xl border-2 px-4 py-2 text-xs font-black transition-all active:scale-95"
+                        :class="
+                          translationGameLang === lang
+                            ? 'border-[#F9595F] bg-white text-[#F9595F] shadow-[0_3px_0_0_#F9595F15]'
+                            : 'border-transparent bg-white/50 text-[#A66B6B] hover:bg-white'
+                        "
+                        @click="translationGameLang = lang"
+                      >
+                        {{ languageMapCodeLabel[lang] }}
+                      </button>
+                    </div>
                   </div>
 
                   <div
-                    class="h-px w-full border-b border-dashed border-[#FFE5E5]"
-                  ></div>
-
-                  <div class="space-y-2">
-                    <span class="text-xs font-bold text-[#A66B6B]">
-                      正確答案預覽
-                    </span>
-                    <div
-                      class="min-h-[40px] rounded-xl bg-[#FFF9F9] px-4 py-3 text-sm font-medium text-[#7A3A3A] ring-1 ring-[#F9595F]/5"
-                    >
-                      <template v-if="translationGameLang">
-                        {{
-                          currentSong.lyrics[5]?.[translationGameLang] ||
-                          '暫無翻譯資料'
-                        }}
-                      </template>
-                      <span v-else class="text-[#E4BABA] italic">
-                        請先選擇語言...
+                    class="overflow-hidden rounded-2xl border border-[#F9595F]/10 bg-white/80 px-3 py-1 shadow-sm md:px-5 md:py-3"
+                  >
+                    <div class="space-y-4">
+                      <span
+                        class="rounded-xl bg-[#F9595F] px-3 py-1 text-[10px] font-black tracking-widest text-white"
+                      >
+                        EXAMPLE
                       </span>
+                      <div class="flex items-center gap-4">
+                        <span class="text-xs font-bold text-[#A66B6B]">
+                          聆聽題目
+                        </span>
+                        <button
+                          class="flex h-10 w-10 items-center justify-center rounded-full border-2 border-pink-100 bg-white text-[#F9595F] shadow-sm transition-transform hover:scale-105 active:scale-95"
+                          @click="
+                            store.playSegmentRequest(
+                              currentSong.lyrics[5]?.start ?? 0,
+                              currentSong.lyrics[5]?.end ?? 0,
+                            )
+                          "
+                        >
+                          <i class="fa-solid fa-volume-high text-sm"></i>
+                        </button>
+                      </div>
+
+                      <div
+                        class="h-px w-full border-b border-dashed border-[#FFE5E5]"
+                      ></div>
+
+                      <div class="space-y-2">
+                        <span class="text-xs font-bold text-[#A66B6B]">
+                          正確答案預覽
+                        </span>
+                        <div
+                          class="min-h-[40px] rounded-xl bg-[#FFF9F9] px-4 py-3 text-sm font-medium text-[#7A3A3A] ring-1 ring-[#F9595F]/5"
+                        >
+                          <template v-if="translationGameLang">
+                            {{
+                              currentSong.lyrics[5]?.[translationGameLang] ||
+                              '暫無翻譯資料'
+                            }}
+                          </template>
+                          <span v-else class="text-[#E4BABA] italic">
+                            請先選擇語言...
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </Transition>
           </div>
         </div>
       </div>
@@ -384,21 +382,13 @@ onMounted(() => {
   transform: scale(0.9);
 }
 
-@keyframes expandBlock {
-  0% {
-    transform: scaleY(0);
-    opacity: 0;
-  }
-  60% {
-    transform: scaleY(1.05);
-    opacity: 1;
-  }
-  100% {
-    transform: scaleY(1);
-  }
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
 }
 
-.animate-expand {
-  animation: expandBlock 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

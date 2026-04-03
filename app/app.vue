@@ -3,13 +3,13 @@ const { isModalOpen, title, content, type, confirm, cancel } = useCheckConfirm()
 </script>
 
 <template>
-  <div>
-    <NuxtLayout>
-      <NuxtPage :key="$route.fullPath" />
-    </NuxtLayout>
+  <NuxtLayout>
+    <NuxtPage />
+  </NuxtLayout>
 
+  <!-- 全局組件使用 Teleport，不佔用 layout rerender -->
+  <Teleport to="body">
     <Toast />
-
     <ConfirmModal
       :open="isModalOpen"
       :title="title"
@@ -18,5 +18,5 @@ const { isModalOpen, title, content, type, confirm, cancel } = useCheckConfirm()
       @confirm="confirm"
       @close="cancel"
     />
-  </div>
+  </Teleport>
 </template>

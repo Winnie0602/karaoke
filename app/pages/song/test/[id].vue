@@ -35,6 +35,7 @@ const selectedQuizType = ref<'partial' | 'allBlank' | 'translation'>(
   'translation',
 )
 
+// 聽力翻譯的語言
 const translationGameLang = ref<LangCode | null>(null)
 
 // 使用者的答案
@@ -185,6 +186,7 @@ onMounted(() => {
         :test-lyrics="selectedLyrics"
         :lang="currentSong.language"
         :selected-quiz-type="selectedQuizType"
+        :translation-game-lang="translationGameLang || currentSong.translation_langs.at(0)"
         @play-segment="
           (e: { start: number; end: number }) =>
             store.playSegmentRequest(e.start, e.end)

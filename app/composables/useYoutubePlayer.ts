@@ -3,6 +3,8 @@ export function useYoutubePlayer() {
   const player = ref<YT.Player | null>(null)
   const isPlayerReady = ref(false)
 
+  const lastNormalVideoId = ref<string | null>(null)
+
   let rafId: number | null = null
 
   const activeId = computed(() =>
@@ -36,7 +38,7 @@ export function useYoutubePlayer() {
     if (rafId !== null) return
 
     const tick = () => {
-      if (!store.isPlaying || store.isSeeking) {
+      if (!store.isPlaying || store.isSeeking || store.storeMode !== 'normal') {
         rafId = requestAnimationFrame(tick)
         return
       }
@@ -62,30 +64,36 @@ export function useYoutubePlayer() {
 
   watch(
     activeId,
-    (newId, oldId) => {
+    (newId) => {
       if (!import.meta.client || !newId) return
 
       if (!player.value) {
-        // 第一次建立實體
         createPlayer('player')
-      } else {
-        if (store.storeMode === 'normal' && !store.videoId && player.value) {
-          // 一般模式沒歌 把考試的歌停掉並清空畫面
-          player.value.stopVideo()
-
-          return
-        }
-
-        const isSameVideo = newId === oldId
-
-        let targetTime = 0
-
-        // 如果是同一首歌就用之前的currenttime 不是則從頭開始
-        if (store.storeMode === 'normal' && isSameVideo) {
-          targetTime = store.currentTime
-        }
-        player.value.loadVideoById(newId, targetTime)
+        return
       }
+
+      if (store.storeMode === 'normal' && !store.videoId) {
+        player.value.stopVideo()
+        return
+      }
+
+      let targetTime = 0
+
+      if (store.storeMode === 'normal') {
+        const isSameVideo = newId === lastNormalVideoId.value
+
+        if (isSameVideo) {
+          //  同一首 → 接續播放
+          targetTime = store.currentTime
+        } else {
+          // 新歌 → 重置時間
+          targetTime = 0
+          store.currentTime = 0
+        }
+      }
+
+      player.value.loadVideoById(newId, targetTime)
+      player.value.playVideo()
     },
     { immediate: true },
   )

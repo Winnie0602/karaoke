@@ -1,13 +1,26 @@
 <script setup lang="ts">
-import { formatTime, calcProgress } from '~/utils/time'
+import { formatTime } from '~/utils/time'
+import { throttle } from 'lodash-es'
 
 const route = useRoute()
 const store = usePlayerStore()
 
-// 目前歌曲的時間(ui顯示用)
+// UI顯示的暫存時間
 const seekingTime = ref(0)
 
-// 只有 一般模式＆歌曲頁面＆不是amin頁面也不是test也面  才顯示影片
+// 節流版本的拖曳更新（每50ms更新一次）
+const onSeekInput = throttle((e: Event) => {
+  const value = Number((e.target as HTMLInputElement).value)
+  seekingTime.value = value
+  store.isSeeking = true
+}, 50)
+
+const onSeekCommit = (e: Event) => {
+  const value = Number((e.target as HTMLInputElement).value)
+  seekTo(value)
+}
+
+// 影片是否顯示
 const showVideo = computed(
   () =>
     store.storeMode === 'normal' &&
@@ -15,40 +28,25 @@ const showVideo = computed(
     !route.path.includes('test'),
 )
 
-// 只有 一般模式 且 有videoid 才顯示播放器
-const showPlayer = computed(() => {
-  if (store.storeMode === 'normal') {
-    return !!store.videoId
-  }
-  return false
-})
+// 播放器是否顯示
+const showPlayer = computed(
+  () => store.storeMode === 'normal' && !!store.videoId,
+)
 
 const { play, pause, seekTo } = useYoutubePlayer()
 
-// 拖曳時（改變ui）
-const onSeekInput = (e: Event) => {
-  const value = Number((e.target as HTMLInputElement).value)
-  seekingTime.value = value
-  store.isSeeking = true
-}
-
-// 放手時，呼叫youtube api跳轉到該時間
-const onSeekCommit = (e: Event) => {
-  const value = Number((e.target as HTMLInputElement).value)
-  seekTo(value)
-}
+// 計算進度百分比
+const progress = computed(() => {
+  const time = store.isSeeking ? seekingTime.value : store.currentTime
+  return store.duration ? time / store.duration : 0
+})
 </script>
 
 <template>
   <div class="flex min-h-screen flex-col pt-[56px]">
-    <!--  影片（只有需要時才顯示） -->
+    <!-- 影片 -->
     <ClientOnly>
-      <div
-        :class="[
-          { 'pointer-events-none hidden opacity-0': !showVideo },
-          'flex-none transition-all duration-300',
-        ]"
-      >
+      <div :class="[showVideo ? '' : 'h-[0.5px] opacity-0', 'transition-all']">
         <div
           id="player"
           class="h-[150px] w-full bg-black md:aspect-video md:h-[360px]"
@@ -56,15 +54,15 @@ const onSeekCommit = (e: Event) => {
       </div>
     </ClientOnly>
 
-    <!-- 中間頁面內容 -->
-    <main class="relative h-screen flex-1 bg-[#FFF9F9] pb-[65px] md:pb-[75px]">
+    <!-- 中間內容 -->
+    <main class="relative flex-1 bg-[#FFF9F9] pb-[68px] md:pb-[75px]">
       <slot />
     </main>
 
     <!-- 底部播放器 -->
     <div
-      class="fixed bottom-0 h-[68px] w-full bg-[#ffe5e5] px-2 md:h-[75px]"
-      :class="{ hidden: !showPlayer }"
+      class="fixed right-0 bottom-0 left-0 h-[68px] w-full bg-[#ffe5e5] px-2 transition-opacity md:h-[75px]"
+      :class="{ 'pointer-events-none opacity-0': !showPlayer }"
     >
       <div class="flex h-full w-full items-center justify-center py-1">
         <div
@@ -72,7 +70,7 @@ const onSeekCommit = (e: Event) => {
         >
           <!-- 播放鍵 -->
           <button
-            class="flex h-8 w-8 flex-none items-center justify-center rounded-full border-2 border-pink-200 bg-white shadow-md transition-transform duration-150 hover:scale-110 active:scale-95 md:h-12 md:w-12"
+            class="flex h-8 w-8 items-center justify-center rounded-full border-2 border-pink-200 bg-white shadow-md transition-transform duration-150 hover:scale-110 active:scale-95 md:h-12 md:w-12"
             @click="store.isPlaying ? pause() : play()"
           >
             <i
@@ -80,36 +78,38 @@ const onSeekCommit = (e: Event) => {
               :class="store.isPlaying ? 'fa-pause' : 'fa-play'"
             ></i>
           </button>
-          <span class="ml-2 text-xs">
-            {{ formatTime(store.currentTime) }}
-          </span>
+
+          <!-- 當前時間 -->
+          <span class="ml-2 text-xs">{{ formatTime(store.currentTime) }}</span>
+
+          <!-- 進度條 -->
           <div class="relative mx-3 w-[calc(100%-150px)] md:mx-4">
-            <span class="absolute bottom-5 line-clamp-1 text-xs text-[#A66B6B]">
+            <span class="absolute bottom-3 line-clamp-1 text-xs text-[#A66B6B]">
               {{ `${store.songArtist} - ${store.songTitle}` }}
             </span>
-            <!-- 進度條 -->
+
             <ClientOnly>
+              <div class="h-2 w-full overflow-hidden rounded-full bg-[#ffe5e5]">
+                <div
+                  class="h-2 origin-left bg-[#f9595f]"
+                  :style="{ transform: `scaleX(${progress})` }"
+                />
+              </div>
               <input
                 type="range"
                 min="0"
                 :max="store.duration"
                 :value="store.isSeeking ? seekingTime : store.currentTime"
-                class="time-bar w-full cursor-pointer appearance-none rounded-full"
-                :style="{
-                  '--progress': `${calcProgress(
-                    store.isSeeking ? seekingTime : store.currentTime,
-                    store.duration,
-                  )}%`,
-                }"
+                class="absolute top-0 left-0 h-2 w-full cursor-pointer opacity-0"
                 @input="onSeekInput"
                 @change="onSeekCommit"
               />
             </ClientOnly>
           </div>
 
+          <!-- 總時長 -->
           <span class="mr-2 text-xs">{{ formatTime(store.duration) }}</span>
 
-          <!-- 右側 icon -->
           <div class="flex items-center">
             <!-- 音量 -->
             <div class="group relative hidden justify-center md:flex">
@@ -210,79 +210,6 @@ const onSeekCommit = (e: Event) => {
   </div>
 </template>
 
-<style lang="postcss" scoped>
-.time-bar {
-  height: 6px;
-  background: linear-gradient(
-    to right,
-    #f9595f 0%,
-    #f9595f var(--progress),
-    #ffe5e5 var(--progress),
-    #ffe5e5 100%
-  );
-  box-shadow: inset 0 1px 3px rgba(249, 89, 95, 0.15);
-  border-radius: 9999px;
-}
-
-.time-bar::-webkit-slider-runnable-track {
-  height: 6px;
-  background: transparent;
-}
-
-.time-bar::-webkit-slider-thumb {
-  appearance: none;
-  width: 18px;
-  height: 18px;
-  background: #fff;
-  border: 3px solid #f9595f;
-  border-radius: 50%;
-  margin-top: -6px;
-  box-shadow: 0 3px 6px rgba(249, 89, 95, 0.4);
-  transition: transform 0.15s ease;
-}
-
-.time-bar::-webkit-slider-thumb:hover {
-  transform: scale(1.2);
-}
-
-.time-bar:hover {
-  height: 8px;
-}
-
-.volume-bar {
-  appearance: none;
-  writing-mode: vertical-rl;
-  direction: rtl;
-
-  width: 6px;
-  height: 90px;
-  border-radius: 9999px;
-  cursor: pointer;
-
-  background: linear-gradient(
-    to top,
-    var(--active) 0%,
-    var(--active) var(--volume),
-    var(--inactive) var(--volume),
-    var(--inactive) 100%
-  );
-}
-
-/* 軌道 */
-.volume-bar::-webkit-slider-runnable-track {
-  width: 6px;
-  background: transparent;
-}
-
-/* 圓形拖曳點 */
-.volume-bar::-webkit-slider-thumb {
-  appearance: none;
-  width: 14px;
-  height: 14px;
-  background: #fff;
-  border: 3px solid var(--active);
-  border-radius: 50%;
-  box-shadow: 0 2px 6px rgba(249, 89, 95, 0.4);
-  margin-right: -4px;
-}
+<style scoped>
+/* 進度條用 scaleX 減少重繪 */
 </style>

@@ -4,12 +4,14 @@ import type { LangCode } from '~/types/lang'
 
 const store = usePlayerStore()
 
-const { userAnswers, testLyrics, lang, selectedQuizType } = defineProps<{
-  userAnswers: { cAnswer: string; uAnswer: string }[]
-  testLyrics: LyricData[]
-  lang: LangCode
-  selectedQuizType: 'partial' | 'allBlank' | 'translation'
-}>()
+const { userAnswers, testLyrics, lang, selectedQuizType, translationGameLang } =
+  defineProps<{
+    userAnswers: { cAnswer: string; uAnswer: string }[]
+    testLyrics: LyricData[]
+    lang: LangCode
+    selectedQuizType: 'partial' | 'allBlank' | 'translation'
+    translationGameLang: LangCode
+  }>()
 
 const emit = defineEmits<{
   (e: 'playSegment', value: { start: number; end: number }): void
@@ -40,7 +42,7 @@ const emit = defineEmits<{
             <p
               class="mt-3 text-sm font-medium tracking-wide text-[#A66B6B] md:text-lg"
             >
-              {{ lyric.zh }}
+              {{ lyric[translationGameLang] }}
             </p>
           </div>
         </div>
