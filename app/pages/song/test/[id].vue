@@ -90,7 +90,8 @@ const canNext = computed(() => {
   return true
 })
 
-watch(step, (newStep) => {
+watch(step, async (newStep) => {
+  await nextTick()
   window.scrollTo({
     top: 0,
     behavior: 'smooth',
@@ -124,7 +125,7 @@ onMounted(() => {
 
     <div
       v-else
-      class="flex flex-1 flex-col overflow-hidden rounded-xl border border-[#B58C8C]/40 bg-white shadow-sm"
+      class="flex flex-1 flex-col overflow-auto rounded-xl border border-[#B58C8C]/40 bg-white shadow-sm"
     >
       <div class="flex h-10 flex-none items-center bg-[#B58C8C]/40 px-4">
         <div class="flex items-center space-x-1.5">
