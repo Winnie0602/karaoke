@@ -7,7 +7,6 @@ const { isModalOpen, title, content, type, confirm, cancel } = useCheckConfirm()
     <NuxtPage />
   </NuxtLayout>
 
-  <!-- 全局組件使用 Teleport，不佔用 layout rerender -->
   <Teleport to="body">
     <Toast />
     <ConfirmModal

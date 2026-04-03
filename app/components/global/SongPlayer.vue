@@ -20,14 +20,6 @@ const onSeekCommit = (e: Event) => {
   seekTo(value)
 }
 
-// 影片是否顯示
-const showVideo = computed(
-  () =>
-    store.storeMode === 'normal' &&
-    route.path.startsWith('/song/') &&
-    !route.path.includes('test'),
-)
-
 // 播放器是否顯示
 const showPlayer = computed(
   () => store.storeMode === 'normal' && !!store.videoId,
@@ -40,6 +32,31 @@ const progress = computed(() => {
   const time = store.isSeeking ? seekingTime.value : store.currentTime
   return store.duration ? time / store.duration : 0
 })
+
+const showVideo = ref(false)
+
+const timeoutId: ReturnType<typeof setTimeout> | null = null
+
+watch(
+  () => route.path,
+  (path) => {
+    if (timeoutId) clearTimeout(timeoutId)
+    
+    if (
+      store.storeMode === 'normal' &&
+      path.startsWith('/song/') &&
+      !path.includes('test')
+    ) {
+      // 延遲 300ms 再顯示影片
+      setTimeout(() => {
+        showVideo.value = true
+      }, 300)
+    } else {
+      showVideo.value = false
+    }
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
@@ -66,11 +83,11 @@ const progress = computed(() => {
     >
       <div class="flex h-full w-full items-center justify-center py-1">
         <div
-          class="flex h-full w-full max-w-[1024px] items-center justify-between rounded-xl bg-gradient-to-b from-white to-[#fff0f0] px-2 shadow-lg md:px-3"
+          class="flex h-full w-full max-w-[1024px] items-center justify-between rounded-xl bg-gradient-to-b from-white to-[#fff0f0] pl-2 shadow-lg md:px-3"
         >
           <!-- 播放鍵 -->
           <button
-            class="flex h-8 w-8 items-center justify-center rounded-full border-2 border-pink-200 bg-white shadow-md transition-transform duration-150 hover:scale-110 active:scale-95 md:h-12 md:w-12"
+            class="flex h-8 w-8 flex-none items-center justify-center rounded-full border-2 border-pink-200 bg-white shadow-md transition-transform duration-150 hover:scale-110 active:scale-95 md:h-12 md:w-12"
             @click="store.isPlaying ? pause() : play()"
           >
             <i
@@ -80,10 +97,12 @@ const progress = computed(() => {
           </button>
 
           <!-- 當前時間 -->
-          <span class="ml-2 text-xs">{{ formatTime(store.currentTime) }}</span>
+          <span class="text-xs md:ml-2">
+            {{ formatTime(store.currentTime) }}
+          </span>
 
           <!-- 進度條 -->
-          <div class="relative mx-3 w-[calc(100%-150px)] md:mx-4">
+          <div class="relative w-[calc(100%-120px)] md:mx-4">
             <span class="absolute bottom-3 line-clamp-1 text-xs text-[#A66B6B]">
               {{ `${store.songArtist} - ${store.songTitle}` }}
             </span>
@@ -209,7 +228,3 @@ const progress = computed(() => {
     </div>
   </div>
 </template>
-
-<style scoped>
-/* 進度條用 scaleX 減少重繪 */
-</style>
