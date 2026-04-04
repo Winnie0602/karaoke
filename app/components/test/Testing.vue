@@ -90,7 +90,7 @@ watch(nowIndex, (index) => {
   <div class="space-y-4 px-5 py-6 md:px-20 md:py-10">
     <div
       v-for="(eachLyric, i) in testLyrics"
-      :key="eachLyric.start"
+      :key="eachLyric.nanoid"
       class="group relative flex items-center"
     >
       <button
@@ -141,7 +141,7 @@ watch(nowIndex, (index) => {
 
       <!-- 聽力翻譯題型 -->
       <TestCardListeningTranslation
-        v-if="translationGameLang"
+        v-if="translationGameLang && selectedQuizType === 'translation'"
         :each-lyric="eachLyric"
         :is-now-card="i === nowIndex"
         :life="life"
