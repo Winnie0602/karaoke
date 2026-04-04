@@ -12,7 +12,7 @@ const emit = defineEmits<{
 
 <template>
   <div
-    class="fixed inset-x-0 bottom-0 z-50 flex justify-center bg-gradient-to-t from-white via-white/90 to-transparent pb-6"
+    class="fixed inset-x-0 bottom-0 z-30 flex justify-center bg-gradient-to-t from-white via-white/90 to-transparent pb-6"
   >
     <div class="flex w-[80%] max-w-md items-center gap-3 px-4 md:w-full">
       <!-- 上一步 -->
