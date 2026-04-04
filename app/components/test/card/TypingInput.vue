@@ -2,13 +2,16 @@
 import type { LyricData } from '~/types/song'
 import type { LangCode } from '~/types/lang'
 
-const { eachLyric, isNowCard, life, selectedQuizType, language } = defineProps<{
-  eachLyric: LyricData
-  isNowCard: boolean
-  life: 0 | 1 | 2 | 3
-  selectedQuizType: 'partial' | 'allBlank' | 'translation'
-  language: LangCode
-}>()
+const { eachLyric, isNowCard, life, selectedQuizType, language, isLocked } =
+  defineProps<{
+    eachLyric: LyricData
+    isNowCard: boolean
+    life: 0 | 1 | 2 | 3
+    selectedQuizType: 'partial' | 'allBlank' | 'translation'
+    language: LangCode
+    isLocked: boolean
+    isAllAnswered: boolean
+  }>()
 
 const emit = defineEmits<{
   (e: 'nextTest'): void
@@ -43,7 +46,7 @@ const isDeleting = ref(false)
 
 // 捕捉目前按下的鍵
 const onKeydown = (e: KeyboardEvent) => {
-  if (isFakeKeyboard.value) {
+  if (isFakeKeyboard.value || isLocked) {
     return
   }
 
@@ -52,7 +55,7 @@ const onKeydown = (e: KeyboardEvent) => {
 
 // 非IME拼打時觸發
 const onInput = (e: Event) => {
-  if (isFakeKeyboard.value) {
+  if (isFakeKeyboard.value || isLocked) {
     return
   }
 
@@ -75,11 +78,15 @@ const onInput = (e: Event) => {
 }
 
 const clickBlock = () => {
-  if (isNowCard) inputRef.value?.focus()
+  if (isNowCard && !isLocked) inputRef.value?.focus()
 }
 
 // 完成答案拼打
 watch(userInput, (val) => {
+  if (isLocked) {
+    return
+  }
+
   if (userInput.value.length !== length) {
     return
   }
@@ -93,7 +100,7 @@ watch(userInput, (val) => {
 watch(
   () => isNowCard,
   async (val) => {
-    if (!val) return
+    if (!val || isLocked) return
 
     await nextTick()
 
@@ -104,16 +111,18 @@ watch(
 
 <template>
   <div
-    class="relative flex items-center justify-center border-[3px] transition-all duration-500 md:border-[5px] md:px-8 md:py-10"
+    class="relative flex items-center justify-center transition-all duration-500 md:px-8 md:py-10"
     :class="[
-      isNowCard
-        ? 'z-20 rounded-xl border-[#F9595F]/30 bg-white px-3 py-6 shadow-lg md:rounded-3xl'
-        : 'scale-95 border-none opacity-50 blur-[0.5px]',
+      isAllAnswered
+        ? 'z-20 rounded-xl bg-white px-3 py-6 md:rounded-3xl'
+        : isNowCard
+          ? 'z-20 rounded-xl border-[3px] border-[#F9595F]/30 bg-white px-3 py-6 shadow-lg md:rounded-3xl md:border-[5px]'
+          : 'scale-95 border-none opacity-50 blur-[0.5px]',
     ]"
     @click="clickBlock"
   >
     <div
-      v-if="isNowCard"
+      v-if="isNowCard && !isAllAnswered"
       class="absolute top-0 left-4 -translate-y-1/2 rounded-full bg-[#F9595F] px-2.5 py-1 shadow-md shadow-[#F9595F]/20 md:left-6 md:px-4 md:py-1.5"
     >
       <span
@@ -134,7 +143,7 @@ watch(
 
     <!-- 生命蘋果 -->
     <div
-      v-if="isNowCard"
+      v-if="isNowCard && !isAllAnswered"
       class="absolute -top-1 right-4 -translate-y-1/2 md:right-6"
     >
       <div class="flex items-center space-x-1">
@@ -154,7 +163,7 @@ watch(
     <div class="relative w-full">
       <!-- 真正打字的地方 -->
       <input
-        v-if="!isFakeKeyboard && isNowCard"
+        v-if="!isFakeKeyboard && isNowCard && !isLocked"
         ref="inputRef"
         :value="userInput"
         class="absolute inset-0 z-30 w-full cursor-default opacity-0"
