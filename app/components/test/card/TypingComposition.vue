@@ -131,6 +131,15 @@ watch(
     @click="clickBlock"
   >
     <div class="relative">
+      <div class="mb-2 flex min-h-[26px] items-start justify-center md:min-h-[30px]">
+        <div
+          v-if="isComposing && composingText"
+          class="max-w-[90vw] rounded-full bg-[#7A3A3A] px-3 py-1 text-xs font-bold tracking-wide text-white shadow-md md:text-sm"
+        >
+          {{ composingText }}
+        </div>
+      </div>
+
       <!-- 真正打字的地方 -->
       <input
         v-if="!isFakeKeyboard && isNowCard && !isLocked"
@@ -207,6 +216,13 @@ watch(
           />
         </div>
       </div>
+
+      <p
+        v-if="isComposing"
+        class="mt-2 text-center text-[11px] font-medium tracking-wide text-[#B58C8C] md:text-xs"
+      >
+        正在組字，按 Enter 確認
+      </p>
     </div>
   </div>
 </template>
