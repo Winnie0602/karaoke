@@ -172,7 +172,7 @@ watch(emblaApi, (api, _prevApi, onCleanup) => {
         :class="[i === nowIndex ? 'w-4 bg-[#F9595F]' : 'bg-gray-300']"
       />
     </div>
-    <div ref="emblaRef" class="embla pt-4 md:pt-6">
+    <div ref="emblaRef" class="embla md:pt-6">
       <div class="embla__container">
         <div
           v-for="(eachLyric, i) in testLyrics"
@@ -224,7 +224,7 @@ watch(emblaApi, (api, _prevApi, onCleanup) => {
       </div>
     </div>
 
-    <div class="mt-8 flex justify-center px-4">
+    <div class="mt-4 flex justify-center px-4 md:mt-8">
       <div
         class="flex w-full max-w-xl items-center justify-between rounded-3xl bg-[#FFF5F5] p-4 md:p-5"
         :class="{ 'opacity-60': isAllAnswered }"
@@ -233,7 +233,7 @@ watch(emblaApi, (api, _prevApi, onCleanup) => {
           <span
             class="text-[10px] font-bold tracking-widest text-gray-400 uppercase md:text-xs"
           >
-            Listening Life
+            {{ $t('listening_life') }}
           </span>
           <div class="mt-1 flex gap-1">
             <i
@@ -267,7 +267,7 @@ watch(emblaApi, (api, _prevApi, onCleanup) => {
           <span
             class="text-[10px] font-bold tracking-widest text-gray-400 uppercase md:text-xs"
           >
-            Progress
+            {{ $t('test_progress') }}
           </span>
           <div class="mt-1 flex items-baseline gap-1">
             <span class="text-lg font-bold text-gray-700 md:text-xl">

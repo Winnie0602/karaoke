@@ -40,7 +40,7 @@ const answerOptions = computed(() => {
 
   const candidates = Array.from(uniqueSet)
 
-  // 選出字數相近歌詞
+  // 先選出字數最接近的候選池，再從池中隨機取三個
   const sorted = [...candidates].sort((a, b) => {
     return (
       Math.abs(a.length - correctText.length) -
@@ -48,8 +48,8 @@ const answerOptions = computed(() => {
     )
   })
 
-  // 隨機挑三個
-  const randomThree = sorted.sort(() => Math.random() - 0.5).slice(0, 3)
+  const nearestPool = sorted.slice(0, Math.min(sorted.length, 8))
+  const randomThree = [...nearestPool].sort(() => Math.random() - 0.5).slice(0, 3)
 
   // 加上正確答案+打亂
   const options = [...randomThree, correctText]

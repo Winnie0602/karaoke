@@ -93,7 +93,21 @@ const onInput = (e: Event) => {
 }
 
 const clickBlock = () => {
-  if (isNowCard && !isLocked) inputRef.value?.focus()
+  if (isNowCard && !isLocked) {
+    inputRef.value?.focus()
+    scrollToTestWindowBarOnMobile()
+  }
+}
+
+const scrollToTestWindowBarOnMobile = () => {
+  if (window.innerWidth >= 768) {
+    return
+  }
+
+  const anchor = document.querySelector('[data-test-window-bar]')
+  if (anchor instanceof HTMLElement) {
+    anchor.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
 }
 
 // 完成答案拼打
@@ -119,7 +133,10 @@ watch(
 
     await nextTick()
 
-    setTimeout(() => inputRef.value?.focus(), 30)
+    setTimeout(() => {
+      inputRef.value?.focus()
+      scrollToTestWindowBarOnMobile()
+    }, 30)
   },
 )
 </script>
@@ -149,6 +166,7 @@ watch(
         type="text"
         spellcheck="false"
         autocapitalize="off"
+        @focus="scrollToTestWindowBarOnMobile"
         @input="onInput"
         @compositionstart="onCompositionStart"
         @compositionend="onCompositionEnd"
