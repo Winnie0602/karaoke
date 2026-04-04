@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { LyricData } from '~/types/song'
 import type { LangCode } from '~/types/lang'
+import { I18N_TO_DB } from '~/types/lang'
+const { locale } = useI18n()
 
 const store = usePlayerStore()
 
@@ -42,7 +44,13 @@ const emit = defineEmits<{
             <p
               class="mt-3 text-sm font-medium tracking-wide text-[#A66B6B] md:text-lg"
             >
-              {{ lyric[translationGameLang] }}
+              {{
+                lyric[
+                  selectedQuizType === 'translation'
+                    ? translationGameLang
+                    : I18N_TO_DB[locale]
+                ]
+              }}
             </p>
           </div>
         </div>

@@ -91,6 +91,15 @@ const setAnswers = (
   }
 }
 
+const handleNextTest = (index: number) => {
+  // 只允許當前題目觸發切題，避免事件競態造成一次跳兩題
+  if (index !== nowIndex.value) {
+    return
+  }
+
+  nowIndex.value = Math.min(index + 1, testLyrics.length - 1)
+}
+
 watch(
   () => testLyrics,
   () => {
@@ -119,13 +128,12 @@ watch(nowIndex, (index) => {
     return
   }
 
-  setTimeout(() => {
-    emblaApi.value?.scrollTo(index)
-    emit('playSegment', {
-      start: testLyrics[index]?.start ?? 0,
-      end: testLyrics[index]?.end ?? 0,
-    })
-  }, 500)
+  // 用 jump 模式直接對齊 snap，避免落在兩題中間
+  emblaApi.value?.scrollTo(index, true)
+  emit('playSegment', {
+    start: testLyrics[index]?.start ?? 0,
+    end: testLyrics[index]?.end ?? 0,
+  })
 })
 
 watch(emblaApi, (api, _prevApi, onCleanup) => {
@@ -134,7 +142,15 @@ watch(emblaApi, (api, _prevApi, onCleanup) => {
   }
 
   const onSelect = () => {
-    nowIndex.value = api.selectedScrollSnap()
+    // 考試進行中由 next-test 控制題號，避免事件互相踩到而跳題
+    if (!isAllAnswered.value) {
+      return
+    }
+
+    const selected = api.selectedScrollSnap()
+    if (selected !== nowIndex.value) {
+      nowIndex.value = selected
+    }
   }
 
   api.on('select', onSelect)
@@ -157,7 +173,7 @@ watch(emblaApi, (api, _prevApi, onCleanup) => {
       />
     </div>
     <div ref="emblaRef" class="embla pt-4 md:pt-6">
-      <div class="embla__container space-x-1">
+      <div class="embla__container">
         <div
           v-for="(eachLyric, i) in testLyrics"
           :key="eachLyric.nanoid"
@@ -174,7 +190,7 @@ watch(emblaApi, (api, _prevApi, onCleanup) => {
               :selected-quiz-type="selectedQuizType"
               :is-locked="Boolean(lockedQuestionMap[i])"
               :is-all-answered="isAllAnswered"
-              @next-test="nowIndex = Math.min(i + 1, testLyrics.length - 1)"
+              @next-test="handleNextTest(i)"
               @set-answer="(ans) => setAnswers(ans, i)"
             />
 
@@ -187,7 +203,7 @@ watch(emblaApi, (api, _prevApi, onCleanup) => {
               :selected-quiz-type="selectedQuizType"
               :is-locked="Boolean(lockedQuestionMap[i])"
               :is-all-answered="isAllAnswered"
-              @next-test="nowIndex = Math.min(i + 1, testLyrics.length - 1)"
+              @next-test="handleNextTest(i)"
               @set-answer="(ans) => setAnswers(ans, i)"
             />
           </template>
@@ -201,7 +217,7 @@ watch(emblaApi, (api, _prevApi, onCleanup) => {
             :all-lyrics="currentSong.lyrics"
             :is-locked="Boolean(lockedQuestionMap[i])"
             :is-all-answered="isAllAnswered"
-            @next-test="nowIndex = Math.min(i + 1, testLyrics.length - 1)"
+            @next-test="handleNextTest(i)"
             @set-answer="(ans) => setAnswers(ans, i)"
           />
         </div>

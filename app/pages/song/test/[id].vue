@@ -187,7 +187,7 @@ onMounted(() => {
         :lang="currentSong.language"
         :selected-quiz-type="selectedQuizType"
         :translation-game-lang="
-          translationGameLang || currentSong.translation_langs.at(0)
+          translationGameLang || currentSong.translation_langs.at(0) || 'en'
         "
         @play-segment="
           (e: { start: number; end: number }) =>

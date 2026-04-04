@@ -18,12 +18,17 @@ const emit = defineEmits<{
 }>()
 
 const {
-  length,
   displayChars,
   resultStates,
   handleInput,
+  isAutoFillIndex,
+  isHintIndex,
   isOriBlank,
   userInput,
+  editableLength,
+  currentInputIndex,
+  mergedInput,
+  isTypedIndex,
   answer,
 } = useTypingMode({
   lyricData: eachLyric,
@@ -41,17 +46,6 @@ defineExpose({
 // 使用虛擬鍵盤？
 const isFakeKeyboard = ref(false)
 
-const isDeleting = ref(false)
-
-// 捕捉目前按下的鍵
-const onKeydown = (e: KeyboardEvent) => {
-  if (isFakeKeyboard.value || isLocked) {
-    return
-  }
-
-  isDeleting.value = e.key === 'Backspace' || e.key === 'Delete'
-}
-
 // 非IME拼打時觸發
 const onInput = (e: Event) => {
   if (isFakeKeyboard.value || isLocked) {
@@ -60,20 +54,7 @@ const onInput = (e: Event) => {
 
   const target = e.target as HTMLInputElement
 
-  // 下一個字是空白的話幫使用者打空白
-  if (!isDeleting.value && isOriBlank(target.value.length)) {
-    target.value = target.value.concat(' ')
-  }
-
-  // 正在按刪除鍵且下一個字為空白，刪除空白
-  if (isDeleting.value && target.value[target.value.length - 1] === ' ') {
-    target.value = target.value.slice(0, -1)
-  }
-
   handleInput(target)
-
-  // reset
-  isDeleting.value = false
 }
 
 const clickBlock = () => {
@@ -81,17 +62,17 @@ const clickBlock = () => {
 }
 
 // 完成答案拼打
-watch(userInput, (val) => {
+watch(userInput, () => {
   if (isLocked) {
     return
   }
 
-  if (userInput.value.length !== length) {
+  if (userInput.value.length !== editableLength.value) {
     return
   }
 
   // 答案傳到父層
-  emit('setAnswer', { cAnswer: answer, uAnswer: val })
+  emit('setAnswer', { cAnswer: answer, uAnswer: mergedInput.value })
 
   emit('nextTest')
 })
@@ -125,7 +106,6 @@ watch(
         spellcheck="false"
         autocapitalize="off"
         @input="onInput"
-        @keydown="onKeydown"
       />
 
       <!-- 顯示格子／字的地方 -->
@@ -138,6 +118,12 @@ watch(
           class="flex flex-col items-center"
         >
           <div v-if="isOriBlank(i)" class="w-4 md:w-8"></div>
+          <div
+            v-else-if="isAutoFillIndex(i)"
+            class="relative flex h-10 w-3 items-center justify-center border-b-[3px] border-transparent text-2xl font-black text-[#D1B8B8] transition-all duration-200 md:h-16 md:w-6 md:text-4xl"
+          >
+            {{ char || '' }}
+          </div>
 
           <div
             v-else
@@ -146,21 +132,23 @@ watch(
               // 錯誤時的文字顏色
               resultStates?.[i] === 'wrong'
                 ? 'border-red-500 text-red-500'
-                : 'text-[#7A3A3A]',
+                : isHintIndex(i) && !isTypedIndex(i)
+                  ? 'text-[#D1B8B8]'
+                  : 'text-[#7A3A3A]',
 
               // 正在打字的格子：底線顏色加深 + 閃爍動畫
-              i === userInput.length && isNowCard
+              i === currentInputIndex && isNowCard
                 ? 'animate-blink border-[#F9595F]'
                 : 'border-[#FFE5E5]',
 
               // 已經打過的格子，底線變深色
-              i < userInput.length ? 'border-[#7A3A3A]' : 'text-[#D1B8B8]',
+              i < currentInputIndex ? 'border-[#7A3A3A]' : 'text-[#D1B8B8]',
             ]"
           >
             {{ char || '' }}
 
             <div
-              v-if="i === userInput.length && isNowCard"
+              v-if="i === currentInputIndex && isNowCard"
               class="absolute inset-0 -z-10 bg-[#F9595F]/20"
             ></div>
           </div>

@@ -18,13 +18,17 @@ const emit = defineEmits<{
 }>()
 
 const {
-  length,
   displayChars,
   resultStates,
   handleInput,
-  isLockedIndex,
+  isAutoFillIndex,
+  isHintIndex,
   isOriBlank,
   userInput,
+  editableLength,
+  currentInputIndex,
+  mergedInput,
+  isTypedIndex,
   answer,
 } = useTypingMode({
   lyricData: eachLyric,
@@ -64,17 +68,6 @@ const onCompositionStart = () => {
   composingText.value = ''
 }
 
-const isDeleting = ref(false)
-
-// 捕捉目前按下的鍵
-const onKeydown = (e: KeyboardEvent) => {
-  if (isFakeKeyboard.value || isLocked) {
-    return
-  }
-
-  isDeleting.value = e.key === 'Backspace' || e.key === 'Delete'
-}
-
 // IME 處理(結束)
 const onCompositionEnd = (e: CompositionEvent) => {
   if (isFakeKeyboard.value || isLocked) {
@@ -96,16 +89,6 @@ const onInput = (e: Event) => {
   if (isComposing.value) return
   const target = e.target as HTMLInputElement
 
-  // 下一個字是空白的話幫使用者打空白
-  if (!isDeleting.value && isOriBlank(target.value.length)) {
-    target.value = target.value.concat(' ')
-  }
-
-  // 正在按刪除鍵且下一個字為空白，刪除空白
-  if (isDeleting.value && target.value[target.value.length - 1] === ' ') {
-    target.value = target.value.slice(0, -2)
-  }
-
   handleInput(target)
 }
 
@@ -114,17 +97,17 @@ const clickBlock = () => {
 }
 
 // 完成答案拼打
-watch(userInput, (val) => {
+watch(userInput, () => {
   if (isLocked) {
     return
   }
 
-  if (userInput.value.length !== length) {
+  if (userInput.value.length !== editableLength.value) {
     return
   }
 
   // 答案傳到父層
-  emit('setAnswer', { cAnswer: answer, uAnswer: val })
+  emit('setAnswer', { cAnswer: answer, uAnswer: mergedInput.value })
 
   emit('nextTest')
 })
@@ -161,7 +144,6 @@ watch(
         @compositionstart="onCompositionStart"
         @compositionend="onCompositionEnd"
         @compositionupdate="onCompositionUpdate"
-        @keydown="onKeydown"
       />
 
       <!-- 顯示格子／字的地方 -->
@@ -177,28 +159,27 @@ watch(
             class="flex h-9 w-7 items-center justify-center rounded-md text-xl font-black transition-all duration-200 md:h-16 md:w-12 md:text-4xl"
             :class="{
               'text-red-500': resultStates?.[i] === 'wrong',
-              'ring ring-[#F9595F]/80': i === userInput.length && isNowCard,
+              'ring ring-[#F9595F]/80': i === currentInputIndex && isNowCard,
             }"
           >
             <div v-if="isOriBlank(i)" class="w-4 md:w-8"></div>
+            <span v-else-if="isAutoFillIndex(i)" class="text-[#D1B8B8]">
+              {{ char }}
+            </span>
 
             <span
-              v-else-if="i >= userInput.length"
+              v-else-if="!char"
               :class="
-                i === userInput.length && isComposing
+                i === currentInputIndex && isComposing
                   ? 'text-[#F9595F]/80'
                   : 'text-[#D1B8B8]/40'
               "
             >
-              {{ i === userInput.length && isComposing ? composingText : char }}
+              {{ i === currentInputIndex && isComposing ? composingText : '' }}
             </span>
+
             <span
-              v-else-if="
-                isLockedIndex(i) &&
-                userInput.length < i + 1 &&
-                !isNowCard &&
-                resultStates?.length === length
-              "
+              v-else-if="isHintIndex(i) && !isTypedIndex(i)"
               class="text-[#D1B8B8]"
             >
               {{ char }}
@@ -215,7 +196,7 @@ watch(
             v-else
             class="mt-1 h-1 w-full rounded-full transition-all duration-500 md:h-2.5"
             :class="[
-              i === userInput.length && isNowCard
+              i === currentInputIndex && isNowCard
                 ? 'bg-[#F9595F]/80'
                 : resultStates
                   ? resultStates[i] === 'correct'

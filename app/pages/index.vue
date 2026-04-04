@@ -2,13 +2,12 @@
 import type { LangCode } from '~/types/lang'
 
 const songsPage = ref(1)
-
 const songListLang = ref<LangCode | 'all'>('en')
 
 const videosPage = ref(1)
-
 const videosLang = ref<LangCode | 'all'>('en')
 
+// 1. 歌曲列表
 const { data: songListData, pending: songListPending } = await useFetch(
   '/api/list/songs',
   {
@@ -21,17 +20,20 @@ const { data: songListData, pending: songListPending } = await useFetch(
   },
 )
 
-// 輪播資料用
-const { data: allSongData, pending: allSongPending } = await useFetch(
+// 2. 輪播資料
+const { data: allSongData, pending: allSongPending } = useFetch(
   '/api/list/songs',
   {
+    lazy: true,
     query: {
       language: 'all',
       sort: 'desc',
+      limit: 10,
     },
   },
 )
 
+// 3. 影片列表
 const { data: videosData, pending: videosPending } = await useFetch(
   '/api/list/videos',
   {
@@ -49,59 +51,46 @@ const handler = (
   payload: { page?: number; lang?: LangCode },
 ) => {
   const componentMap = {
-    songList: {
-      page: songsPage,
-      lang: songListLang,
-    },
-    videoList: {
-      page: videosPage,
-      lang: videosLang,
-    },
+    songList: { page: songsPage, lang: songListLang },
+    videoList: { page: videosPage, lang: videosLang },
   }
 
   const target = componentMap[component]
-
-  if (payload.page !== undefined) {
-    target.page.value = payload.page
-  }
-
-  if (payload.lang !== undefined) {
-    target.lang.value = payload.lang
-  }
+  if (payload.page !== undefined) target.page.value = payload.page
+  if (payload.lang !== undefined) target.lang.value = payload.lang
 }
 </script>
 
 <template>
   <div class="w-full">
     <IndexTopCarousel
-      v-if="allSongData?.songs && !allSongPending"
-      :songs="allSongData.songs"
+      :songs="allSongData?.songs || []"
+      :pending="allSongPending"
     />
 
     <div class="mx-auto my-4 w-full px-4 md:my-8 md:max-w-[1280px] md:px-8">
-      <!-- Song List -->
-      <IndexSongsList
-        v-if="songListData?.songs"
-        :songs="songListData.songs"
-        :page="songListData.page"
-        :total-pages="songListData.totalPages"
-        :total="songListData.total"
-        :pending="songListPending"
-        @refresh="(payload) => handler('songList', payload)"
-      />
+      <section class="mb-12">
+        <IndexSongsList
+          :songs="songListData?.songs || []"
+          :page="songListData?.page || 1"
+          :total-pages="songListData?.totalPages || 1"
+          :total="songListData?.total || 0"
+          :pending="songListPending"
+          @refresh="(payload) => handler('songList', payload)"
+        />
+      </section>
 
-      <!-- Videos -->
-      <IndexVideosList
-        v-if="videosData?.videos"
-        :videos="videosData?.videos"
-        :page="videosData.page"
-        :total-pages="videosData.totalPages"
-        :total="videosData.total"
-        :pending="videosPending"
-        @refresh="(payload) => handler('videoList', payload)"
-      />
+      <section class="mb-12">
+        <IndexVideosList
+          :videos="videosData?.videos || []"
+          :page="videosData?.page || 1"
+          :total-pages="videosData?.totalPages || 1"
+          :total="videosData?.total || 0"
+          :pending="videosPending"
+          @refresh="(payload) => handler('videoList', payload)"
+        />
+      </section>
 
-      <!-- Reading -->
       <IndexReadingList />
     </div>
   </div>

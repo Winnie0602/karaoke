@@ -35,13 +35,9 @@ const progress = computed(() => {
 
 const showVideo = ref(false)
 
-const timeoutId: ReturnType<typeof setTimeout> | null = null
-
 watch(
   () => route.path,
   (path) => {
-    if (timeoutId) clearTimeout(timeoutId)
-    
     if (
       store.storeMode === 'normal' &&
       path.startsWith('/song/') &&
@@ -78,7 +74,7 @@ watch(
 
     <!-- 底部播放器 -->
     <div
-      class="fixed right-0 bottom-0 left-0 h-[68px] w-full bg-[#ffe5e5] px-2 transition-opacity md:h-[75px]"
+      class="fixed right-0 bottom-0 left-0 z-50 h-[68px] w-full bg-[#ffe5e5] px-2 transition-opacity md:h-[75px]"
       :class="{ 'pointer-events-none opacity-0': !showPlayer }"
     >
       <div class="flex h-full w-full items-center justify-center py-1">
