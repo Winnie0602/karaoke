@@ -2,11 +2,10 @@
 import type { LyricData } from '~/types/song'
 import type { LangCode } from '~/types/lang'
 
-const { eachLyric, isNowCard, life, translationGameLang, allLyrics, isLocked } =
+const { eachLyric, isNowCard, translationGameLang, allLyrics, isLocked } =
   defineProps<{
     eachLyric: LyricData // 正確答案
     isNowCard: boolean
-    life: 0 | 1 | 2 | 3
     translationGameLang: LangCode // 顯示翻譯答案的語言
     allLyrics: LyricData[] // 其他句歌詞陣列
     isLocked: boolean
@@ -95,34 +94,15 @@ const clickAnswer = (userAns: string, index: number) => {
 
 <template>
   <div
-    class="relative flex w-full items-center justify-center transition-all duration-500 md:px-8 md:py-10"
+    class="flex w-full items-center justify-center transition-all duration-500 md:px-8 md:py-10"
     :class="[
       isAllAnswered
         ? 'z-20 rounded-xl bg-white px-3 py-6 md:rounded-3xl'
         : isNowCard
-          ? 'z-20 rounded-xl border-[3px] border-[#F9595F]/30 bg-white px-3 py-6 shadow-lg md:rounded-3xl md:border-[5px]'
-          : 'scale-95 border-none opacity-90 blur-[0.5px]',
+          ? 'z-20 rounded-xl bg-white px-3 py-6 md:rounded-3xl'
+          : 'scale-95 opacity-90 blur-[0.5px]',
     ]"
   >
-    <!-- 生命蘋果 -->
-    <div
-      v-if="isNowCard && !isAllAnswered"
-      class="absolute -top-1 right-4 -translate-y-1/2 md:right-6"
-    >
-      <div class="flex items-center space-x-1">
-        <i
-          v-for="i in 3"
-          :key="i"
-          class="fa-solid fa-apple-whole text-lg transition-all duration-300 md:text-2xl"
-          :class="
-            i <= life
-              ? 'scale-100 text-[#F9595F] opacity-100'
-              : 'scale-0 text-[#F9595F]/0 opacity-0'
-          "
-        />
-      </div>
-    </div>
-
     <div class="flex w-full flex-col space-y-3">
       <button
         v-for="(a, index) in answerOptions.options"

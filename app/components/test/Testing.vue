@@ -119,14 +119,13 @@ watch(nowIndex, (index) => {
     return
   }
 
-  emit('playSegment', {
-    start: testLyrics[index]?.start ?? 0,
-    end: testLyrics[index]?.end ?? 0,
-  })
-
   setTimeout(() => {
     emblaApi.value?.scrollTo(index)
-  }, 400)
+    emit('playSegment', {
+      start: testLyrics[index]?.start ?? 0,
+      end: testLyrics[index]?.end ?? 0,
+    })
+  }, 500)
 })
 
 watch(emblaApi, (api, _prevApi, onCleanup) => {
@@ -147,79 +146,122 @@ watch(emblaApi, (api, _prevApi, onCleanup) => {
 </script>
 
 <template>
-  <div ref="emblaRef" class="embla px-5 py-6 md:px-20 md:py-10">
-    <div class="embla__container space-x-1">
+  <div class="py-6 md:px-20 md:py-10">
+    <!-- 上方點點 -->
+    <div v-if="testLyrics.length > 0" class="flex justify-center gap-2">
       <div
-        v-for="(eachLyric, i) in testLyrics"
-        :key="eachLyric.nanoid"
-        class="group embla__slide relative flex items-center"
-      >
-        <button
-          class="absolute left-0 z-30 -translate-x-1/2 items-center justify-center rounded-full transition-all"
-          :class="[
-            i === nowIndex ? 'flex' : 'hidden',
-            'h-7 w-7 md:h-10 md:w-10',
-            isPlaying
-              ? 'cursor-not-allowed border-2 border-white bg-[#E5E5E5]'
-              : 'border-2 border-transparent bg-[#FFE5E5]',
-            life < 1 &&
-              !isPlaying &&
-              !isAllAnswered &&
-              'pointer-events-none invisible',
-          ]"
-          :disabled="isPlaying || (!isAllAnswered && life < 1)"
-          @click="handlePlay(eachLyric, i)"
+        v-for="(_, i) in testLyrics"
+        :key="i"
+        class="h-2 w-2 rounded-full transition-all duration-300"
+        :class="[i === nowIndex ? 'w-4 bg-[#F9595F]' : 'bg-gray-300']"
+      />
+    </div>
+    <div ref="emblaRef" class="embla pt-4 md:pt-6">
+      <div class="embla__container space-x-1">
+        <div
+          v-for="(eachLyric, i) in testLyrics"
+          :key="eachLyric.nanoid"
+          class="group embla__slide relative flex items-center"
         >
-          <i
-            class="fa-solid fa-play md:text-lg"
-            :class="isPlaying ? 'text-gray-400' : 'text-[#F9595F]'"
-          />
-        </button>
+          <!-- 填空題型 -->
+          <template v-if="['partial', 'allBlank'].includes(selectedQuizType)">
+            <TestCardTypingComposition
+              v-if="['ja', 'zh', 'kr'].includes(currentSong.language)"
+              ref="cardRefs"
+              :each-lyric="eachLyric"
+              :is-now-card="i === nowIndex"
+              :language="currentSong.language"
+              :selected-quiz-type="selectedQuizType"
+              :is-locked="Boolean(lockedQuestionMap[i])"
+              :is-all-answered="isAllAnswered"
+              @next-test="nowIndex = Math.min(i + 1, testLyrics.length - 1)"
+              @set-answer="(ans) => setAnswers(ans, i)"
+            />
 
-        <!-- 填空題型 -->
-        <template v-if="['partial', 'allBlank'].includes(selectedQuizType)">
-          <TestCardTypingComposition
-            v-if="['ja', 'zh', 'kr'].includes(currentSong.language)"
-            ref="cardRefs"
+            <TestCardTypingInput
+              v-if="['en'].includes(currentSong.language)"
+              ref="cardRefs"
+              :each-lyric="eachLyric"
+              :is-now-card="i === nowIndex"
+              :language="currentSong.language"
+              :selected-quiz-type="selectedQuizType"
+              :is-locked="Boolean(lockedQuestionMap[i])"
+              :is-all-answered="isAllAnswered"
+              @next-test="nowIndex = Math.min(i + 1, testLyrics.length - 1)"
+              @set-answer="(ans) => setAnswers(ans, i)"
+            />
+          </template>
+
+          <!-- 聽力翻譯題型 -->
+          <TestCardListeningTranslation
+            v-if="translationGameLang && selectedQuizType === 'translation'"
             :each-lyric="eachLyric"
             :is-now-card="i === nowIndex"
-            :life="life"
-            :language="currentSong.language"
-            :selected-quiz-type="selectedQuizType"
+            :translation-game-lang="translationGameLang"
+            :all-lyrics="currentSong.lyrics"
             :is-locked="Boolean(lockedQuestionMap[i])"
             :is-all-answered="isAllAnswered"
             @next-test="nowIndex = Math.min(i + 1, testLyrics.length - 1)"
             @set-answer="(ans) => setAnswers(ans, i)"
           />
+        </div>
+      </div>
+    </div>
 
-          <TestCardTypingInput
-            v-if="['en'].includes(currentSong.language)"
-            ref="cardRefs"
-            :each-lyric="eachLyric"
-            :is-now-card="i === nowIndex"
-            :life="life"
-            :language="currentSong.language"
-            :selected-quiz-type="selectedQuizType"
-            :is-locked="Boolean(lockedQuestionMap[i])"
-            :is-all-answered="isAllAnswered"
-            @next-test="nowIndex = Math.min(i + 1, testLyrics.length - 1)"
-            @set-answer="(ans) => setAnswers(ans, i)"
-          />
-        </template>
+    <div class="mt-8 flex justify-center px-4">
+      <div
+        class="flex w-full max-w-xl items-center justify-between rounded-3xl bg-[#FFF5F5] p-4 md:p-5"
+        :class="{ 'opacity-60': isAllAnswered }"
+      >
+        <div class="flex flex-1 flex-col items-start">
+          <span
+            class="text-[10px] font-bold tracking-widest text-gray-400 uppercase md:text-xs"
+          >
+            Listening Life
+          </span>
+          <div class="mt-1 flex gap-1">
+            <i
+              v-for="n in 3"
+              :key="n"
+              class="fa-solid fa-apple-whole text-sm transition-colors duration-300"
+              :class="n <= life ? 'text-[#F9595F]' : 'text-gray-200'"
+            />
+          </div>
+        </div>
 
-        <!-- 聽力翻譯題型 -->
-        <TestCardListeningTranslation
-          v-if="translationGameLang && selectedQuizType === 'translation'"
-          :each-lyric="eachLyric"
-          :is-now-card="i === nowIndex"
-          :life="life"
-          :translation-game-lang="translationGameLang"
-          :all-lyrics="currentSong.lyrics"
-          :is-locked="Boolean(lockedQuestionMap[i])"
-          :is-all-answered="isAllAnswered"
-          @next-test="nowIndex = Math.min(i + 1, testLyrics.length - 1)"
-          @set-answer="(ans) => setAnswers(ans, i)"
-        />
+        <div class="relative px-4">
+          <button
+            class="group flex h-14 w-14 items-center justify-center rounded-full transition-all active:scale-90 md:h-16 md:w-16"
+            :class="[
+              isPlaying || (!isAllAnswered && life < 1)
+                ? 'cursor-not-allowed bg-gray-100'
+                : 'bg-[#FFE5E5] shadow-md shadow-red-100 hover:bg-[#ffd9d9]',
+            ]"
+            :disabled="isPlaying || (!isAllAnswered && life < 1)"
+            @click="handlePlay(testLyrics[nowIndex], nowIndex)"
+          >
+            <i
+              class="fa-solid fa-play text-xl transition-transform group-hover:scale-110 md:text-2xl"
+              :class="isPlaying ? 'text-gray-300' : 'text-[#F9595F]'"
+            />
+          </button>
+        </div>
+
+        <div class="flex flex-1 flex-col items-end">
+          <span
+            class="text-[10px] font-bold tracking-widest text-gray-400 uppercase md:text-xs"
+          >
+            Progress
+          </span>
+          <div class="mt-1 flex items-baseline gap-1">
+            <span class="text-lg font-bold text-gray-700 md:text-xl">
+              {{ nowIndex + 1 }}
+            </span>
+            <span class="text-xs font-medium text-gray-400">
+              / {{ testLyrics.length }}
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   </div>

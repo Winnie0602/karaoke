@@ -186,7 +186,9 @@ onMounted(() => {
         :test-lyrics="selectedLyrics"
         :lang="currentSong.language"
         :selected-quiz-type="selectedQuizType"
-        :translation-game-lang="translationGameLang || currentSong.translation_langs.at(0)"
+        :translation-game-lang="
+          translationGameLang || currentSong.translation_langs.at(0)
+        "
         @play-segment="
           (e: { start: number; end: number }) =>
             store.playSegmentRequest(e.start, e.end)

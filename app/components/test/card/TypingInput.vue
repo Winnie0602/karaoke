@@ -2,11 +2,10 @@
 import type { LyricData } from '~/types/song'
 import type { LangCode } from '~/types/lang'
 
-const { eachLyric, isNowCard, life, selectedQuizType, language, isLocked } =
+const { eachLyric, isNowCard, selectedQuizType, language, isLocked } =
   defineProps<{
     eachLyric: LyricData
     isNowCard: boolean
-    life: 0 | 1 | 2 | 3
     selectedQuizType: 'partial' | 'allBlank' | 'translation'
     language: LangCode
     isLocked: boolean
@@ -111,55 +110,10 @@ watch(
 
 <template>
   <div
-    class="relative flex items-center justify-center transition-all duration-500 md:px-8 md:py-10"
-    :class="[
-      isAllAnswered
-        ? 'z-20 rounded-xl bg-white px-3 py-6 md:rounded-3xl'
-        : isNowCard
-          ? 'z-20 rounded-xl border-[3px] border-[#F9595F]/30 bg-white px-3 py-6 shadow-lg md:rounded-3xl md:border-[5px]'
-          : 'scale-95 border-none opacity-50 blur-[0.5px]',
-    ]"
+    class="z-20 flex w-full items-center justify-center rounded-xl bg-white px-3 py-6 transition-all duration-500 md:px-8 md:py-10"
+    :class="[isAllAnswered ? 'md:rounded-3xl' : 'md:rounded-3xl']"
     @click="clickBlock"
   >
-    <div
-      v-if="isNowCard && !isAllAnswered"
-      class="absolute top-0 left-4 -translate-y-1/2 rounded-full bg-[#F9595F] px-2.5 py-1 shadow-md shadow-[#F9595F]/20 md:left-6 md:px-4 md:py-1.5"
-    >
-      <span
-        class="flex items-center gap-1.5 text-[9px] font-black tracking-widest text-white uppercase md:gap-2 md:text-[11px]"
-      >
-        <span class="relative flex h-1.5 w-1.5 md:h-2 md:w-2">
-          <span
-            class="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75"
-          ></span>
-          <span
-            class="relative inline-flex h-1.5 w-1.5 rounded-full bg-white md:h-2 md:w-2"
-          ></span>
-        </span>
-        <span class="leading-none">Now</span>
-        <span class="hidden md:inline">Typing</span>
-      </span>
-    </div>
-
-    <!-- 生命蘋果 -->
-    <div
-      v-if="isNowCard && !isAllAnswered"
-      class="absolute -top-1 right-4 -translate-y-1/2 md:right-6"
-    >
-      <div class="flex items-center space-x-1">
-        <i
-          v-for="i in 3"
-          :key="i"
-          class="fa-solid fa-apple-whole text-lg transition-all duration-300 md:text-2xl"
-          :class="
-            i <= life
-              ? 'scale-100 text-[#F9595F] opacity-100'
-              : 'scale-0 text-[#F9595F]/0 opacity-0'
-          "
-        />
-      </div>
-    </div>
-
     <div class="relative w-full">
       <!-- 真正打字的地方 -->
       <input
@@ -213,15 +167,6 @@ watch(
         </div>
       </div>
     </div>
-
-    <button
-      class="ml-4 hidden cursor-pointer items-center justify-center transition-all duration-500 md:flex"
-      :class="[isNowCard ? 'scale-110 opacity-100' : 'scale-50 opacity-0']"
-    >
-      <div class="keyboard-icon-wrapper">
-        <i class="fa-regular fa-keyboard text-xl text-[#F9595F]"></i>
-      </div>
-    </button>
   </div>
 </template>
 
