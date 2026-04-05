@@ -131,19 +131,6 @@ export function useYoutubePlayer() {
     },
   )
 
-  // state的音量變數改變時，call youtube API改變音量
-  watch(
-    () => store.volume,
-    (vol) => {
-      if (!player.value) return
-
-      const current = player.value.getVolume()
-      if (current !== vol) {
-        player.value.setVolume(vol)
-      }
-    },
-  )
-
   // 歌詞被點 -> 影片跳到該行
   watch(
     () => store.seekToTime,
@@ -184,11 +171,6 @@ export function useYoutubePlayer() {
 
           if (store.finalPlaybackRate !== 1) {
             player.value?.setPlaybackRate(store.finalPlaybackRate)
-          }
-
-          // 音量設定
-          if (store.volume !== 100) {
-            player.value?.setVolume(store.volume)
           }
 
           if (store.isPlaying) {

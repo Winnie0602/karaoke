@@ -9,6 +9,8 @@ const store = usePlayerStore()
 
 const videoId = computed(() => route.params.id as string)
 
+store.loadVideo(videoId.value)
+
 // 該歌api資料
 const { data: currentSong, pending } = await useFetch<SongData | null>(
   `/api/song/${videoId.value}`,
@@ -92,8 +94,6 @@ watch(
   () => route.params.id,
   (id) => {
     if (typeof id !== 'string') return
-
-    store.loadVideo(id)
 
     if (currentSong.value) {
       store.setSongInfo(currentSong.value?.title, currentSong.value?.artist)

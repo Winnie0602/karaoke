@@ -68,7 +68,17 @@ const nextLabel = computed(() => {
   return $t('next')
 })
 
+const prevLabel = computed(() => {
+  if (step.value === 4) return $t('restartTest')
+  return $t('prev')
+})
+
 const prevStep = async () => {
+  if (step.value === 4) {
+    step.value = 1
+    return
+  }
+
   if (step.value > 1) {
     if (step.value === 3) {
       const check = await open(
@@ -100,6 +110,8 @@ watch(step, async (newStep) => {
 
   if (newStep === 1) {
     selectedQuizType.value = 'translation'
+    selectedLyricsId.value = []
+    userAnswers.value = []
   } else if (newStep === 4) {
     store.setPlaybackRate(1)
   } else {
@@ -198,8 +210,9 @@ onMounted(() => {
 
     <!-- 上／下一步 -->
     <TestControlProgressButton
-      :can-prev="step > 1 && step < 4"
+      :can-prev="step > 1"
       :can-next="canNext"
+      :prev-label="prevLabel"
       :next-label="nextLabel"
       @prev="prevStep"
       @next="nextStep"

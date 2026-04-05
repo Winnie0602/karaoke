@@ -28,6 +28,7 @@
     "review": "Review"
   },
   "prev": "Previous",
+  "restartTest": "Restart Test",
   "next": "Next",
   "goHome": "Back to Home",
   "testStart": "Start Test",

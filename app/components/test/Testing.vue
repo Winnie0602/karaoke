@@ -33,9 +33,9 @@ const [emblaRef, emblaApi] = emblaCarouselVue({
 // 現在在寫第幾個題目
 const nowIndex = ref(0)
 
-const userAnswers = ref<Array<{ cAnswer: string; uAnswer: string } | undefined>>(
-  [],
-)
+const userAnswers = ref<
+  Array<{ cAnswer: string; uAnswer: string } | undefined>
+>([])
 
 const isAllAnswered = computed(
   () =>
@@ -84,7 +84,10 @@ const setAnswers = (
 
   // 全部題目都填滿了後再往頁面送
   if (isAllAnswered.value) {
-    emit('setAnswers', userAnswers.value as { cAnswer: string; uAnswer: string }[])
+    emit(
+      'setAnswers',
+      userAnswers.value as { cAnswer: string; uAnswer: string }[],
+    )
     // 允許滑動看答案
     canSwiperDrag.value = true
   }
@@ -126,8 +129,7 @@ watch(nowIndex, (index) => {
     return
   }
 
-  // 用 jump 模式直接對齊 snap，避免落在兩題中間
-  emblaApi.value?.scrollTo(index, true)
+  emblaApi.value?.scrollTo(index)
   emit('playSegment', {
     start: testLyrics[index]?.start ?? 0,
     end: testLyrics[index]?.end ?? 0,
@@ -223,9 +225,11 @@ watch(emblaApi, (api, _prevApi, onCleanup) => {
     <div class="flex justify-center px-4 md:mt-8">
       <div
         class="flex w-full max-w-xl items-center justify-between rounded-3xl bg-[#FFF5F5] p-3 md:p-5"
-        :class="{ 'opacity-60': isAllAnswered }"
       >
-        <div class="flex flex-1 flex-col items-start">
+        <div
+          class="flex flex-1 flex-col items-start"
+          :class="{ 'opacity-60': isAllAnswered }"
+        >
           <span
             class="text-[10px] font-bold tracking-widest text-gray-400 uppercase md:text-xs"
           >

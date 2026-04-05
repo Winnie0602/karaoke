@@ -48,7 +48,9 @@ const answerOptions = computed(() => {
   })
 
   const nearestPool = sorted.slice(0, Math.min(sorted.length, 8))
-  const randomThree = [...nearestPool].sort(() => Math.random() - 0.5).slice(0, 3)
+  const randomThree = [...nearestPool]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 3)
 
   // 加上正確答案+打亂
   const options = [...randomThree, correctText]
@@ -87,20 +89,15 @@ const clickAnswer = (userAns: string, index: number) => {
     uAnswer: userAns,
   })
 
-  emit('nextTest')
+  setTimeout(() => {
+    emit('nextTest')
+  }, 500)
 }
 </script>
 
 <template>
   <div
-    class="flex w-full items-center justify-center transition-all duration-500 md:px-8 md:py-10"
-    :class="[
-      isAllAnswered
-        ? 'z-20 rounded-xl bg-white px-3 py-6 md:rounded-3xl'
-        : isNowCard
-          ? 'z-20 rounded-xl bg-white px-3 py-6 md:rounded-3xl'
-          : 'scale-95 opacity-90 blur-[0.5px]',
-    ]"
+    class="z-20 flex w-full items-center justify-center rounded-xl bg-white px-3 py-6 transition-all duration-500 md:rounded-3xl md:px-8 md:py-10"
   >
     <div class="flex w-full flex-col space-y-3">
       <button
@@ -109,13 +106,13 @@ const clickAnswer = (userAns: string, index: number) => {
         class="flex w-full items-center rounded-2xl border-2 border-[#FFE5E5] bg-[#FFF9F9] p-3 transition-all duration-200 active:scale-[0.98]"
         :class="{
           'hover:border-[#F9595F] hover:bg-white hover:shadow-md':
-            !hasAnswered && !isAllAnswered && isNowCard,
+            !hasAnswered && !isAllAnswered,
           'border-gray-300 bg-gray-300': hasAnswered && index === userAnswer,
           'border-green-500':
             hasAnswered &&
             index === answerOptions.correctIndex &&
             userAnswer !== answerOptions.correctIndex,
-          'cursor-default opacity-80': hasAnswered || isAllAnswered || !isNowCard,
+          'cursor-default': hasAnswered || isAllAnswered,
         }"
         @click="clickAnswer(a, index)"
       >

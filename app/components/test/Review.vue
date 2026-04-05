@@ -71,30 +71,54 @@ const emit = defineEmits<{
               </span>
             </div>
 
-            <div class="flex flex-wrap justify-start gap-x-2 gap-y-4">
+            <div class="flex flex-wrap justify-start gap-x-4 gap-y-4">
               <div
-                v-for="(char, i) in userAnswers[index].cAnswer"
-                :key="i"
-                class="flex w-[1.2rem] flex-col items-center space-y-2 md:w-[1.5rem]"
+                v-for="(word, wordIndex) in userAnswers[index].cAnswer.split(
+                  ' ',
+                )"
+                :key="wordIndex"
+                class="flex justify-start gap-x-0.5"
               >
-                <span
-                  class="h-6 font-mono text-base leading-6 font-bold text-[#7A3A3A] md:h-8 md:text-xl md:leading-8"
+                <div
+                  v-for="(char, charIndex) in word"
+                  :key="charIndex"
+                  class="flex w-[1rem] flex-col items-center space-y-2 md:w-[1.2rem]"
                 >
-                  {{ char }}
-                </span>
+                  <span
+                    class="h-6 font-mono text-base leading-6 font-bold text-[#7A3A3A] md:h-8 md:text-xl md:leading-8"
+                  >
+                    {{ char }}
+                  </span>
 
-                <span
-                  class="h-6 w-full border-b-[2px] text-center font-mono text-base leading-6 font-black whitespace-pre transition-all md:h-8 md:text-xl md:leading-8"
-                  :class="
-                    userAnswers[index].uAnswer[i] === ' '
-                      ? 'border-none'
-                      : userAnswers[index].uAnswer[i] !== char
-                        ? 'border-[#F9595F] text-[#F9595F]'
-                        : 'border-[#B58C8C]/20 text-[#7A3A3A]/30'
-                  "
-                >
-                  {{ userAnswers[index].uAnswer[i] || ' ' }}
-                </span>
+                  <span
+                    class="h-6 w-full border-b-[2px] text-center font-mono text-base leading-6 font-black whitespace-pre transition-all md:h-8 md:text-xl md:leading-8"
+                    :class="
+                      (() => {
+                        const startIndex = userAnswers[index].cAnswer
+                          .split(' ')
+                          .slice(0, wordIndex)
+                          .reduce((acc, w) => acc + w.length + 1, 0)
+                        const globalIndex = startIndex + charIndex
+                        return userAnswers[index].uAnswer[globalIndex] === ' '
+                          ? 'border-none'
+                          : userAnswers[index].uAnswer[globalIndex] !== char
+                            ? 'border-[#F9595F] text-[#F9595F]'
+                            : 'border-[#B58C8C]/20 text-[#7A3A3A]/30'
+                      })()
+                    "
+                  >
+                    {{
+                      (() => {
+                        const startIndex = userAnswers[index].cAnswer
+                          .split(' ')
+                          .slice(0, wordIndex)
+                          .reduce((acc, w) => acc + w.length + 1, 0)
+                        const globalIndex = startIndex + charIndex
+                        return userAnswers[index].uAnswer[globalIndex] || ' '
+                      })()
+                    }}
+                  </span>
+                </div>
               </div>
             </div>
           </div>

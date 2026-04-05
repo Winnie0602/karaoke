@@ -24,10 +24,6 @@ export const usePlayerStore = defineStore(
 
     const availableRates = ref<number[]>([]) //可用的播放速度
 
-    const volume = ref(100)
-    const lastVolume = ref(100) // 靜音前的音量
-    const isMuted = computed(() => volume.value === 0)
-
     const seekToTime = ref<number | null>(null) // 由實體所在compasable監聽，有變動的話影片跳到該段落
     const isSeeking = ref(false) //拖拉bar是否在把拖拉
 
@@ -43,6 +39,9 @@ export const usePlayerStore = defineStore(
     }
 
     function loadVideo(id: string) {
+      if (videoId.value && videoId.value !== id) {
+        currentTime.value = 0
+      }
       videoId.value = id
     }
 
@@ -71,19 +70,6 @@ export const usePlayerStore = defineStore(
 
     function setAvailableRates(rates: number[]) {
       availableRates.value = rates
-    }
-
-    function setVolume(vol: number) {
-      volume.value = vol
-    }
-
-    function toggleMute() {
-      if (volume.value === 0) {
-        volume.value = lastVolume.value || 60
-      } else {
-        lastVolume.value = volume.value
-        volume.value = 0
-      }
     }
 
     // 由歌詞組件呼叫，使影片跳到該段
@@ -121,9 +107,6 @@ export const usePlayerStore = defineStore(
       test_playbackRate,
       finalPlaybackRate,
       availableRates,
-      volume,
-      lastVolume,
-      isMuted,
       songTitle,
       songArtist,
       seekToTime,
@@ -142,8 +125,6 @@ export const usePlayerStore = defineStore(
       seekToRequest,
       setPlaybackRate,
       setAvailableRates,
-      setVolume,
-      toggleMute,
       playSegmentRequest,
     }
   },
@@ -152,7 +133,6 @@ export const usePlayerStore = defineStore(
       pick: [
         'videoId',
         'currentTime',
-        'volume',
         'playbackRate',
         'test_playbackRate',
         'songTitle',

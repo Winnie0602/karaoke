@@ -144,54 +144,6 @@ watch(
           <span class="mr-2 text-xs">{{ formatTime(store.duration) }}</span>
 
           <div class="flex items-center">
-            <!-- 音量 -->
-            <div class="group relative hidden justify-center md:flex">
-              <!-- 固定寬度 icon 區（避免擠版） -->
-              <div
-                class="flex h-7 w-7 items-center justify-center"
-                @click="store.toggleMute"
-              >
-                <i
-                  :class="[
-                    'fa-solid cursor-pointer text-xl text-[#F9595F] transition-transform duration-150 hover:scale-125 hover:rotate-[-10deg]',
-                    store.isMuted ? 'fa-volume-xmark' : 'fa-volume-low',
-                  ]"
-                />
-              </div>
-
-              <!-- 透明區塊 -->
-              <div
-                class="absolute bottom-6 left-1/2 h-6 w-10 -translate-x-1/2"
-              ></div>
-
-              <!-- 音量調整 UI -->
-              <div
-                class="pointer-events-none absolute bottom-8 left-1/2 -translate-x-1/2 opacity-0 transition-all duration-150 group-hover:pointer-events-auto group-hover:opacity-100"
-              >
-                <div
-                  class="flex h-[120px] w-[40px] items-center justify-center rounded-xl bg-[#f9595f] bg-white shadow-lg"
-                >
-                  <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    :value="store.volume"
-                    class="volume-bar"
-                    :style="{
-                      '--volume': `${store.volume}%`,
-                      '--active': '#f9595f',
-                      '--inactive': '#ffe5e5',
-                    }"
-                    @input="
-                      store.setVolume(
-                        Number(($event.target as HTMLInputElement).value),
-                      )
-                    "
-                  />
-                </div>
-              </div>
-            </div>
-
             <!-- 播放速度 -->
             <div class="group relative hidden md:block">
               <i

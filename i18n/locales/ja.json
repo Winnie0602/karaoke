@@ -28,6 +28,7 @@
     "review": "復習"
   },
   "prev": "前へ",
+  "restartTest": "もう一度テスト",
   "next": "次へ",
   "goHome": "ホームに戻る",
   "testStart": "テスト開始",
