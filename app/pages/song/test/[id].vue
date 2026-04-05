@@ -128,10 +128,7 @@ onMounted(() => {
       v-else
       class="flex flex-1 flex-col overflow-auto rounded-xl border border-[#B58C8C]/40 bg-white shadow-sm"
     >
-      <div
-        data-test-window-bar
-        class="flex h-10 flex-none items-center bg-[#B58C8C]/40 px-4"
-      >
+      <div class="flex h-10 flex-none items-center bg-[#B58C8C]/40 px-4">
         <div class="flex items-center space-x-1.5">
           <div class="h-3 w-3 rounded-full bg-[#FF5F57]"></div>
           <div class="h-3 w-3 rounded-full bg-[#FFBD2E]"></div>

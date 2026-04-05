@@ -106,7 +106,7 @@ const scrollToTestWindowBarOnMobile = () => {
 
   const anchor = document.querySelector('[data-test-window-bar]')
   if (anchor instanceof HTMLElement) {
-    anchor.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    anchor.scrollIntoView({ behavior: 'smooth', block: 'end' })
   }
 }
 
