@@ -104,7 +104,7 @@ watch(
 
           <!-- 當前時間 -->
           <ClientOnly>
-            <span class="text-xs md:ml-2">
+            <span class="mx-1 text-xs md:ml-2">
               {{ !store.videoId ? '0:00' : formatTime(store.currentTime) }}
             </span>
             <template #fallback>
@@ -115,7 +115,9 @@ watch(
           <!-- 進度條 -->
           <div class="relative w-[calc(100%-120px)] md:mx-4">
             <ClientOnly>
-              <span class="absolute bottom-3 line-clamp-1 text-xs text-[#A66B6B]">
+              <span
+                class="absolute bottom-3 line-clamp-1 text-xs text-[#A66B6B]"
+              >
                 {{
                   store.songTitle
                     ? `${store.songArtist} - ${store.songTitle}`
@@ -151,9 +153,9 @@ watch(
           </div>
 
           <!-- 總時長 -->
-          <span class="mr-2 text-xs">{{ formatTime(store.duration) }}</span>
+          <span class="mx-1 text-xs">{{ formatTime(store.duration) }}</span>
 
-          <div class="flex items-center">
+          <div class="mr-1 flex items-center">
             <!-- 播放速度 -->
             <div class="group relative hidden md:block">
               <i

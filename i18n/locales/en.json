@@ -35,7 +35,7 @@
   "play_speed": "Playback Speed",
   "test_type": "Quiz Type",
   "re_listen_time": "Replay Attempts",
-  "review_swipe_left_hint": "Swipe left to review",
+  "review_swipe_left_hint": "Swipe left to view previous questions",
   "listening_life": "Listening Attempts",
   "test_progress": "Progress",
   "selected_range_prefix": "Selected from",

@@ -63,87 +63,58 @@ watch(nowTab, () => {
 
       <!-- 區塊：列表內容 -->
       <div class="mt-3 min-h-[400px]">
-        <!-- 狀態：首次載入骨架 -->
-        <div v-if="pending && (!songs || songs.length === 0)">
-          <!-- 骨架：list 模式 -->
-          <div v-if="showType === 'list'" class="space-y-3">
-            <div v-for="n in 6" :key="n" class="flex items-center justify-between rounded-xl border border-gray-100 bg-white px-2 py-3 md:px-4">
-              <div class="flex items-center space-x-2 md:space-x-4">
-                <div class="h-[56px] w-[56px] animate-pulse rounded-lg bg-gray-200"></div>
-                <div class="space-y-2">
-                  <div class="h-4 w-32 animate-pulse rounded bg-gray-200 md:w-48"></div>
-                  <div class="h-3 w-20 animate-pulse rounded bg-gray-100 md:w-32"></div>
-                </div>
-              </div>
-              <div class="h-7 w-16 animate-pulse rounded-full bg-gray-100"></div>
-            </div>
-          </div>
-          <!-- 骨架：grid 模式 -->
-          <div v-else class="grid grid-cols-2 gap-4 px-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-            <div v-for="n in 8" :key="n" class="flex flex-col overflow-hidden rounded-2xl border border-gray-50 bg-white shadow-sm">
-              <div class="aspect-video w-full animate-pulse bg-gray-200"></div>
-              <div class="p-3 space-y-2">
-                <div class="h-4 w-full animate-pulse rounded bg-gray-200"></div>
-                <div class="h-3 w-2/3 animate-pulse rounded bg-gray-100"></div>
-                <div class="mt-3 h-6 w-12 animate-pulse rounded-full bg-gray-100"></div>
-              </div>
-            </div>
-          </div>
+        <div
+          v-if="pending"
+          class="flex min-h-[400px] flex-col items-center justify-center gap-3"
+        >
+          <div
+            class="h-8 w-8 animate-spin rounded-full border-4 border-gray-100 border-t-[#F9595F]"
+          ></div>
+          <span class="text-sm font-medium tracking-widest text-gray-400">
+            {{ $t('loading') }} ...
+          </span>
         </div>
 
-        <!-- 狀態：有資料 -->
         <template v-else-if="songs && songs.length > 0">
-          <!-- 資料刷新中遮罩（保留舊資料） -->
-          <div
-            :class="{ 'opacity-40 pointer-events-none transition-opacity duration-300': pending }"
-            class="relative"
-          >
-            <div v-if="pending" class="absolute inset-0 z-10 flex items-start justify-center pt-20">
-              <div class="h-10 w-10 animate-spin rounded-full border-4 border-gray-200 border-t-[#F9595F]"></div>
-            </div>
-
-            <!-- 內容：list 模式 -->
-            <div v-if="showType === 'list'" class="space-y-3">
-              <div v-for="song in songs" :key="song.id" class="group flex items-center justify-between rounded-xl border border-[#F9595F]/20 bg-white px-2 py-3 shadow-sm transition hover:bg-[#FFF3F3] md:px-4">
-                <div class="flex items-center space-x-2 md:space-x-4">
-                  <NuxtLink :to="`/song/${song.id}`" class="relative h-[56px] w-[56px] flex-none overflow-hidden rounded-lg bg-gray-100">
-                    <img :src="`https://img.youtube.com/vi/${song.id}/mqdefault.jpg`" class="h-full w-full object-cover" />
-                    <div class="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition group-hover:opacity-100">
-                      <div class="flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-[#F9595F]"> ▶ </div>
-                    </div>
-                  </NuxtLink>
-                  <NuxtLink :to="`/song/${song.id}`" class="flex flex-col">
-                    <span class="line-clamp-1 text-sm font-medium text-[#5A3E3E] md:text-lg">{{ song.title }}</span>
-                    <span class="mt-1 line-clamp-1 text-xs text-[#A66B6B] md:text-sm">{{ song.artist }}</span>
-                  </NuxtLink>
-                </div>
-                <div class="flex items-center space-x-1.5">
-                  <NuxtLink v-if="song.has_timestamp" :to="`/song/test/${song.id}`" class="flex h-[28px] items-center justify-center rounded-full border border-[#F9595F]/10 bg-[#FFE5E5] px-1.5 text-[10px] font-bold text-[#F9595F] shadow-sm transition hover:bg-[#F9595F] hover:text-white md:px-2.5"> TEST! </NuxtLink>
-                  <a :href="`https://www.youtube.com/watch?v=${song.id}`" target="_blank" class="flex h-[28px] items-center justify-center rounded-full bg-[#FFE5E5] px-2 shadow-sm transition hover:bg-[#F9595F]/10 md:px-3">
-                    <i class="fa-brands fa-youtube text-lg text-[#F9595F]"></i>
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <!-- 內容：grid 模式 -->
-            <div v-else class="grid grid-cols-2 gap-4 px-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-              <div v-for="song in songs" :key="song.id" class="group flex flex-col overflow-hidden rounded-2xl border border-[#F9595F]/10 bg-white shadow-sm transition hover:shadow-md">
-                <NuxtLink :to="`/song/${song.id}`" class="relative aspect-video w-full overflow-hidden bg-gray-100">
-                  <img :src="`https://img.youtube.com/vi/${song.id}/mqdefault.jpg`" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
-                  <div class="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition group-hover:opacity-100">
-                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#F9595F] shadow-lg"> ▶ </div>
+          <div v-if="showType === 'list'" class="space-y-3">
+            <div v-for="song in songs" :key="song.id" class="group flex items-center justify-between rounded-xl border border-[#F9595F]/20 bg-white px-2 py-3 shadow-sm transition hover:bg-[#FFF3F3] md:px-4">
+              <div class="flex items-center space-x-2 md:space-x-4">
+                <NuxtLink :to="`/song/${song.id}`" class="relative h-[56px] w-[56px] flex-none overflow-hidden rounded-lg bg-gray-100">
+                  <img :src="`https://img.youtube.com/vi/${song.id}/mqdefault.jpg`" class="h-full w-full object-cover" />
+                  <div class="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition group-hover:opacity-100">
+                    <div class="flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-[#F9595F]"> ▶ </div>
                   </div>
                 </NuxtLink>
-                <div class="flex flex-1 flex-col p-3">
-                  <NuxtLink :to="`/song/${song.id}`" class="line-clamp-1 text-sm font-medium text-[#5A3E3E] group-hover:text-[#F9595F] md:text-lg">{{ song.title }} </NuxtLink>
+                <NuxtLink :to="`/song/${song.id}`" class="flex flex-col">
+                  <span class="line-clamp-1 text-sm font-medium text-[#5A3E3E] md:text-lg">{{ song.title }}</span>
                   <span class="mt-1 line-clamp-1 text-xs text-[#A66B6B] md:text-sm">{{ song.artist }}</span>
-                  <div class="mt-3 flex items-center border-t border-gray-50 pt-3">
-                    <NuxtLink v-if="song.has_timestamp" :to="`/song/test/${song.id}`" class="flex h-6 items-center justify-center rounded-full border border-[#F9595F]/10 bg-[#FFE5E5] px-1.5 text-[10px] font-bold text-[#F9595F] shadow-sm transition hover:bg-[#F9595F] hover:text-white md:px-2.5"> TEST! </NuxtLink>
-                    <a :href="`https://www.youtube.com/watch?v=${song.id}`" target="_blank" class="ml-auto text-[#F9595F] transition hover:scale-110">
-                      <i class="fa-brands fa-youtube text-xl"></i>
-                    </a>
-                  </div>
+                </NuxtLink>
+              </div>
+              <div class="flex items-center space-x-1.5">
+                <NuxtLink v-if="song.has_timestamp" :to="`/song/test/${song.id}`" class="flex h-[28px] items-center justify-center rounded-full border border-[#F9595F]/10 bg-[#FFE5E5] px-1.5 text-[10px] font-bold text-[#F9595F] shadow-sm transition hover:bg-[#F9595F] hover:text-white md:px-2.5"> TEST! </NuxtLink>
+                <a :href="`https://www.youtube.com/watch?v=${song.id}`" target="_blank" class="flex h-[28px] items-center justify-center rounded-full bg-[#FFE5E5] px-2 shadow-sm transition hover:bg-[#F9595F]/10 md:px-3">
+                  <i class="fa-brands fa-youtube text-lg text-[#F9595F]"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div v-else class="grid grid-cols-2 gap-4 px-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+            <div v-for="song in songs" :key="song.id" class="group flex flex-col overflow-hidden rounded-2xl border border-[#F9595F]/10 bg-white shadow-sm transition hover:shadow-md">
+              <NuxtLink :to="`/song/${song.id}`" class="relative aspect-video w-full overflow-hidden bg-gray-100">
+                <img :src="`https://img.youtube.com/vi/${song.id}/mqdefault.jpg`" class="h-full w-full object-cover transition duration-300 group-hover:scale-110" />
+                <div class="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition group-hover:opacity-100">
+                  <div class="flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#F9595F] shadow-lg"> ▶ </div>
+                </div>
+              </NuxtLink>
+              <div class="flex flex-1 flex-col p-3">
+                <NuxtLink :to="`/song/${song.id}`" class="line-clamp-1 text-sm font-medium text-[#5A3E3E] group-hover:text-[#F9595F] md:text-lg">{{ song.title }} </NuxtLink>
+                <span class="mt-1 line-clamp-1 text-xs text-[#A66B6B] md:text-sm">{{ song.artist }}</span>
+                <div class="mt-3 flex items-center border-t border-gray-50 pt-3">
+                  <NuxtLink v-if="song.has_timestamp" :to="`/song/test/${song.id}`" class="flex h-6 items-center justify-center rounded-full border border-[#F9595F]/10 bg-[#FFE5E5] px-1.5 text-[10px] font-bold text-[#F9595F] shadow-sm transition hover:bg-[#F9595F] hover:text-white md:px-2.5"> TEST! </NuxtLink>
+                  <a :href="`https://www.youtube.com/watch?v=${song.id}`" target="_blank" class="ml-auto text-[#F9595F] transition hover:scale-110">
+                    <i class="fa-brands fa-youtube text-xl"></i>
+                  </a>
                 </div>
               </div>
             </div>

@@ -35,7 +35,7 @@
   "play_speed": "再生速度",
   "test_type": "問題形式",
   "re_listen_time": "再試聴回数",
-  "review_swipe_left_hint": "左にスワイプして復習",
+  "review_swipe_left_hint": "左にスワイプして前の問題を確認",
   "listening_life": "試聴回数",
   "test_progress": "進捗",
   "selected_range_prefix": "第",

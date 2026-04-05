@@ -35,7 +35,7 @@
   "play_speed": "재생 속도",
   "test_type": "문제 유형",
   "re_listen_time": "다시 듣기 기회",
-  "review_swipe_left_hint": "왼쪽으로 넘겨 복습",
+  "review_swipe_left_hint": "왼쪽으로 넘겨 이전 문제 보기",
   "listening_life": "듣기 횟수",
   "test_progress": "진행도",
   "selected_range_prefix": "",
