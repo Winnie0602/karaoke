@@ -2,13 +2,12 @@
 import type { LyricData } from '~/types/song'
 import type { LangCode } from '~/types/lang'
 
-const { eachLyric, isNowCard, translationGameLang, allLyrics, isLocked } =
+const { eachLyric, isNowCard, translationGameLang, allLyrics, isAllAnswered } =
   defineProps<{
     eachLyric: LyricData // 正確答案
     isNowCard: boolean
     translationGameLang: LangCode // 顯示翻譯答案的語言
     allLyrics: LyricData[] // 其他句歌詞陣列
-    isLocked: boolean
     isAllAnswered: boolean
   }>()
 
@@ -72,7 +71,7 @@ const hasAnswered = ref(false)
 const userAnswer = ref<number>(0)
 
 const clickAnswer = (userAns: string, index: number) => {
-  if (hasAnswered.value || isLocked || !isNowCard) {
+  if (hasAnswered.value || isAllAnswered || !isNowCard) {
     return
   }
 
@@ -110,13 +109,13 @@ const clickAnswer = (userAns: string, index: number) => {
         class="flex w-full items-center rounded-2xl border-2 border-[#FFE5E5] bg-[#FFF9F9] p-3 transition-all duration-200 active:scale-[0.98]"
         :class="{
           'hover:border-[#F9595F] hover:bg-white hover:shadow-md':
-            !hasAnswered && !isLocked && isNowCard,
+            !hasAnswered && !isAllAnswered && isNowCard,
           'border-gray-300 bg-gray-300': hasAnswered && index === userAnswer,
           'border-green-500':
             hasAnswered &&
             index === answerOptions.correctIndex &&
             userAnswer !== answerOptions.correctIndex,
-          'cursor-default opacity-80': hasAnswered || isLocked || !isNowCard,
+          'cursor-default opacity-80': hasAnswered || isAllAnswered || !isNowCard,
         }"
         @click="clickAnswer(a, index)"
       >

@@ -6,6 +6,7 @@
   "lyrics_language": "Lyrics Language",
   "original": "Original",
   "recommended_songs": "Recommended Songs",
+  "select_song_prompt": "Please select a song",
   "karaoke_site": "Karaoke Practice",
   "no_words": "This song has no related vocabulary now.",
   "total_items": "Total {count} items",

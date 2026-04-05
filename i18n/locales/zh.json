@@ -6,6 +6,7 @@
   "lyrics_language": "歌詞語言",
   "original": "原文",
   "recommended_songs": "推薦歌曲",
+  "select_song_prompt": "請選擇歌曲",
   "karaoke_site": "卡啦OK練習網",
   "no_words": "這首歌目前沒有相關單字",
   "total_items": "共 {count} 件",

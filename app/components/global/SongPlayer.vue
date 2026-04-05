@@ -21,8 +21,13 @@ const onSeekCommit = (e: Event) => {
 }
 
 // 播放器是否顯示
-const showPlayer = computed(
-  () => store.storeMode === 'normal' && !!store.videoId,
+const showPlayer = computed(() => store.storeMode === 'normal')
+
+const isSongPage = computed(
+  () =>
+    store.storeMode === 'normal' &&
+    route.path.startsWith('/song/') &&
+    !route.path.includes('test'),
 )
 
 const { play, pause, seekTo } = useYoutubePlayer()
@@ -36,13 +41,10 @@ const progress = computed(() => {
 const showVideo = ref(false)
 
 watch(
-  () => route.path,
-  (path) => {
-    if (
-      store.storeMode === 'normal' &&
-      path.startsWith('/song/') &&
-      !path.includes('test')
-    ) {
+  isSongPage,
+  (visible) => {
+    if (visible) {
+      showVideo.value = false
       // 延遲 300ms 再顯示影片
       setTimeout(() => {
         showVideo.value = true
@@ -59,11 +61,18 @@ watch(
   <div class="flex min-h-screen flex-col pt-[56px]">
     <!-- 影片 -->
     <ClientOnly>
-      <div :class="[showVideo ? '' : 'h-[0.5px] opacity-0', 'transition-all']">
-        <div
-          id="player"
-          class="h-[150px] w-full bg-black md:aspect-video md:h-[360px]"
-        />
+      <div
+        class="w-full overflow-hidden transition-[height,opacity] duration-300"
+        :class="
+          isSongPage
+            ? [
+                'h-[150px] md:h-[360px]',
+                showVideo ? 'opacity-100' : 'opacity-0',
+              ]
+            : 'h-0 opacity-0'
+        "
+      >
+        <div id="player" class="h-full w-full bg-black md:aspect-video" />
       </div>
     </ClientOnly>
 
@@ -93,14 +102,23 @@ watch(
           </button>
 
           <!-- 當前時間 -->
-          <span class="text-xs md:ml-2">
-            {{ formatTime(store.currentTime) }}
-          </span>
+          <ClientOnly>
+            <span class="text-xs md:ml-2">
+              {{ formatTime(store.currentTime) }}
+            </span>
+            <template #fallback>
+              <span class="text-xs md:ml-2">0:00</span>
+            </template>
+          </ClientOnly>
 
           <!-- 進度條 -->
           <div class="relative w-[calc(100%-120px)] md:mx-4">
             <span class="absolute bottom-3 line-clamp-1 text-xs text-[#A66B6B]">
-              {{ `${store.songArtist} - ${store.songTitle}` }}
+              {{
+                store.songTitle
+                  ? `${store.songArtist} - ${store.songTitle}`
+                  : $t('select_song_prompt')
+              }}
             </span>
 
             <ClientOnly>
@@ -210,7 +228,7 @@ watch(
 
             <!-- 回到目前歌曲id -->
             <NuxtLink
-              v-if="route.params.id !== store.videoId"
+              v-if="route.params.id !== store.videoId && store.videoId"
               :to="`/song/${store.videoId}`"
               class="flex h-7 w-7 items-center justify-center"
             >

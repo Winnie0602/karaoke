@@ -33,14 +33,14 @@ const [emblaRef, emblaApi] = emblaCarouselVue({
 // 現在在寫第幾個題目
 const nowIndex = ref(0)
 
-const userAnswers = ref<{ cAnswer: string; uAnswer: string }[]>([])
-
-const lockedQuestionMap = ref<boolean[]>([])
+const userAnswers = ref<Array<{ cAnswer: string; uAnswer: string } | undefined>>(
+  [],
+)
 
 const isAllAnswered = computed(
   () =>
     testLyrics.length > 0 &&
-    lockedQuestionMap.value.filter((isLocked) => isLocked).length ===
+    userAnswers.value.filter((answer) => Boolean(answer)).length ===
       testLyrics.length,
 )
 
@@ -76,16 +76,15 @@ const setAnswers = (
   ans: { cAnswer: string; uAnswer: string },
   index: number,
 ) => {
-  if (lockedQuestionMap.value[index]) {
+  if (userAnswers.value[index] || isAllAnswered.value) {
     return
   }
 
   userAnswers.value[index] = { cAnswer: ans.cAnswer, uAnswer: ans.uAnswer }
-  lockedQuestionMap.value[index] = true
 
   // 全部題目都填滿了後再往頁面送
   if (isAllAnswered.value) {
-    emit('setAnswers', userAnswers.value)
+    emit('setAnswers', userAnswers.value as { cAnswer: string; uAnswer: string }[])
     // 允許滑動看答案
     canSwiperDrag.value = true
   }
@@ -104,7 +103,6 @@ watch(
   () => testLyrics,
   () => {
     userAnswers.value = []
-    lockedQuestionMap.value = []
     canSwiperDrag.value = false
     nowIndex.value = 0
   },
@@ -188,7 +186,6 @@ watch(emblaApi, (api, _prevApi, onCleanup) => {
               :is-now-card="i === nowIndex"
               :language="currentSong.language"
               :selected-quiz-type="selectedQuizType"
-              :is-locked="Boolean(lockedQuestionMap[i])"
               :is-all-answered="isAllAnswered"
               @next-test="handleNextTest(i)"
               @set-answer="(ans) => setAnswers(ans, i)"
@@ -201,7 +198,6 @@ watch(emblaApi, (api, _prevApi, onCleanup) => {
               :is-now-card="i === nowIndex"
               :language="currentSong.language"
               :selected-quiz-type="selectedQuizType"
-              :is-locked="Boolean(lockedQuestionMap[i])"
               :is-all-answered="isAllAnswered"
               @next-test="handleNextTest(i)"
               @set-answer="(ans) => setAnswers(ans, i)"
@@ -215,7 +211,6 @@ watch(emblaApi, (api, _prevApi, onCleanup) => {
             :is-now-card="i === nowIndex"
             :translation-game-lang="translationGameLang"
             :all-lyrics="currentSong.lyrics"
-            :is-locked="Boolean(lockedQuestionMap[i])"
             :is-all-answered="isAllAnswered"
             @next-test="handleNextTest(i)"
             @set-answer="(ans) => setAnswers(ans, i)"
@@ -224,9 +219,10 @@ watch(emblaApi, (api, _prevApi, onCleanup) => {
       </div>
     </div>
 
-    <div class="mt-4 flex justify-center px-4 md:mt-8">
+    <!-- 下方選單 -->
+    <div class="flex justify-center px-4 md:mt-8">
       <div
-        class="flex w-full max-w-xl items-center justify-between rounded-3xl bg-[#FFF5F5] p-4 md:p-5"
+        class="flex w-full max-w-xl items-center justify-between rounded-3xl bg-[#FFF5F5] p-3 md:p-5"
         :class="{ 'opacity-60': isAllAnswered }"
       >
         <div class="flex flex-1 flex-col items-start">
@@ -247,7 +243,7 @@ watch(emblaApi, (api, _prevApi, onCleanup) => {
 
         <div class="relative px-4">
           <button
-            class="group flex h-14 w-14 items-center justify-center rounded-full transition-all active:scale-90 md:h-16 md:w-16"
+            class="group flex h-12 w-12 items-center justify-center rounded-full transition-all active:scale-90 md:h-16 md:w-16"
             :class="[
               isPlaying || (!isAllAnswered && life < 1)
                 ? 'cursor-not-allowed bg-gray-100'

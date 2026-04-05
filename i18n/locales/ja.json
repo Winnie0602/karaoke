@@ -6,6 +6,7 @@
   "lyrics_language": "歌詞言語",
   "original": "原文",
   "recommended_songs": "おすすめ曲",
+  "select_song_prompt": "曲を選択してください",
   "karaoke_site": "カラオケ練習サイト",
   "no_words": "この曲には現在関連する単語がありません",
   "total_items": "合計 {count} 件",

@@ -2,13 +2,12 @@
 import type { LyricData } from '~/types/song'
 import type { LangCode } from '~/types/lang'
 
-const { eachLyric, isNowCard, selectedQuizType, language, isLocked } =
+const { eachLyric, isNowCard, selectedQuizType, language, isAllAnswered } =
   defineProps<{
     eachLyric: LyricData
     isNowCard: boolean
     selectedQuizType: 'partial' | 'allBlank' | 'translation'
     language: LangCode
-    isLocked: boolean
     isAllAnswered: boolean
   }>()
 
@@ -49,7 +48,7 @@ const isFakeKeyboard = ref(false)
 
 // 非IME拼打時觸發
 const onInput = (e: Event) => {
-  if (isFakeKeyboard.value || isLocked) {
+  if (isFakeKeyboard.value || isAllAnswered) {
     return
   }
 
@@ -59,7 +58,7 @@ const onInput = (e: Event) => {
 }
 
 const clickBlock = () => {
-  if (isNowCard && !isLocked) {
+  if (isNowCard && !isAllAnswered) {
     inputRef.value?.focus()
     scrollToTestWindowBarOnMobile()
   }
@@ -75,7 +74,7 @@ const scrollToTestWindowBarOnMobile = () => {
 
 // 完成答案拼打
 watch(userInput, () => {
-  if (isLocked) {
+  if (isAllAnswered) {
     return
   }
 
@@ -92,7 +91,7 @@ watch(userInput, () => {
 watch(
   () => isNowCard,
   async (val) => {
-    if (!val || isLocked) return
+    if (!val || isAllAnswered) return
 
     await nextTick()
 
@@ -101,20 +100,21 @@ watch(
       scrollToTestWindowBarOnMobile()
     }, 30)
   },
+  { immediate: true },
 )
 </script>
 
 <template>
   <div
     ref="cardRef"
-    class="z-20 flex w-full items-center justify-center rounded-xl bg-white px-3 py-6 transition-all duration-500 md:px-8 md:py-10"
+    class="z-20 flex w-full items-center justify-center rounded-xl bg-white px-3 py-2 transition-all duration-500 md:px-8 md:py-3"
     :class="[isAllAnswered ? 'md:rounded-3xl' : 'md:rounded-3xl']"
     @click="clickBlock"
   >
     <div class="relative w-full">
       <!-- 真正打字的地方 -->
       <input
-        v-if="!isFakeKeyboard && isNowCard && !isLocked"
+        v-if="!isFakeKeyboard && isNowCard && !isAllAnswered"
         ref="inputRef"
         :value="userInput"
         class="absolute inset-0 z-30 w-full cursor-default opacity-0"

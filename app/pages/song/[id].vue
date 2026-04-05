@@ -111,7 +111,7 @@ watch(
   >
     <div class="flex flex-col space-y-8 lg:flex-row lg:space-y-0 lg:space-x-10">
       <!-- 左邊區塊 -->
-      <div class="w-full lg:w-2/3">
+      <div class="min-h-[600px] w-full lg:w-2/3">
         <div v-if="pending">Loading…</div>
 
         <div v-else-if="!currentSong || currentSong.lyrics.length === 0">
@@ -119,65 +119,63 @@ watch(
         </div>
 
         <div v-else class="space-y-4">
-          <ClientOnly>
-            <div
-              class="flex flex-wrap items-center justify-between gap-2 border-b border-[#FFE5E5] pb-3"
-            >
-              <div class="flex items-center gap-1.5 text-[#A66B6B]">
-                <i class="fa-solid fa-language text-lg text-[#F9595F]"></i>
-                <span>{{ $t('lyrics_language') }}</span>
-              </div>
-
-              <div class="flex flex-wrap gap-1.5">
-                <div
-                  class="flex items-center gap-2 rounded-full bg-[#FFE5E5]/50 px-4 py-1.5 text-xs text-[#F9595F] md:text-sm"
-                >
-                  <i class="fa-solid fa-circle-check text-sm opacity-70"></i>
-                  {{ languageMapCodeLabel[currentSong.language] }} ({{
-                    $t('original')
-                  }})
-                </div>
-
-                <button
-                  v-for="lang in currentSong.translation_langs"
-                  :key="lang"
-                  class="rounded-full border-[1px] px-4 py-1.5 text-xs md:text-sm"
-                  :class="[
-                    showTranslations?.includes(lang)
-                      ? 'bg-[#F9595F] text-white shadow-md shadow-[#F9595F]/20'
-                      : 'border-[#FFE5E5] bg-white text-[#A66B6B] hover:border-[#F9595F]/30 hover:bg-[#FFF9F9]',
-                  ]"
-                  @click="handleTranslations(lang)"
-                >
-                  {{ languageMapCodeLabel[lang] }}
-                </button>
-              </div>
+          <div
+            class="flex flex-wrap items-center justify-between gap-2 border-b border-[#FFE5E5] pb-3"
+          >
+            <div class="flex items-center gap-1.5 text-[#A66B6B]">
+              <i class="fa-solid fa-language text-lg text-[#F9595F]"></i>
+              <span>{{ $t('lyrics_language') }}</span>
             </div>
 
-            <div class="mt-4 space-y-3">
-              <SongLyrics
-                :lyrics="currentSong.lyrics"
-                :song-data="{
-                  title: currentSong.title,
-                  artist: currentSong.artist,
-                }"
-                :current-line-index="currentLineIndex"
-                :song-lang="currentSong.language || ['']"
-                :show-translations="showTranslations"
-                :has-time-stamp="hasTimeStamp"
-              />
+            <div class="flex flex-wrap gap-1.5">
+              <div
+                class="flex items-center gap-2 rounded-full bg-[#FFE5E5]/50 px-4 py-1.5 text-xs text-[#F9595F] md:text-sm"
+              >
+                <i class="fa-solid fa-circle-check text-sm opacity-70"></i>
+                {{ languageMapCodeLabel[currentSong.language] }} ({{
+                  $t('original')
+                }})
+              </div>
 
-              <!-- 單字 -->
-              <SongWords
-                :song="currentSong"
-                :current-nanoid="currentNanoid ?? ''"
-              />
+              <button
+                v-for="lang in currentSong.translation_langs"
+                :key="lang"
+                class="rounded-full border-[1px] px-4 py-1.5 text-xs md:text-sm"
+                :class="[
+                  showTranslations?.includes(lang)
+                    ? 'bg-[#F9595F] text-white shadow-md shadow-[#F9595F]/20'
+                    : 'border-[#FFE5E5] bg-white text-[#A66B6B] hover:border-[#F9595F]/30 hover:bg-[#FFF9F9]',
+                ]"
+                @click="handleTranslations(lang)"
+              >
+                {{ languageMapCodeLabel[lang] }}
+              </button>
             </div>
-          </ClientOnly>
+          </div>
+
+          <div class="mt-4 space-y-3">
+            <SongLyrics
+              :lyrics="currentSong.lyrics"
+              :song-data="{
+                title: currentSong.title,
+                artist: currentSong.artist,
+              }"
+              :current-line-index="currentLineIndex"
+              :song-lang="currentSong.language || ['']"
+              :show-translations="showTranslations"
+              :has-time-stamp="hasTimeStamp"
+            />
+
+            <!-- 單字 -->
+            <SongWords
+              :song="currentSong"
+              :current-nanoid="currentNanoid ?? ''"
+            />
+          </div>
         </div>
       </div>
       <!-- 右邊區塊 -->
-      <div class="w-full lg:w-1/3 lg:min-w-[402px]">
+      <div class="min-h-[400px] w-full lg:w-1/3 lg:min-w-[402px]">
         <div
           class="mb-4 border-b-4 border-[#A66B6B] text-xl font-medium text-[#A66B6B] md:text-2xl"
         >
@@ -185,17 +183,18 @@ watch(
         </div>
 
         <div v-if="otherSongs?.songs" class="space-y-2">
-          <ClientOnly>
-            <VideoCard
-              v-for="song in otherSongs.songs"
-              :key="song.id"
-              :song="song"
-            />
-          </ClientOnly>
+          <VideoCard
+            v-for="song in otherSongs.songs"
+            :key="song.id"
+            :song="song"
+          />
         </div>
       </div>
     </div>
-    <div class="mt-6 mb-4 flex w-full justify-center md:mt-12 md:mb-8">
+    <div
+      v-if="!pending && currentSong"
+      class="mt-6 mb-4 flex w-full justify-center md:mt-12 md:mb-8"
+    >
       <NuxtLink
         :to="`/song/test/${videoId}`"
         class="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#F9595F] py-3 font-bold text-white shadow-lg shadow-red-100 transition-all hover:brightness-110 active:scale-[0.98] md:w-[240px] md:py-4"

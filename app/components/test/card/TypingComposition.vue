@@ -2,13 +2,12 @@
 import type { LyricData } from '~/types/song'
 import type { LangCode } from '~/types/lang'
 
-const { eachLyric, isNowCard, selectedQuizType, language, isLocked } =
+const { eachLyric, isNowCard, selectedQuizType, language, isAllAnswered } =
   defineProps<{
     eachLyric: LyricData
     isNowCard: boolean
     selectedQuizType: 'partial' | 'allBlank' | 'translation'
     language: LangCode
-    isLocked: boolean
     isAllAnswered: boolean
   }>()
 
@@ -54,7 +53,7 @@ const isComposing = ref(false)
 const composingText = ref('')
 
 const onCompositionUpdate = (e: CompositionEvent) => {
-  if (isLocked) {
+  if (isAllAnswered) {
     return
   }
   composingText.value = e.data
@@ -62,7 +61,7 @@ const onCompositionUpdate = (e: CompositionEvent) => {
 
 // IME 處理(開始)
 const onCompositionStart = () => {
-  if (isFakeKeyboard.value || isLocked) {
+  if (isFakeKeyboard.value || isAllAnswered) {
     return
   }
   isComposing.value = true
@@ -71,7 +70,7 @@ const onCompositionStart = () => {
 
 // IME 處理(結束)
 const onCompositionEnd = (e: CompositionEvent) => {
-  if (isFakeKeyboard.value || isLocked) {
+  if (isFakeKeyboard.value || isAllAnswered) {
     return
   }
   isComposing.value = false
@@ -84,7 +83,7 @@ const onCompositionEnd = (e: CompositionEvent) => {
 
 // 非IME拼打時觸發
 const onInput = (e: Event) => {
-  if (isFakeKeyboard.value || isLocked) {
+  if (isFakeKeyboard.value || isAllAnswered) {
     return
   }
   if (isComposing.value) return
@@ -94,7 +93,7 @@ const onInput = (e: Event) => {
 }
 
 const clickBlock = () => {
-  if (isNowCard && !isLocked) {
+  if (isNowCard && !isAllAnswered) {
     inputRef.value?.focus()
     scrollToTestWindowBarOnMobile()
   }
@@ -110,7 +109,7 @@ const scrollToTestWindowBarOnMobile = () => {
 
 // 完成答案拼打
 watch(userInput, () => {
-  if (isLocked) {
+  if (isAllAnswered) {
     return
   }
 
@@ -127,7 +126,7 @@ watch(userInput, () => {
 watch(
   () => isNowCard,
   async (val) => {
-    if (!val || isLocked) return
+    if (!val || isAllAnswered) return
 
     await nextTick()
 
@@ -136,29 +135,21 @@ watch(
       scrollToTestWindowBarOnMobile()
     }, 30)
   },
+  { immediate: true },
 )
 </script>
 
 <template>
   <div
     ref="cardRef"
-    class="z-20 flex w-full items-center justify-center rounded-xl bg-white px-3 py-6 transition-all duration-500 md:px-8 md:py-10"
+    class="z-20 flex w-full items-center justify-center rounded-xl bg-white px-3 py-2 transition-all duration-500 md:px-8 md:py-3"
     :class="[isAllAnswered ? 'md:rounded-3xl' : 'md:rounded-3xl']"
     @click="clickBlock"
   >
-    <div class="relative">
-      <div class="mb-2 flex min-h-[26px] items-start justify-center md:min-h-[30px]">
-        <div
-          v-if="isComposing && composingText"
-          class="max-w-[90vw] rounded-full bg-[#7A3A3A] px-3 py-1 text-xs font-bold tracking-wide text-white shadow-md md:text-sm"
-        >
-          {{ composingText }}
-        </div>
-      </div>
-
+    <div class="relative pt-8 md:pt-10">
       <!-- 真正打字的地方 -->
       <input
-        v-if="!isFakeKeyboard && isNowCard && !isLocked"
+        v-if="!isFakeKeyboard && isNowCard && !isAllAnswered"
         ref="inputRef"
         :value="userInput"
         class="absolute inset-0 z-30 w-full cursor-default opacity-0"
@@ -179,8 +170,20 @@ watch(
         <div
           v-for="(char, i) in displayChars"
           :key="i"
-          class="flex flex-col items-center"
+          class="relative flex flex-col items-center"
         >
+          <div
+            v-if="
+              i === currentInputIndex &&
+              isNowCard &&
+              isComposing &&
+              composingText
+            "
+            class="pointer-events-none absolute bottom-full left-0 z-20 mb-2 rounded-full bg-[#7A3A3A] px-3 py-1 text-xs font-bold tracking-wide whitespace-nowrap text-white shadow-md shadow-[#7A3A3A]/20 md:mb-3 md:px-4 md:text-sm"
+          >
+            {{ composingText }}
+          </div>
+
           <div
             class="flex h-9 w-7 items-center justify-center rounded-md text-xl font-black transition-all duration-200 md:h-16 md:w-12 md:text-4xl"
             :class="{
@@ -233,13 +236,6 @@ watch(
           />
         </div>
       </div>
-
-      <p
-        v-if="isComposing"
-        class="mt-2 text-center text-[11px] font-medium tracking-wide text-[#B58C8C] md:text-xs"
-      >
-        正在組字，按 Enter 確認
-      </p>
     </div>
   </div>
 </template>
