@@ -35,6 +35,7 @@
   "play_speed": "播放速度",
   "test_type": "題目型態",
   "re_listen_time": "重新聆聽機會",
+  "review_swipe_left_hint": "可往左回顧",
   "listening_life": "聆聽次數",
   "test_progress": "作答進度",
   "selected_range_prefix": "已選取第",

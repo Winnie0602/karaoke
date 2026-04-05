@@ -65,15 +65,20 @@ export function useYoutubePlayer() {
   watch(
     activeId,
     (newId) => {
-      if (!import.meta.client || !newId) return
+      if (!import.meta.client) return
 
-      if (!player.value) {
-        createPlayer('player')
+      if (store.storeMode === 'normal' && !store.videoId) {
+        player.value?.stopVideo()
+        store.pause()
+        stopTick()
+        store.setDuration(0)
         return
       }
 
-      if (store.storeMode === 'normal' && !store.videoId) {
-        player.value.stopVideo()
+      if (!newId) return
+
+      if (!player.value) {
+        createPlayer('player')
         return
       }
 
@@ -90,6 +95,8 @@ export function useYoutubePlayer() {
           targetTime = 0
           store.currentTime = 0
         }
+
+        lastNormalVideoId.value = newId
       }
 
       player.value.loadVideoById(newId, targetTime)
@@ -162,6 +169,10 @@ export function useYoutubePlayer() {
           isPlayerReady.value = true
           store.setDuration(player.value!.getDuration())
 
+          if (store.storeMode === 'normal' && activeId.value) {
+            lastNormalVideoId.value = activeId.value
+          }
+
           if (store.currentTime > 0) {
             player.value!.seekTo(store.currentTime, true)
           }
@@ -209,10 +220,12 @@ export function useYoutubePlayer() {
 
   // 對外控制方法
   function play() {
+    if (store.storeMode === 'normal' && !store.videoId) return
     if (isPlayerReady.value) player.value?.playVideo()
   }
 
   function pause() {
+    if (store.storeMode === 'normal' && !store.videoId) return
     if (isPlayerReady.value) player.value?.pauseVideo()
   }
 

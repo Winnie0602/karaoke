@@ -148,7 +148,7 @@ onMounted(() => {
           <div
             class="ml-2 text-[12px] font-medium tracking-wide text-stone-500"
           >
-            {{ currentSong?.title || '未選擇歌曲' }}
+            {{ currentSong?.title || $t('select_song_prompt') }}
           </div>
         </div>
       </div>

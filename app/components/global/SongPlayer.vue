@@ -93,6 +93,7 @@ watch(
           <!-- 播放鍵 -->
           <button
             class="flex h-8 w-8 flex-none items-center justify-center rounded-full border-2 border-pink-200 bg-white shadow-md transition-transform duration-150 hover:scale-110 active:scale-95 md:h-12 md:w-12"
+            :disabled="!store.videoId"
             @click="store.isPlaying ? pause() : play()"
           >
             <i
@@ -104,7 +105,7 @@ watch(
           <!-- 當前時間 -->
           <ClientOnly>
             <span class="text-xs md:ml-2">
-              {{ formatTime(store.currentTime) }}
+              {{ !store.videoId ? '0:00' : formatTime(store.currentTime) }}
             </span>
             <template #fallback>
               <span class="text-xs md:ml-2">0:00</span>
@@ -113,13 +114,22 @@ watch(
 
           <!-- 進度條 -->
           <div class="relative w-[calc(100%-120px)] md:mx-4">
-            <span class="absolute bottom-3 line-clamp-1 text-xs text-[#A66B6B]">
-              {{
-                store.songTitle
-                  ? `${store.songArtist} - ${store.songTitle}`
-                  : $t('select_song_prompt')
-              }}
-            </span>
+            <ClientOnly>
+              <span class="absolute bottom-3 line-clamp-1 text-xs text-[#A66B6B]">
+                {{
+                  store.songTitle
+                    ? `${store.songArtist} - ${store.songTitle}`
+                    : $t('select_song_prompt')
+                }}
+              </span>
+              <template #fallback>
+                <span
+                  class="absolute bottom-3 line-clamp-1 text-xs text-[#A66B6B]"
+                >
+                  {{ $t('select_song_prompt') }}
+                </span>
+              </template>
+            </ClientOnly>
 
             <ClientOnly>
               <div class="h-2 w-full overflow-hidden rounded-full bg-[#ffe5e5]">

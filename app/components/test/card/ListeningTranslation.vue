@@ -71,14 +71,22 @@ const hasAnswered = ref(false)
 
 // 使用者選的答案
 const userAnswer = ref<number>(0)
+const answerResult = ref<'correct' | 'wrong' | null>(null)
+const showReviewHint = ref(false)
+const RESULT_DISPLAY_MS = 500
+const REVIEW_HINT_MS = 2000
+const NEXT_AFTER_HIDE_MS = 120
 
 const clickAnswer = (userAns: string, index: number) => {
   if (hasAnswered.value || isAllAnswered || !isNowCard) {
     return
   }
 
+  const isCorrect = index === answerOptions.value.correctIndex
+
   // 子組件ui呈現設定
   userAnswer.value = index
+  answerResult.value = isCorrect ? 'correct' : 'wrong'
 
   hasAnswered.value = true
 
@@ -90,15 +98,115 @@ const clickAnswer = (userAns: string, index: number) => {
   })
 
   setTimeout(() => {
-    emit('nextTest')
-  }, 500)
+    answerResult.value = null
+
+    if (isAllAnswered) {
+      showReviewHint.value = true
+
+      setTimeout(() => {
+        showReviewHint.value = false
+        emit('nextTest')
+      }, REVIEW_HINT_MS)
+
+      return
+    }
+
+    setTimeout(() => {
+      emit('nextTest')
+    }, NEXT_AFTER_HIDE_MS)
+  }, RESULT_DISPLAY_MS)
 }
 </script>
 
 <template>
   <div
-    class="z-20 flex w-full items-center justify-center rounded-xl bg-white px-3 py-6 transition-all duration-500 md:rounded-3xl md:px-8 md:py-10"
+    class="relative z-20 flex w-full items-center justify-center rounded-xl bg-white px-3 py-6 transition-all duration-500 md:rounded-3xl md:px-8 md:py-10"
   >
+    <div
+      v-if="answerResult"
+      class="pointer-events-none absolute inset-0 z-30 flex items-center justify-center overflow-hidden"
+    >
+      <Transition
+        appear
+        enter-active-class="transition duration-300 ease-out"
+        enter-from-class="transform scale-50 opacity-0"
+        enter-to-class="transform scale-100 opacity-100"
+      >
+        <div
+          class="flex flex-col items-center justify-center rounded-3xl p-6 shadow-2xl backdrop-blur-md md:p-10"
+          :class="
+            answerResult === 'correct'
+              ? 'border-2 border-green-500/30 bg-white/90'
+              : 'border-2 border-red-500/30 bg-white/90'
+          "
+        >
+          <div
+            class="flex h-16 w-16 items-center justify-center rounded-full md:h-20 md:w-20"
+            :class="answerResult === 'correct' ? 'bg-green-100' : 'bg-red-100'"
+          >
+            <i
+              class="fa-solid text-4xl md:text-5xl"
+              :class="[
+                answerResult === 'correct'
+                  ? 'fa-check text-green-600'
+                  : 'fa-xmark text-red-600',
+                'animate-bounce-short',
+              ]"
+            ></i>
+          </div>
+          <span
+            class="mt-3 text-lg font-bold tracking-widest md:text-xl"
+            :class="
+              answerResult === 'correct' ? 'text-green-600' : 'text-red-600'
+            "
+          >
+            {{ answerResult === 'correct' ? 'CORRECT' : 'WRONG' }}
+          </span>
+        </div>
+      </Transition>
+    </div>
+
+    <Transition
+      appear
+      enter-active-class="transition duration-300 ease-out"
+      enter-from-class="opacity-0 translate-x-10"
+      enter-to-class="opacity-100 translate-x-0"
+      leave-active-class="transition duration-200 ease-in"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <div
+        v-if="showReviewHint"
+        class="pointer-events-none absolute inset-0 z-30 flex items-center justify-center overflow-hidden rounded-xl md:rounded-3xl"
+      >
+        <div class="absolute inset-0 bg-[#F9595F]/5 backdrop-blur-[2px]"></div>
+
+        <div
+          class="relative flex items-center gap-3 rounded-full border border-[#F9595F]/30 bg-white px-6 py-3 shadow-2xl md:px-8 md:py-4"
+        >
+          <div class="animate-slide-left flex text-[#F9595F]">
+            <i class="fa-solid fa-chevron-left text-lg md:text-xl"></i>
+            <i
+              class="fa-solid fa-chevron-left text-lg opacity-50 md:text-xl"
+            ></i>
+          </div>
+
+          <div class="flex flex-col items-start">
+            <span
+              class="text-xs font-medium tracking-tighter text-[#F9595F]/60 uppercase md:text-sm"
+            >
+              Finish!
+            </span>
+            <span
+              class="text-sm font-bold tracking-wide text-[#7A3A3A] md:text-base"
+            >
+              {{ $t('review_swipe_left_hint') }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </Transition>
+
     <div class="flex w-full flex-col space-y-3">
       <button
         v-for="(a, index) in answerOptions.options"
@@ -149,17 +257,17 @@ const clickAnswer = (userAns: string, index: number) => {
 </template>
 
 <style lang="postcss" scoped>
-@keyframes blink {
+@keyframes slide-left {
   0%,
   100% {
-    opacity: 1;
+    transform: translateX(0);
   }
   50% {
-    opacity: 0.3;
+    transform: translateX(-10px);
   }
 }
 
-.animate-blink {
-  animation: blink 1s infinite;
+.animate-slide-left {
+  animation: slide-left 1.2s ease-in-out infinite;
 }
 </style>
