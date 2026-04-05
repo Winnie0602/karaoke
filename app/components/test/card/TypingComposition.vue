@@ -38,6 +38,7 @@ const {
 })
 
 const inputRef = ref<HTMLInputElement | null>(null)
+const cardRef = ref<HTMLElement | null>(null)
 
 defineExpose({
   focusInput: () => inputRef.value?.focus(),
@@ -104,10 +105,7 @@ const scrollToTestWindowBarOnMobile = () => {
     return
   }
 
-  const anchor = document.querySelector('[data-test-window-bar]')
-  if (anchor instanceof HTMLElement) {
-    anchor.scrollIntoView({ behavior: 'smooth', block: 'end' })
-  }
+  cardRef.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 
 // 完成答案拼打
@@ -143,6 +141,7 @@ watch(
 
 <template>
   <div
+    ref="cardRef"
     class="z-20 flex w-full items-center justify-center rounded-xl bg-white px-3 py-6 transition-all duration-500 md:px-8 md:py-10"
     :class="[isAllAnswered ? 'md:rounded-3xl' : 'md:rounded-3xl']"
     @click="clickBlock"

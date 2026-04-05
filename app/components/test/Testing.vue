@@ -224,7 +224,7 @@ watch(emblaApi, (api, _prevApi, onCleanup) => {
       </div>
     </div>
 
-    <div data-test-window-bar class="mt-4 flex justify-center px-4 md:mt-8">
+    <div class="mt-4 flex justify-center px-4 md:mt-8">
       <div
         class="flex w-full max-w-xl items-center justify-between rounded-3xl bg-[#FFF5F5] p-4 md:p-5"
         :class="{ 'opacity-60': isAllAnswered }"
