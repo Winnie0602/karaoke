@@ -46,7 +46,9 @@ const seoDescription = computed(() => {
 
 useSeoMeta({
   title: () => seoTitle.value,
+  ogTitle: () => seoTitle.value,
   description: () => seoDescription.value,
+  ogDescription: () => seoDescription.value,
 })
 
 // 目前在第幾步驟

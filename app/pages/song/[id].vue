@@ -41,7 +41,9 @@ const seoDescription = computed(() => {
 
 useSeoMeta({
   title: () => seoTitle.value,
+  ogTitle: () => seoTitle.value,
   description: () => seoDescription.value,
+  ogDescription: () => seoDescription.value,
 })
 
 // 該歌曲有沒有時間戳記

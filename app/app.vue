@@ -14,10 +14,10 @@ useHead(() => ({
 }))
 
 useSeoMeta({
-  applicationName: siteName,
   ogSiteName: siteName,
-  twitterCard: 'summary_large_image',
   ogImage: `${config.public.siteUrl}/og-image.png`,
+  twitterCard: 'summary_large_image',
+  twitterImage: `${config.public.siteUrl}/og-image.png`,
 })
 </script>
 
