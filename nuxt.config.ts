@@ -15,7 +15,7 @@ export default defineNuxtConfig({
     mongoURI: process.env.MONGODB_URI || '',
     authSecret: process.env.AUTH_SECRET,
     public: {
-      siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://你的網域.com',
+      siteUrl: process.env.APP_URL || 'https://karaoke.zeabur.app',
     },
   },
   css: ['~/assets/css/main.css'],

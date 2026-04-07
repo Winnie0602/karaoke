@@ -11,6 +11,8 @@ const { t } = useI18n()
 useSeoMeta({
   title: () => t('seo.home_title'),
   description: () => t('seo.home_description'),
+  ogTitle: () => t('seo.home_title'),
+  ogDescription: () => t('seo.home_description'),
 })
 
 // 1. 歌曲列表
