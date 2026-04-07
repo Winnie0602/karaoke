@@ -136,7 +136,7 @@ const logout = async () => {
                 :total="data?.total || 0"
                 :page="page"
                 :total-pages="data?.totalPages || 0"
-                @update-page="({ newPage }) => (page = newPage)"
+                @update-page="(newPage) => (page = newPage)"
               />
             </div>
             <div v-if="!pending && data?.songs" class="grid md:gap-3">

@@ -1,4 +1,4 @@
-# SyncTune – Global Music Player & CMS
+# Karaoke Lab – Global Music Player & CMS
 
 A full-featured web-based music player built with Nuxt 4, combining music playback, language learning, and content management.
 

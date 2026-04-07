@@ -9,6 +9,8 @@ const store = usePlayerStore()
 const route = useRoute()
 
 const router = useRouter()
+const { t } = useI18n()
+
 
 const videoId = computed(() => route.params.id as string)
 
@@ -24,6 +26,28 @@ if (!currentSong.value && !pending.value) {
     message: '找不到這首歌曲，請檢查網址是否正確。',
   })
 }
+
+const seoTitle = computed(() => {
+  if (!currentSong.value) return t('seo.song_test_fallback_title')
+  return t('seo.song_test_title', {
+    title: currentSong.value.title,
+    artist: currentSong.value.artist,
+  })
+})
+
+const seoDescription = computed(() => {
+  if (!currentSong.value) return t('seo.default_description')
+
+  return t('seo.song_test_description', {
+    title: currentSong.value.title,
+    artist: currentSong.value.artist,
+  })
+})
+
+useSeoMeta({
+  title: () => seoTitle.value,
+  description: () => seoDescription.value,
+})
 
 // 目前在第幾步驟
 const step = ref<1 | 2 | 3 | 4>(1)

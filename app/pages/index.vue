@@ -6,6 +6,12 @@ const songListLang = ref<LangCode | 'all'>('en')
 
 const videosPage = ref(1)
 const videosLang = ref<LangCode | 'all'>('en')
+const { t } = useI18n()
+
+useSeoMeta({
+  title: () => t('seo.home_title'),
+  description: () => t('seo.home_description'),
+})
 
 // 1. 歌曲列表
 const { data: songListData, pending: songListPending } = await useFetch(

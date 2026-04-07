@@ -1,5 +1,24 @@
 <script setup lang="ts">
 const { isModalOpen, title, content, type, confirm, cancel } = useCheckConfirm()
+const { locale } = useI18n()
+const config = useRuntimeConfig()
+const siteName = 'Karaoke Lab'
+
+useHead(() => ({
+  htmlAttrs: {
+    lang: locale.value,
+  },
+  titleTemplate: (titleChunk) => {
+    return titleChunk ? `${titleChunk} | ${siteName}` : siteName
+  },
+}))
+
+useSeoMeta({
+  applicationName: siteName,
+  ogSiteName: siteName,
+  twitterCard: 'summary_large_image',
+  ogImage: `${config.public.siteUrl}/og-image.png`,
+})
 </script>
 
 <template>

@@ -4,6 +4,7 @@ import { languageMapCodeLabel } from '~/types/lang'
 import type { LangCode } from '~/types/lang'
 
 const route = useRoute()
+const { t } = useI18n()
 
 const store = usePlayerStore()
 
@@ -23,6 +24,25 @@ if (!currentSong.value && !pending.value) {
     message: '找不到這首歌曲，請檢查網址是否正確。',
   })
 }
+
+const seoTitle = computed(() => {
+  if (!currentSong.value) return t('seo.song_fallback_title')
+  return `${currentSong.value.title} - ${currentSong.value.artist}`
+})
+
+const seoDescription = computed(() => {
+  if (!currentSong.value) return t('seo.default_description')
+
+  return t('seo.song_description', {
+    title: currentSong.value.title,
+    artist: currentSong.value.artist,
+  })
+})
+
+useSeoMeta({
+  title: () => seoTitle.value,
+  description: () => seoDescription.value,
+})
 
 // 該歌曲有沒有時間戳記
 const hasTimeStamp = ref(currentSong.value?.lyrics[0]?.start !== undefined)
