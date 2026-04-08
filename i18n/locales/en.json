@@ -46,6 +46,12 @@
     "allBlank": "Full Fill",
     "translation": "Translation"
   },
+  "test_ui": {
+    "translation_hint": "Listen to the lyric and choose the correct translation",
+    "translation_language_prompt": "Please choose the translation language you want to practice:",
+    "listening_question": "Listening Prompt",
+    "correct_answer_preview": "Correct Answer Preview"
+  },
   "confirm_back_title": "Confirm going back?",
   "confirm_back_message": "Going back will lose your current input.",
   "confirm": "Confirm",

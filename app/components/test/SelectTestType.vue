@@ -95,27 +95,6 @@ onMounted(() => {
             </button>
           </div>
         </div>
-
-        <!-- <div
-            class="rounded-2xl border border-dashed border-[#F9595F]/30 bg-[#FFE5E5]/20 p-4"
-          >
-            <span
-              class="text-[10px] font-black tracking-widest text-[#F9595F] uppercase"
-            >
-              Selected Range
-            </span>
-            <p class="mt-1 text-xs leading-relaxed text-[#A66B6B]">
-              {{ $t('selected_range_prefix') }}
-              <span class="font-bold text-[#F9595F]">
-                {{ selected.start + 1 }}
-              </span>
-              {{ $t('selected_range_middle') }}
-              <span class="font-bold text-[#F9595F]">
-                {{ selected.end + 1 }}
-              </span>
-              {{ $t('selected_range_suffix') }}
-            </p>
-          </div> -->
       </div>
 
       <div class="space-y-10 lg:col-span-7 lg:pt-2">
@@ -176,7 +155,7 @@ onMounted(() => {
             <button
               v-for="t in quizTypes"
               :key="t"
-              class="rounded-xl border-2 py-2.5 text-[13px] font-bold transition-all active:scale-95 md:py-3.5"
+              class="relative rounded-xl border-2 py-2.5 text-[13px] font-bold transition-all active:scale-95 md:py-3.5"
               :class="
                 selectedQuizType === t
                   ? 'border-[#F9595F] bg-white text-[#F9595F] shadow-[0_3px_0_0_#F9595F15]'
@@ -184,6 +163,13 @@ onMounted(() => {
               "
               @click="selectedQuizType = t"
             >
+              <span
+                v-if="t !== 'translation'"
+                class="absolute -top-2 -right-1 rounded-md bg-[#A66B6B] px-2 py-0.5 text-[12px] font-black text-white"
+              >
+                開發中
+              </span>
+
               {{ $t(`quiz_type.${t}`) }}
             </button>
           </div>
@@ -268,9 +254,11 @@ onMounted(() => {
                     >
                       <div class="flex items-center gap-1.5 text-[#F9595F]">
                         <i class="fa-solid fa-circle-info"></i>
-                        <span>聆聽歌詞，選擇正確的翻譯</span>
+                        <span>{{ $t('test_ui.translation_hint') }}</span>
                       </div>
-                      <p class="mt-1 opacity-80">請選擇想要練習的翻譯語言：</p>
+                      <p class="mt-1 opacity-80">
+                        {{ $t('test_ui.translation_language_prompt') }}
+                      </p>
                     </div>
 
                     <div class="flex flex-wrap gap-2">
@@ -301,7 +289,7 @@ onMounted(() => {
                       </span>
                       <div class="flex items-center gap-4">
                         <span class="text-xs font-bold text-[#A66B6B]">
-                          聆聽題目
+                          {{ $t('test_ui.listening_question') }}
                         </span>
                         <button
                           class="flex h-10 w-10 items-center justify-center rounded-full border-2 border-pink-100 bg-white text-[#F9595F] shadow-sm transition-transform hover:scale-105 active:scale-95"
@@ -322,7 +310,7 @@ onMounted(() => {
 
                       <div class="space-y-2">
                         <span class="text-xs font-bold text-[#A66B6B]">
-                          正確答案預覽
+                          {{ $t('test_ui.correct_answer_preview') }}
                         </span>
                         <div
                           class="min-h-[40px] rounded-xl bg-[#FFF9F9] px-4 py-3 text-sm font-medium text-[#7A3A3A] ring-1 ring-[#F9595F]/5"

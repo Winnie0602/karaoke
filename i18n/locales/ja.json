@@ -46,6 +46,12 @@
     "allBlank": "全文穴埋め",
     "translation": "翻訳"
   },
+  "test_ui": {
+    "translation_hint": "歌詞を聞いて、正しい翻訳を選んでください",
+    "translation_language_prompt": "練習したい翻訳言語を選択してください：",
+    "listening_question": "リスニング問題",
+    "correct_answer_preview": "正解プレビュー"
+  },
   "confirm_back_title": "戻りますか？",
   "confirm_back_message": "前のステップに戻ると、入力内容は失われます。",
   "confirm": "確認",

@@ -46,6 +46,12 @@
     "allBlank": "全部填空",
     "translation": "語言翻譯"
   },
+  "test_ui": {
+    "translation_hint": "聆聽歌詞，選擇正確的翻譯",
+    "translation_language_prompt": "請選擇想要練習的翻譯語言：",
+    "listening_question": "聆聽題目",
+    "correct_answer_preview": "正確答案預覽"
+  },
   "confirm_back_title": "確認返回?",
   "confirm_back_message": "返回上一步將會遺失目前輸入的內容。",
   "confirm": "確認",

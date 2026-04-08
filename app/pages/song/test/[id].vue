@@ -9,8 +9,10 @@ const store = usePlayerStore()
 const route = useRoute()
 
 const router = useRouter()
+
 const { t } = useI18n()
 
+const { show } = useToast()
 
 const videoId = computed(() => route.params.id as string)
 
@@ -83,6 +85,11 @@ const nextStep = () => {
   if (step.value === 4) {
     router.push('/')
 
+    return
+  }
+
+  if (selectedQuizType.value !== 'translation' && step.value === 1) {
+    show('開發中，請選其他題型', 1000)
     return
   }
   step.value++

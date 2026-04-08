@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
 import type { SongData } from '~/types/song'
 import type { LangCode } from '~/types/lang'
 import { I18N_TO_DB } from '~/types/lang'
@@ -20,9 +19,9 @@ const emit = defineEmits<{
 }>()
 
 const testIds = ref<string[]>([])
-const activeDisclosure = ref<{ id: string; close: () => void } | null>(null)
+const openDisclosureId = ref<string | null>(null)
 
-const setTestlyric = (nanoid: string, close: () => void) => {
+const setTestlyric = (nanoid: string) => {
   // 已經選完了->return
   if (testIds.value.length >= 8) {
     show($t('up_to_5_words'), 2000)
@@ -30,11 +29,7 @@ const setTestlyric = (nanoid: string, close: () => void) => {
     return
   }
 
-  close()
-  if (activeDisclosure.value?.id === nanoid) {
-    activeDisclosure.value = null
-  }
-
+  openDisclosureId.value = null
   testIds.value.push(nanoid)
 
   emit('update', testIds.value)
@@ -44,46 +39,27 @@ const isSelected = (id: string) => {
   return testIds.value.includes(id)
 }
 
-const reset = (id: string, close: () => void) => {
+const isOpen = (id: string) => {
+  return openDisclosureId.value === id
+}
+
+const reset = (id: string) => {
   testIds.value = testIds.value.filter((i) => i !== id)
-  close()
-  if (activeDisclosure.value?.id === id) {
-    activeDisclosure.value = null
+
+  if (openDisclosureId.value === id) {
+    openDisclosureId.value = null
   }
 }
 
-const handleDisclosureClick = (
-  id: string,
-  isOpen: boolean,
-  close: () => void,
-) => {
-  // 點開新項目時，先關掉目前已展開的項目
-  if (!isOpen && activeDisclosure.value && activeDisclosure.value.id !== id) {
-    activeDisclosure.value.close()
-  }
-
-  // 點同一個已展開項目會收起
-  if (isOpen && activeDisclosure.value?.id === id) {
-    activeDisclosure.value = null
-    return
-  }
-
-  // 點未展開項目會打開
-  if (!isOpen) {
-    activeDisclosure.value = { id, close }
-  }
+const toggleDisclosure = (id: string) => {
+  openDisclosureId.value = openDisclosureId.value === id ? null : id
 }
 </script>
 
 <template>
   <div class="h-full w-full md:h-[calc(100%-40px)] md:flex-row">
     <div class="mt-1 flex-[3] space-y-4 bg-white md:space-y-6 md:px-6 md:py-6">
-      <Disclosure
-        v-for="lyric in currentSong?.lyrics"
-        :key="lyric.nanoid"
-        v-slot="{ open, close }"
-        as="div"
-      >
+      <div v-for="lyric in currentSong?.lyrics" :key="lyric.nanoid">
         <div
           class="group relative flex flex-col justify-center px-4 py-2 pr-10 text-sm transition-all md:flex-row md:items-center md:justify-between md:px-3 md:py-3 md:pr-10 md:text-base"
           :class="{
@@ -96,9 +72,10 @@ const handleDisclosureClick = (
           />
 
           <div class="flex w-full flex-col">
-            <DisclosureButton
+            <button
+              type="button"
               class="flex flex-col text-left focus:outline-none"
-              @click="handleDisclosureClick(lyric.nanoid, open, close)"
+              @click="toggleDisclosure(lyric.nanoid)"
             >
               <div
                 v-if="currentSong.language === 'ja'"
@@ -117,7 +94,7 @@ const handleDisclosureClick = (
                     : lyric[I18N_TO_DB[locale]]
                 }}
               </span>
-            </DisclosureButton>
+            </button>
 
             <transition
               enter-active-class="transition-[max-height,opacity] duration-300 ease-out overflow-hidden"
@@ -127,7 +104,7 @@ const handleDisclosureClick = (
               leave-from-class="max-h-[200px] opacity-100"
               leave-to-class="max-h-0 opacity-0"
             >
-              <DisclosurePanel v-slot="{ close }" class="mt-1 flex gap-2">
+              <div v-if="isOpen(lyric.nanoid)" class="mt-1 flex gap-2">
                 <button
                   class="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-full border border-[#F9595F] bg-[#F9595F]/90 px-4 py-1.5 text-xs font-medium text-white transition-all hover:bg-[#e8484e] md:flex-none md:rounded-md md:px-4 md:text-sm"
                   @click="store.playSegmentRequest(lyric.start, lyric.end)"
@@ -139,22 +116,22 @@ const handleDisclosureClick = (
                 <button
                   v-if="testIds.includes(lyric.nanoid)"
                   class="flex flex-1 cursor-pointer items-center justify-center rounded-full border border-[#F9595F] bg-white px-2 py-1.5 text-xs font-medium text-[#F9595F] transition-all hover:bg-[#F9595F]/5 md:flex-none md:rounded-md md:px-4 md:text-sm"
-                  @click="reset(lyric.nanoid, close)"
+                  @click="reset(lyric.nanoid)"
                 >
                   <span>{{ $t('reset') }}</span>
                 </button>
                 <button
                   v-else
                   class="flex flex-1 cursor-pointer items-center justify-center rounded-full border border-[#F9595F] bg-white px-2 py-1.5 text-xs font-medium text-[#F9595F] transition-all hover:bg-[#F9595F]/5 md:flex-none md:rounded-md md:px-4 md:text-sm"
-                  @click="setTestlyric(lyric.nanoid, close)"
+                  @click="setTestlyric(lyric.nanoid)"
                 >
                   <span>{{ $t('select_this_lyric') }}</span>
                 </button>
-              </DisclosurePanel>
+              </div>
             </transition>
           </div>
         </div>
-      </Disclosure>
+      </div>
     </div>
   </div>
 </template>
