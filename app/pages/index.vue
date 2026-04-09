@@ -29,10 +29,9 @@ const { data: songListData, pending: songListPending } = await useFetch(
 )
 
 // 2. 輪播資料
-const { data: allSongData, pending: allSongPending } = useFetch(
+const { data: allSongData, pending: allSongPending } = await useFetch(
   '/api/list/songs',
   {
-    lazy: true,
     query: {
       language: 'all',
       sort: 'desc',
