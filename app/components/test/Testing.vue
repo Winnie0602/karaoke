@@ -1,28 +1,24 @@
 <script setup lang="ts">
-import type TypingComposition from '~/components/test/card/TypingComposition.vue'
 import type { LangCode } from '~/types/lang'
 import type { SongData, LyricData } from '~/types/song'
 import emblaCarouselVue from 'embla-carousel-vue'
 
-const {
-  currentSong,
-  testLyrics,
-  isPlaying,
-  translationGameLang,
-  selectedQuizType,
-} = defineProps<{
-  currentSong: SongData
-  testLyrics: LyricData[]
-  isPlaying: boolean
-  translationGameLang: LangCode | null
-  selectedQuizType: 'partial' | 'allBlank' | 'translation'
-}>()
+const store = usePlayerStore()
+
+const { currentSong, testLyrics, translationGameLang, selectedQuizType } =
+  defineProps<{
+    currentSong: SongData
+    testLyrics: LyricData[]
+    translationGameLang: LangCode | null
+    selectedQuizType: 'partial' | 'allBlank' | 'translation'
+  }>()
 
 const emit = defineEmits<{
-  (e: 'playSegment', value: { start: number; end: number }): void
+  // 卡片點選完答案後，等全部題目都填完才往頁面送出答案
   (e: 'setAnswers', value: { cAnswer: string; uAnswer: string }[]): void
 }>()
 
+// 是否可以滑動題目
 const canSwiperDrag = ref(false)
 
 const [emblaRef, emblaApi] = emblaCarouselVue({
@@ -30,64 +26,50 @@ const [emblaRef, emblaApi] = emblaCarouselVue({
   watchDrag: () => canSwiperDrag.value,
 })
 
+// 每題使用者的答案 型態
+type UserAnswer = {
+  cAnswer: string
+  uAnswer: string
+}
+
 // 現在在寫第幾個題目
 const nowIndex = ref(0)
 
-const userAnswers = ref<
-  Array<{ cAnswer: string; uAnswer: string } | undefined>
->([])
+// 使用者的答案陣列
+const userAnswers = ref<UserAnswer[]>([])
 
+// 是否全部題目都作答完了
 const isAllAnswered = computed(
-  () =>
-    testLyrics.length > 0 &&
-    userAnswers.value.filter((answer) => Boolean(answer)).length ===
-      testLyrics.length,
+  () => testLyrics.length > 0 && userAnswers.value.length === testLyrics.length,
 )
 
 // 聆聽生命蘋果 共三次機會
 const life = ref<0 | 1 | 2 | 3>(3)
 
-const cardRefs = ref<InstanceType<typeof TypingComposition>[]>([])
+// 題目下方的播放鍵邏輯
+const handlePlay = (lyric?: LyricData) => {
+  if (!lyric || store.isPlaying) return
 
-const playLyric = (eachLyric: LyricData) => {
-  if (!isPlaying) {
-    // 播放
-    emit('playSegment', {
-      start: eachLyric.start,
-      end: eachLyric.end,
-    })
-    if (!isAllAnswered.value) {
-      life.value--
-    }
+  // 播放當前歌詞的段落
+  store.playSegmentRequest(lyric.start, lyric.end)
+
+  // 如果還沒全部作答完，就扣聆聽生命蘋果
+  if (!isAllAnswered.value) {
+    life.value -= 1
   }
 }
 
-const handlePlay = (lyric: LyricData | undefined, i: number) => {
-  if (lyric) {
-    playLyric(lyric)
-  }
-
-  nextTick(() => {
-    cardRefs.value[i]?.focusInput()
-  })
-}
-
-const setAnswers = (
-  ans: { cAnswer: string; uAnswer: string },
-  index: number,
-) => {
-  if (userAnswers.value[index] || isAllAnswered.value) {
+// 使用者選完卡片的答案後，先存在 userAnswers 陣列裡，等全部題目都填完了再送出給頁面
+const setAnswers = (ans: UserAnswer) => {
+  if (isAllAnswered.value) {
     return
   }
 
-  userAnswers.value[index] = { cAnswer: ans.cAnswer, uAnswer: ans.uAnswer }
+  userAnswers.value.push(ans)
 
   // 全部題目都填滿了後再往頁面送
   if (isAllAnswered.value) {
-    emit(
-      'setAnswers',
-      userAnswers.value as { cAnswer: string; uAnswer: string }[],
-    )
+    emit('setAnswers', userAnswers.value)
     // 允許滑動看答案
     canSwiperDrag.value = true
   }
@@ -99,30 +81,18 @@ const handleNextTest = (index: number) => {
     return
   }
 
+  // 切到下一題(但不能超過最後一題index)
   nowIndex.value = Math.min(index + 1, testLyrics.length - 1)
 }
 
-watch(
-  () => testLyrics,
-  () => {
-    userAnswers.value = []
-    canSwiperDrag.value = false
-    nowIndex.value = 0
-  },
-)
 
 // 一進來頁面就播放第一句
 onMounted(() => {
-  cardRefs.value[0]?.focusInput()
-  emit('playSegment', {
-    start: testLyrics[0]?.start ?? 0,
-    end: testLyrics[0]?.end ?? 0,
-  })
+  store.playSegmentRequest(testLyrics[0]?.start ?? 0, testLyrics[0]?.end ?? 0)
 })
 
-// 一換考試歌詞時就播放
+// 監聽題目切換，切到下一題就播放下一段歌詞，並恢復聆聽生命蘋果
 watch(nowIndex, (index) => {
-  // 恢復蘋果數量
   life.value = 3
 
   if (isAllAnswered.value) {
@@ -130,10 +100,11 @@ watch(nowIndex, (index) => {
   }
 
   emblaApi.value?.scrollTo(index)
-  emit('playSegment', {
-    start: testLyrics[index]?.start ?? 0,
-    end: testLyrics[index]?.end ?? 0,
-  })
+
+  store.playSegmentRequest(
+    testLyrics[index]?.start ?? 0,
+    testLyrics[index]?.end ?? 0,
+  )
 })
 
 watch(emblaApi, (api, _prevApi, onCleanup) => {
@@ -177,35 +148,8 @@ watch(emblaApi, (api, _prevApi, onCleanup) => {
         <div
           v-for="(eachLyric, i) in testLyrics"
           :key="eachLyric.nanoid"
-          class="group embla__slide relative flex items-center"
+          class="embla__slide relative flex items-center"
         >
-          <!-- 填空題型 -->
-          <template v-if="['partial', 'allBlank'].includes(selectedQuizType)">
-            <TestCardTypingComposition
-              v-if="['ja', 'zh', 'kr'].includes(currentSong.language)"
-              ref="cardRefs"
-              :each-lyric="eachLyric"
-              :is-now-card="i === nowIndex"
-              :language="currentSong.language"
-              :selected-quiz-type="selectedQuizType"
-              :is-all-answered="isAllAnswered"
-              @next-test="handleNextTest(i)"
-              @set-answer="(ans) => setAnswers(ans, i)"
-            />
-
-            <TestCardTypingInput
-              v-if="['en'].includes(currentSong.language)"
-              ref="cardRefs"
-              :each-lyric="eachLyric"
-              :is-now-card="i === nowIndex"
-              :language="currentSong.language"
-              :selected-quiz-type="selectedQuizType"
-              :is-all-answered="isAllAnswered"
-              @next-test="handleNextTest(i)"
-              @set-answer="(ans) => setAnswers(ans, i)"
-            />
-          </template>
-
           <!-- 聽力翻譯題型 -->
           <TestCardListeningTranslation
             v-if="translationGameLang && selectedQuizType === 'translation'"
@@ -215,7 +159,7 @@ watch(emblaApi, (api, _prevApi, onCleanup) => {
             :all-lyrics="currentSong.lyrics"
             :is-all-answered="isAllAnswered"
             @next-test="handleNextTest(i)"
-            @set-answer="(ans) => setAnswers(ans, i)"
+            @set-answer="setAnswers"
           />
         </div>
       </div>
@@ -249,16 +193,16 @@ watch(emblaApi, (api, _prevApi, onCleanup) => {
           <button
             class="group flex h-12 w-12 items-center justify-center rounded-full transition-all active:scale-90 md:h-16 md:w-16"
             :class="[
-              isPlaying || (!isAllAnswered && life < 1)
+              store.isPlaying || (!isAllAnswered && life < 1)
                 ? 'cursor-not-allowed bg-gray-100'
                 : 'bg-[#FFE5E5] shadow-md shadow-red-100 hover:bg-[#ffd9d9]',
             ]"
-            :disabled="isPlaying || (!isAllAnswered && life < 1)"
-            @click="handlePlay(testLyrics[nowIndex], nowIndex)"
+            :disabled="store.isPlaying || (!isAllAnswered && life < 1)"
+            @click="handlePlay(testLyrics[nowIndex])"
           >
             <i
               class="fa-solid fa-play text-xl transition-transform group-hover:scale-110 md:text-2xl"
-              :class="isPlaying ? 'text-gray-300' : 'text-[#F9595F]'"
+              :class="store.isPlaying ? 'text-gray-300' : 'text-[#F9595F]'"
             />
           </button>
         </div>

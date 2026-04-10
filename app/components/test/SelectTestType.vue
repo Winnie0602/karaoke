@@ -5,23 +5,27 @@ import { languageMapCodeLabel } from '~/types/lang'
 
 const store = usePlayerStore()
 
-const { currentSong, isPlaying } = defineProps<{
+const { currentSong } = defineProps<{
   currentSong: SongData
-  isPlaying: boolean
 }>()
 
 const emit = defineEmits<{
+  // 設定題型
   (e: 'setQuizeType', value: 'partial' | 'allBlank' | 'translation'): void
+  // 設定翻譯遊戲的語言
   (e: 'setTransGameLang', value: LangCode | null): void
 }>()
 
+// 目前的播放速度
 const currentSpeed = ref(1)
 
 // 語言翻譯遊戲 選擇的語言
 const translationGameLang = ref<LangCode | null>(null)
 
+// 題型選項
 const quizTypes = ['translation', 'partial', 'allBlank'] as const
 
+// 選擇的題型
 const selectedQuizType = ref<'partial' | 'allBlank' | 'translation'>(
   'translation',
 )
@@ -29,25 +33,29 @@ const selectedQuizType = ref<'partial' | 'allBlank' | 'translation'>(
 // 速度設定
 const speedSteps = [0.5, 0.75, 1, 1.25, 1.5]
 
+// 播放速度改變（速度控制拖曳bar)
 const handleSliderChange = (e: Event) => {
   const value = Number((e.target as HTMLInputElement).value)
 
   currentSpeed.value = value
 
+  // 設定播放器速度(test mode)
   store.setPlaybackRate(currentSpeed.value)
 
+  // 播放第一句到第五句歌詞，讓使用者可以即時聽到速度變化的效果
   store.playSegmentRequest(
     currentSong.lyrics[0]?.start ?? 0,
     currentSong.lyrics[5]?.end ?? 0,
   )
 }
 
-const handlePlay = (boo: boolean) => {
-  if (boo) {
+const handlePlay = (isPlaying: boolean) => {
+  if (isPlaying) {
     store.play()
-  } else {
-    store.pause()
+    return
   }
+
+  store.pause()
 }
 
 // 題型更換時開啟特效
@@ -86,11 +94,11 @@ onMounted(() => {
             </div>
             <button
               class="flex h-12 w-12 flex-none items-center justify-center rounded-full border-2 border-pink-200 bg-white shadow-md"
-              @click="handlePlay(!isPlaying)"
+              @click="handlePlay(!store.isPlaying)"
             >
               <i
                 class="fa-solid text-lg text-[#F9595F]"
-                :class="isPlaying ? 'fa-pause' : 'fa-play'"
+                :class="store.isPlaying ? 'fa-pause' : 'fa-play'"
               ></i>
             </button>
           </div>
@@ -123,7 +131,6 @@ onMounted(() => {
               class="custom-slider w-full"
               :style="{
                 '--progress': `${((currentSpeed - 0.5) / 1.0) * 100}%`,
-                'background-image': `linear-gradient(to right, #F9595F 0%, #F9595F ${((currentSpeed - 0.5) / 1.0) * 100}%, #FFE5E5 ${((currentSpeed - 0.5) / 1.0) * 100}%, #FFE5E5 100%)`,
               }"
               @change="handleSliderChange"
             />
@@ -133,7 +140,6 @@ onMounted(() => {
               <span
                 v-for="s in speedSteps"
                 :key="s"
-                class="transition-colors duration-200"
                 :class="{
                   'scale-110 text-[#F9595F]': currentSpeed === s,
                 }"
@@ -175,7 +181,7 @@ onMounted(() => {
           </div>
           <!-- 預覽題型 -->
           <div
-            class="origin-top rounded-2xl border border-dashed border-[#F9595F]/30 bg-[#FFE5E5]/20 p-4 transition-all duration-500 ease-out"
+            class="rounded-2xl border border-dashed border-[#F9595F]/30 bg-[#FFE5E5]/20 p-4"
           >
             <Transition name="fade" mode="out-in">
               <div :key="selectedQuizType">
@@ -192,7 +198,7 @@ onMounted(() => {
                     <i
                       v-for="i in 3"
                       :key="i"
-                      class="fa-solid fa-apple-whole text-lg text-[#F9595F] drop-shadow-[0_2px_4px_rgba(249,89,95,0.2)] transition-all duration-300 md:text-2xl"
+                      class="fa-solid fa-apple-whole text-lg text-[#F9595F] md:text-2xl"
                     />
                     <span class="ml-4">X3</span>
                   </div>
@@ -207,7 +213,7 @@ onMounted(() => {
                     class="flex flex-col items-center"
                   >
                     <div
-                      class="flex h-7 w-5 items-center justify-center text-xl font-black transition-all duration-200 md:h-11 md:w-8 md:text-4xl"
+                      class="flex h-7 w-5 items-center justify-center text-xl font-black md:h-11 md:w-8 md:text-4xl"
                       :class="{
                         'rounded-md bg-[#FFF9F9] text-[#F9595F] shadow-inner ring-2 ring-[#F9595F]/20 md:ring-4':
                           i === 0,
@@ -215,7 +221,7 @@ onMounted(() => {
                     ></div>
 
                     <div
-                      class="mt-1 h-1 w-full rounded-full bg-[#FFE5E5] transition-all duration-500 md:h-2"
+                      class="mt-1 h-1 w-full rounded-full bg-[#FFE5E5] md:h-2"
                     />
                   </div>
                 </div>
@@ -229,7 +235,7 @@ onMounted(() => {
                     class="flex flex-col items-center"
                   >
                     <div
-                      class="flex h-7 w-5 items-center justify-center text-xl font-black text-[#A66B6B] transition-all duration-200 md:h-11 md:w-8 md:text-4xl"
+                      class="flex h-7 w-5 items-center justify-center text-xl font-black text-[#A66B6B] md:h-11 md:w-8 md:text-4xl"
                       :class="{
                         'rounded-md bg-[#FFF9F9] text-[#F9595F] shadow-inner ring-2 ring-[#F9595F]/20 md:ring-4':
                           i === 0,
@@ -240,7 +246,7 @@ onMounted(() => {
                     </div>
 
                     <div
-                      class="mt-1 h-1 w-full rounded-full bg-[#FFE5E5] transition-all duration-500 md:h-2"
+                      class="mt-1 h-1 w-full rounded-full bg-[#FFE5E5] md:h-2"
                     />
                   </div>
                 </div>
@@ -279,7 +285,7 @@ onMounted(() => {
                   </div>
 
                   <div
-                    class="overflow-hidden rounded-2xl border border-[#F9595F]/10 bg-white/80 px-3 py-1 shadow-sm md:px-5 md:py-3"
+                    class="rounded-2xl border border-[#F9595F]/10 bg-white/80 px-3 py-1 shadow-sm md:px-5 md:py-3"
                   >
                     <div class="space-y-4">
                       <span
@@ -292,7 +298,7 @@ onMounted(() => {
                           {{ $t('test_ui.listening_question') }}
                         </span>
                         <button
-                          class="flex h-10 w-10 items-center justify-center rounded-full border-2 border-pink-100 bg-white text-[#F9595F] shadow-sm transition-transform hover:scale-105 active:scale-95"
+                          class="flex h-10 w-10 items-center justify-center rounded-full border-2 border-pink-100 bg-white text-[#F9595F] shadow-sm"
                           @click="
                             store.playSegmentRequest(
                               currentSong.lyrics[5]?.start ?? 0,
@@ -353,6 +359,13 @@ onMounted(() => {
   border-radius: 9999px;
   cursor: pointer;
   outline: none;
+  background-image: linear-gradient(
+    to right,
+    #f9595f 0%,
+    #f9595f var(--progress),
+    #ffe5e5 var(--progress),
+    #ffe5e5 100%
+  );
 }
 
 .custom-slider::-webkit-slider-thumb {

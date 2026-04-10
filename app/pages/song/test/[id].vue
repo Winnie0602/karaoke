@@ -29,6 +29,7 @@ if (!currentSong.value && !pending.value) {
   })
 }
 
+// SEO
 const seoTitle = computed(() => {
   if (!currentSong.value) return t('seo.song_test_fallback_title')
   return t('seo.song_test_title', {
@@ -56,8 +57,6 @@ useSeoMeta({
 // 目前在第幾步驟
 const step = ref<1 | 2 | 3 | 4>(1)
 
-const selectedLyricsId = ref<string[]>([])
-
 // 選擇的題型
 const selectedQuizType = ref<'partial' | 'allBlank' | 'translation'>(
   'translation',
@@ -66,21 +65,57 @@ const selectedQuizType = ref<'partial' | 'allBlank' | 'translation'>(
 // 聽力翻譯的語言
 const translationGameLang = ref<LangCode | null>(null)
 
-// 使用者的答案
+// 使用者的答案{正確答案、使用者答案}陣列
 const userAnswers = ref<{ cAnswer: string; uAnswer: string }[]>([])
 
-// 想要考試的資料陣列
+// 選擇的歌詞 ID 陣列
+const selectedLyricsId = ref<string[]>([])
+
+// 根據選擇的歌詞 ID，找出對應的歌詞資料陣列
 const selectedLyrics = computed<LyricData[]>(() => {
-  return (
-    currentSong.value?.lyrics.filter((lyric) =>
-      selectedLyricsId.value.includes(lyric.nanoid),
-    ) ?? []
-  )
+  const lyrics = currentSong.value?.lyrics ?? []
+  return lyrics.filter((lyric) => selectedLyricsId.value.includes(lyric.nanoid))
 })
 
 // ===== 頁面控制邏輯 =====
 const { open } = useCheckConfirm()
 
+// 下一步按鈕的文字
+const nextLabel = computed(() => {
+  if (step.value === 2) return $t('testStart')
+  if (step.value === 4) return $t('goHome')
+  return $t('next')
+})
+
+// 上一步按鈕的文字
+const prevLabel = computed(() => {
+  if (step.value === 4) return $t('restartTest')
+  return $t('prev')
+})
+
+// 回上一頁
+const prevStep = async () => {
+  if (step.value === 4) {
+    step.value = 1
+    return
+  }
+
+  if (step.value <= 1) return
+
+  if (step.value === 3) {
+    const check = await open(
+      $t('confirm_back_title'),
+      $t('confirm_back_message'),
+      'ask',
+    )
+
+    if (!check) return
+  }
+
+  step.value--
+}
+
+// 前往下一步
 const nextStep = () => {
   if (step.value === 4) {
     router.push('/')
@@ -95,63 +130,42 @@ const nextStep = () => {
   step.value++
 }
 
-const nextLabel = computed(() => {
-  if (step.value === 2) return $t('testStart')
-  if (step.value === 4) return $t('goHome')
-  return $t('next')
-})
-
-const prevLabel = computed(() => {
-  if (step.value === 4) return $t('restartTest')
-  return $t('prev')
-})
-
-const prevStep = async () => {
-  if (step.value === 4) {
-    step.value = 1
-    return
-  }
-
-  if (step.value > 1) {
-    if (step.value === 3) {
-      const check = await open(
-        $t('confirm_back_title'),
-        $t('confirm_back_message'),
-        'ask',
-      )
-
-      if (!check) return
-    }
-    step.value--
-  }
-}
-
+// 是否可以進入下一步
 const canNext = computed(() => {
-  if (step.value === 1) return true
-  if (step.value === 2) return selectedLyricsId.value.length >= 3
-  if (step.value === 3)
-    return userAnswers.value.length === selectedLyrics.value.length
-  return true
+  switch (step.value) {
+    case 2:
+      return selectedLyricsId.value.length >= 3
+    case 3:
+      return userAnswers.value.length === selectedLyrics.value.length
+    default:
+      return true
+  }
 })
 
 watch(step, async (newStep) => {
+  // 等畫面更新完再滾動，確保位置正確
   await nextTick()
   window.scrollTo({
     top: 0,
     behavior: 'smooth',
   })
 
-  if (newStep === 1) {
-    selectedQuizType.value = 'translation'
-    selectedLyricsId.value = []
-    userAnswers.value = []
-  } else if (newStep === 4) {
-    store.setPlaybackRate(1)
-  } else {
-    store.isPlaying = false
+  switch (newStep) {
+    case 1:
+      selectedQuizType.value = 'translation'
+      selectedLyricsId.value = []
+      userAnswers.value = []
+      break
+    case 4:
+      store.setPlaybackRate(1)
+      break
+    case 2:
+      store.isPlaying = false
+      break
   }
 })
 
+// 頁面載入完時，預設播放第一句歌詞
 onMounted(() => {
   store.seekToRequest(currentSong.value?.lyrics[0]?.start ?? 0)
 })
@@ -181,7 +195,10 @@ onMounted(() => {
           <div
             class="ml-2 text-[12px] font-medium tracking-wide text-stone-500"
           >
-            {{ currentSong?.title || $t('select_song_prompt') }}
+            {{
+              `${currentSong?.artist} - ${currentSong?.title}` ||
+              $t('select_song_prompt')
+            }}
           </div>
         </div>
       </div>
@@ -190,8 +207,6 @@ onMounted(() => {
       <SelectTestType
         v-if="currentSong && step === 1"
         :current-song="currentSong"
-        :is-playing="store.isPlaying"
-        :step="step"
         @set-quize-type="(str) => (selectedQuizType = str)"
         @set-trans-game-lang="(lang) => (translationGameLang = lang)"
       />
@@ -217,10 +232,6 @@ onMounted(() => {
         :is-playing="store.isPlaying"
         :selected-quiz-type="selectedQuizType"
         :translation-game-lang="translationGameLang"
-        @play-segment="
-          (e: { start: number; end: number }) =>
-            store.playSegmentRequest(e.start, e.end)
-        "
         @set-answers="(ans) => (userAnswers = ans)"
       />
 
