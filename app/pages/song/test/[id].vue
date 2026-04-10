@@ -29,6 +29,19 @@ if (!currentSong.value && !pending.value) {
   })
 }
 
+// 該歌曲有沒有時間戳記
+const hasTimeStamp = computed(
+  () => currentSong.value?.lyrics[0]?.start !== undefined,
+)
+
+if (currentSong.value && !hasTimeStamp.value) {
+  throw createError({
+    statusCode: 404,
+    statusMessage: 'Not Found',
+    message: '這首歌曲尚未提供測驗功能。',
+  })
+}
+
 // SEO
 const seoTitle = computed(() => {
   if (!currentSong.value) return t('seo.song_test_fallback_title')
