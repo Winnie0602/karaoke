@@ -61,7 +61,7 @@ watch(
   <div class="flex min-h-screen flex-col pt-[56px]">
     <!-- 影片 -->
     <ClientOnly>
-      <div
+        <div
         class="w-full overflow-hidden transition-[height,opacity] duration-300"
         :class="
           isSongPage

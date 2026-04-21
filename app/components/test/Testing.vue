@@ -85,7 +85,6 @@ const handleNextTest = (index: number) => {
   nowIndex.value = Math.min(index + 1, testLyrics.length - 1)
 }
 
-
 // 一進來頁面就播放第一句
 onMounted(() => {
   store.playSegmentRequest(testLyrics[0]?.start ?? 0, testLyrics[0]?.end ?? 0)
@@ -107,27 +106,28 @@ watch(nowIndex, (index) => {
   )
 })
 
-watch(emblaApi, (api, _prevApi, onCleanup) => {
-  if (!api) {
+// 重新同步目前的 swiper index
+const swiperDataRefresh = () => {
+  if (!emblaApi.value || !isAllAnswered.value) {
     return
   }
 
-  const onSelect = () => {
-    // 考試進行中由 next-test 控制題號，避免事件互相踩到而跳題
-    if (!isAllAnswered.value) {
-      return
-    }
+  nowIndex.value = emblaApi.value.selectedScrollSnap()
+}
 
-    const selected = api.selectedScrollSnap()
-    if (selected !== nowIndex.value) {
-      nowIndex.value = selected
-    }
+watchEffect((onCleanup) => {
+  if (!emblaApi.value) {
+    return
   }
 
-  api.on('select', onSelect)
+  // 註冊事件監聽器 發生select事件，就自動執行swiperDataRefresh
+  emblaApi.value.on('select', swiperDataRefresh)
 
+  swiperDataRefresh()
+
+  // 組件卸載時，把事件監聽器移除
   onCleanup(() => {
-    api.off('select', onSelect)
+    emblaApi.value?.off('select', swiperDataRefresh)
   })
 })
 </script>
@@ -148,7 +148,7 @@ watch(emblaApi, (api, _prevApi, onCleanup) => {
         <div
           v-for="(eachLyric, i) in testLyrics"
           :key="eachLyric.nanoid"
-          class="embla__slide relative flex items-center"
+          class="embla__slide"
         >
           <!-- 聽力翻譯題型 -->
           <TestCardListeningTranslation
@@ -183,20 +183,21 @@ watch(emblaApi, (api, _prevApi, onCleanup) => {
             <i
               v-for="n in 3"
               :key="n"
-              class="fa-solid fa-apple-whole text-sm transition-colors duration-300"
+              class="fa-solid fa-apple-whole text-sm"
               :class="n <= life ? 'text-[#F9595F]' : 'text-gray-200'"
             />
           </div>
         </div>
 
-        <div class="relative px-4">
+        <!-- 播放按鈕 -->
+        <div class="px-4">
           <button
             class="group flex h-12 w-12 items-center justify-center rounded-full transition-all active:scale-90 md:h-16 md:w-16"
-            :class="[
+            :class="
               store.isPlaying || (!isAllAnswered && life < 1)
                 ? 'cursor-not-allowed bg-gray-100'
-                : 'bg-[#FFE5E5] shadow-md shadow-red-100 hover:bg-[#ffd9d9]',
-            ]"
+                : 'bg-[#FFE5E5] shadow-md shadow-red-100 hover:bg-[#ffd9d9]'
+            "
             :disabled="store.isPlaying || (!isAllAnswered && life < 1)"
             @click="handlePlay(testLyrics[nowIndex])"
           >
@@ -214,9 +215,11 @@ watch(emblaApi, (api, _prevApi, onCleanup) => {
             {{ $t('test_progress') }}
           </span>
           <div class="mt-1 flex items-baseline gap-1">
+            <!-- 目前題數 -->
             <span class="text-lg font-bold text-gray-700 md:text-xl">
               {{ nowIndex + 1 }}
             </span>
+            <!-- 總題數 -->
             <span class="text-xs font-medium text-gray-400">
               / {{ testLyrics.length }}
             </span>

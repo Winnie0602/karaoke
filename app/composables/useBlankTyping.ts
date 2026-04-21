@@ -163,10 +163,10 @@ export function useTypingMode(options: UseTypingModeOptions) {
     isHintIndex, // 這格是否為提示字（可輸入覆蓋）
     isOriBlank, // 這格是不是單字與單字間的空白
     userInput, // 使用者實際輸入（僅可作答字元）
-    editableLength,
-    currentInputIndex,
-    mergedInput,
-    isTypedIndex,
-    answer,
+    editableLength, // 可輸入字元數量
+    currentInputIndex, // 下一個可輸入位置index（超過則為答案長度）
+    mergedInput, // 顯示在畫面上的字串
+    isTypedIndex, // 這格是否已經輸入
+    answer, // 正確答案
   }
 }

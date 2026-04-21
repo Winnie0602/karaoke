@@ -1,5 +1,6 @@
 export function useYoutubePlayer() {
   const store = usePlayerStore()
+
   const player = ref<YT.Player | null>(null)
   const isPlayerReady = ref(false)
 
@@ -205,13 +206,12 @@ export function useYoutubePlayer() {
           }
         },
         onError: (event) => {
-          console.error('YT Error', event.data)
-
-          if ([100, 101, 150, 2, 5].includes(event.data)) {
-            showError({
-              statusCode: 404,
-              statusMessage: 'Oops! Something wrong!',
-            })
+          if ([100, 101, 150, 2, 5, 153].includes(event.data)) {
+            store.pause()
+            stopTick()
+            store.setDuration(0)
+            isPlayerReady.value = false
+            return
           }
         },
       },

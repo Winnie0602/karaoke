@@ -27,7 +27,7 @@ const openDisclosureId = ref<string | null>(null)
 const setTestlyric = (nanoid: string) => {
   // 最多只能選擇 8 句歌詞
   if (testIds.value.length >= 8) {
-    show($t('up_to_5_words'), 2000)
+    show($t('up_to_8_words'), 2000)
 
     return
   }
