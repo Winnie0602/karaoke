@@ -16,6 +16,8 @@ const { show } = useToast()
 
 const videoId = computed(() => route.params.id as string)
 
+store.setTestVideoId(videoId.value)
+
 // 該歌詞
 const { data: currentSong, pending } = await useFetch<SongData | null>(
   `/api/song/${videoId.value}`,

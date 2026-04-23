@@ -40,6 +40,7 @@ export const usePlayerStore = defineStore(
 
     function loadVideo(id: string) {
       if (videoId.value && videoId.value !== id) {
+        // 換新歌，時間重置
         currentTime.value = 0
       }
       videoId.value = id

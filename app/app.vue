@@ -6,15 +6,18 @@ const siteName = 'Karaoke Lab'
 const siteUrl = config.public.siteUrl.replace(/\/+$/, '')
 
 useHead(() => ({
+  // Google Search Console 驗證碼
   meta: [
     {
       name: 'google-site-verification',
       content: '6RsNwJZO2CDZVdTuNStgFJSVffmaEYMqij35P0UKaps',
     },
   ],
+  // 設定 HTML 的 lang 屬性
   htmlAttrs: {
     lang: locale.value,
   },
+  // 動態設定頁面標題，根據當前路由或內容變化
   titleTemplate: (titleChunk) => {
     return titleChunk ? `${titleChunk} | ${siteName}` : siteName
   },
