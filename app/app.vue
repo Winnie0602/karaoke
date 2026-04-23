@@ -3,6 +3,7 @@ const { isModalOpen, title, content, type, confirm, cancel } = useCheckConfirm()
 const { locale } = useI18n()
 const config = useRuntimeConfig()
 const siteName = 'Karaoke Lab'
+const siteUrl = config.public.siteUrl.replace(/\/+$/, '')
 
 useHead(() => ({
   meta: [
@@ -22,9 +23,9 @@ useHead(() => ({
 
 useSeoMeta({
   ogSiteName: siteName,
-  ogImage: `${config.public.siteUrl}/og-image.png`,
+  ogImage: `${siteUrl}/og-image.png`,
   twitterCard: 'summary_large_image',
-  twitterImage: `${config.public.siteUrl}/og-image.png`,
+  twitterImage: `${siteUrl}/og-image.png`,
 })
 </script>
 
