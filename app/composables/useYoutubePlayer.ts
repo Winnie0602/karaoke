@@ -166,6 +166,7 @@ export function useYoutubePlayer() {
         playsinline: 1,
       },
       events: {
+        // 完成載入作業並準備開始接收 API 呼叫時，就會觸發這個事件
         onReady: () => {
           isPlayerReady.value = true
           store.setDuration(player.value!.getDuration())
@@ -189,6 +190,7 @@ export function useYoutubePlayer() {
             player.value!.playVideo()
           }
         },
+        // 每當播放器狀態變更時，就會觸發此事件
         onStateChange: (event) => {
           if (event.data === YT.PlayerState.PLAYING) {
             store.play()

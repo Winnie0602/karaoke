@@ -36,6 +36,7 @@ export default NuxtAuthHandler({
 
   callbacks: {
     async jwt({ token, user }) {
+      // 第一次登入時 -> 存token
       if (user && 'role' in user) {
         token.role = user.role
       }
@@ -43,6 +44,7 @@ export default NuxtAuthHandler({
     },
 
     async session({ session, token }) {
+      // 整理給前端的資料
       return {
         ...session,
         user: {

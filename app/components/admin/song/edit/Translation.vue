@@ -4,7 +4,7 @@ import type { LangCode } from '~/types/lang'
 import { languageMapCodeLabel } from '~/types/lang'
 
 const { open } = useCheckConfirm()
-const router = useRouter()
+
 const emit = defineEmits(['goBack'])
 
 const { show } = useToast()

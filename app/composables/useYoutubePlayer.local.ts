@@ -42,7 +42,7 @@ export function useYoutubePlayerLocal(videoId: string) {
   }
 
   /* ---------------- 建立 Player ---------------- */
-  async function createPlayer(elementId: string | HTMLElement) {
+  async function createPlayer(elementId: string) {
     if (!import.meta.client || !videoId || player.value) return
 
     await loadYoutubeAPI()
@@ -54,6 +54,7 @@ export function useYoutubePlayerLocal(videoId: string) {
         playsinline: 1,
       },
       events: {
+        // 每當播放器狀態變更時，就會觸發此事件
         onStateChange: (event) => {
           if (event.data === YT.PlayerState.PLAYING) {
             startTick()

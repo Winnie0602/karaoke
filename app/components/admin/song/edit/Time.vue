@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import type { LyricData } from '~/types/song'
 import type { LangCode } from '~/types/lang'
+
 const { show } = useToast()
-
-const router = useRouter()
-
 const emit = defineEmits(['goBack'])
 
 const { videoId, lyrics, language } = defineProps<{
@@ -15,16 +13,26 @@ const { videoId, lyrics, language } = defineProps<{
 
 const { createPlayer, destroy, currentTime } = useYoutubePlayerLocal(videoId)
 
+// 編輯的歌詞時間陣列
 const lyricsTimeArr = ref<{ nanoid: string; start?: number; end?: number }[]>(
   [],
 )
 
 const currentStep = ref<'start' | 'end'>('start')
 
+const getLyricIndex = (nanoid?: string) => {
+  if (!nanoid) return -1
+  return lyrics.findIndex((lyric) => lyric.nanoid === nanoid)
+}
+
+const findEditedLyric = (nanoid: string) => {
+  return lyricsTimeArr.value.find((line) => line.nanoid === nanoid)
+}
+
 const setTime = (nanoid: string, type: 'start' | 'end') => {
   const time = parseFloat(currentTime.value.toFixed(2))
 
-  const line = lyricsTimeArr.value.find((l) => l.nanoid === nanoid)
+  const line = findEditedLyric(nanoid)
 
   // 已有歌詞，更新該歌詞的開始or結束
   if (line) {
@@ -39,7 +47,7 @@ const setTime = (nanoid: string, type: 'start' | 'end') => {
 }
 
 const getLyricTime = (nanoid: string, type: 'start' | 'end') => {
-  const line = lyricsTimeArr.value.find((l) => l.nanoid === nanoid)
+  const line = findEditedLyric(nanoid)
   return line?.[type] ?? null
 }
 
@@ -63,12 +71,12 @@ const saveLyricsTime = async () => {
   emit('goBack')
 }
 
-// 最後一個編輯過的歌詞id
-const editLastLyricId = ref(lyrics[0]?.nanoid)
+// 現正在編輯的歌詞nanoid
+const currentLyricId = ref(lyrics[0]?.nanoid)
 
 // 現正在編輯的歌詞index
 const currentLyricIndex = computed(() => {
-  return lyrics.findIndex((l) => l.nanoid === editLastLyricId.value)
+  return getLyricIndex(currentLyricId.value)
 })
 
 // 音樂播放到的index
@@ -86,34 +94,36 @@ const playingLyricIndex = computed(() => {
 })
 
 const handleEdit = (nanoid: string) => {
-  editLastLyricId.value = nanoid
+  // 點擊編輯後，將此歌詞設為最後編輯的歌詞
+  currentLyricId.value = nanoid
   currentStep.value = 'start'
 
-  const index = lyrics.findIndex((l) => l.nanoid === nanoid)
+  const currentIndex = getLyricIndex(nanoid)
 
   // 砍掉這句之後的所有時間
-  lyricsTimeArr.value = lyricsTimeArr.value.filter((l) => {
-    const i = lyrics.findIndex((x) => x.nanoid === l.nanoid)
-    return i < index
+  lyricsTimeArr.value = lyricsTimeArr.value.filter((line) => {
+    return getLyricIndex(line.nanoid) < currentIndex
   })
 }
 
-const circle = () => {
-  const index = currentLyricIndex.value
-  const lyric = lyrics[index]
+const markCurrentTime = () => {
+  // 找出當前歌詞
+  const lyric = lyrics[currentLyricIndex.value]
 
   if (!lyric) return
 
   if (currentStep.value === 'start') {
+    // 放到編輯陣列中
     setTime(lyric.nanoid, 'start')
     currentStep.value = 'end'
-  } else {
-    setTime(lyric.nanoid, 'end')
-    currentStep.value = 'start'
-
-    //  設定完 end > 換下一句
-    editLastLyricId.value = lyrics[index + 1]?.nanoid
+    return
   }
+
+  setTime(lyric.nanoid, 'end')
+  currentStep.value = 'start'
+
+  //  設定完 end > 換下一句
+  currentLyricId.value = lyrics[currentLyricIndex.value + 1]?.nanoid
 }
 
 onMounted(() => {
@@ -211,7 +221,7 @@ onBeforeUnmount(() => {
     <div class="flex flex-col items-center space-y-4 md:space-y-6">
       <button
         class="fixed right-6 bottom-10 z-50 flex h-16 w-16 flex-col items-center justify-center rounded-full bg-white transition-all hover:scale-110 active:scale-90 md:right-10 md:bottom-12 md:h-20 md:w-20"
-        @click="circle()"
+        @click="markCurrentTime()"
       >
         <i class="fa-solid fa-stopwatch text-xl text-[#F9595F] md:text-2xl"></i>
         <span class="mt-0.5 text-[10px] font-black text-[#F9595F] md:text-xs">

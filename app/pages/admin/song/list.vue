@@ -14,8 +14,6 @@ const page = ref(1)
 
 const selectLang = ref<LangCode | 'all'>('all')
 
-// const searchQuery = ref('')
-
 const { data, refresh, pending } = await useFetch('/api/list/songs', {
   query: {
     language: selectLang,

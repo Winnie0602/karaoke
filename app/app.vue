@@ -5,12 +5,19 @@ const config = useRuntimeConfig()
 const siteName = 'Karaoke Lab'
 
 useHead(() => ({
+  meta: [
+    {
+      name: 'google-site-verification',
+      content: '6RsNwJZO2CDZVdTuNStgFJSVffmaEYMqij35P0UKaps',
+    },
+  ],
   htmlAttrs: {
     lang: locale.value,
   },
   titleTemplate: (titleChunk) => {
     return titleChunk ? `${titleChunk} | ${siteName}` : siteName
   },
+
 }))
 
 useSeoMeta({

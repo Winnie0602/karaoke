@@ -7,8 +7,6 @@ export default defineEventHandler(async (event) => {
 
   const { db } = await connectToDatabase()
 
-  const collection = db.collection('songs')
-
   const operations = lyrics.map(
     (line: { nanoid: string; start?: number; end?: number }) => {
       const setData: Record<string, number> = {}
@@ -33,7 +31,7 @@ export default defineEventHandler(async (event) => {
     },
   )
 
-  await collection.bulkWrite(operations)
+  await db.collection('songs').bulkWrite(operations)
 
   await db
     .collection('list')
