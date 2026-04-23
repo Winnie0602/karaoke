@@ -18,14 +18,13 @@ useHead(() => ({
   titleTemplate: (titleChunk) => {
     return titleChunk ? `${titleChunk} | ${siteName}` : siteName
   },
-
 }))
 
 useSeoMeta({
   ogSiteName: siteName,
-  ogImage: `${siteUrl}/og-image.png`,
+  ogImage: `${siteUrl}/og-img.png`,
   twitterCard: 'summary_large_image',
-  twitterImage: `${siteUrl}/og-image.png`,
+  twitterImage: `${siteUrl}/og-img.png`,
 })
 </script>
 
