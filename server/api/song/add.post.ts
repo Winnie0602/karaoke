@@ -87,7 +87,6 @@ export default defineEventHandler(async (event) => {
     id: videoId,
     language,
     translation_langs: [],
-    has_timestamp: false,
     artist,
     lyrics: resultLyrics,
   })

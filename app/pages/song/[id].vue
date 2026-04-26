@@ -10,11 +10,9 @@ const store = usePlayerStore()
 
 const videoId = computed(() => route.params.id as string)
 
-store.loadVideo(videoId.value)
-
 // 該歌api資料
 const { data: currentSong, pending } = await useFetch<SongData | null>(
-  `/api/song/${videoId.value}`,
+  () => `/api/song/${videoId.value}`,
 )
 
 if (!currentSong.value && !pending.value) {
@@ -47,7 +45,9 @@ useSeoMeta({
 })
 
 // 該歌曲有沒有時間戳記
-const hasTimeStamp = ref(currentSong.value?.lyrics[0]?.start !== undefined)
+const hasTimeStamp = computed(
+  () => currentSong.value?.lyrics[0]?.start !== undefined,
+)
 
 // 要顯示的翻譯語言
 const showTranslations = ref<LangCode[]>([])
@@ -113,15 +113,20 @@ const { data: otherSongs } = await useFetch<{ songs: SongsList[] }>(
 )
 
 watch(
-  () => route.params.id,
+  videoId,
   (id) => {
-    if (typeof id !== 'string') return
+    store.loadVideo(id)
+  },
+  { immediate: true },
+)
 
-    if (currentSong.value) {
-      store.setSongInfo(currentSong.value?.title, currentSong.value?.artist)
+watch(
+  currentSong,
+  (song) => {
+    if (!song) return
 
-      showTranslations.value = currentSong.value.translation_langs
-    }
+    store.setSongInfo(song.title, song.artist)
+    showTranslations.value = song.translation_langs
   },
   { immediate: true },
 )
