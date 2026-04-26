@@ -7,9 +7,11 @@ export function useTatoeba(langFrom: string, langTo: MaybeRefOrGetter<string>) {
   const get = async (query: string) => {
     if (!query) return []
 
+    const key = `${query}-${toValue(langTo)}`
+
     // 有 cache 直接回傳
-    if (cache.has(`${query}-${toValue(langTo)}`)) {
-      return cache.get(`${query}-${toValue(langTo)}`)!
+    if (cache.has(key)) {
+      return cache.get(key)
     }
 
     loading.value = true
