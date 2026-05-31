@@ -8,12 +8,12 @@ const store = usePlayerStore()
 // UI顯示的暫存時間
 const seekingTime = ref(0)
 
-// 節流版本的拖曳更新（每50ms更新一次）
+// 節流版本的拖曳更新（每75ms更新一次）
 const onSeekInput = throttle((e: Event) => {
   const value = Number((e.target as HTMLInputElement).value)
   seekingTime.value = value
   store.isSeeking = true
-}, 50)
+}, 75)
 
 const onSeekCommit = (e: Event) => {
   const value = Number((e.target as HTMLInputElement).value)
@@ -61,7 +61,7 @@ watch(
   <div class="flex min-h-screen flex-col pt-[56px]">
     <!-- 影片 -->
     <ClientOnly>
-        <div
+      <div
         class="w-full overflow-hidden transition-[height,opacity] duration-300"
         :class="
           isSongPage
