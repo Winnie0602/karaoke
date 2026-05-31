@@ -107,7 +107,7 @@ const { data: otherSongs } = await useFetch<{ songs: SongsList[] }>(
   {
     query: {
       language: 'all',
-      limit: 8,
+      limit: 10,
     },
   },
 )
